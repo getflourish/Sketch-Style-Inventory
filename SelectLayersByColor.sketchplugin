@@ -1,0 +1,83 @@
+// This plugin selects all layers that have the same fill color as the currently selected layer/s (command shift c)
+// Can be used to combine colors that are visually very similar
+
+
+// Get an array of all selected colors
+
+var referenceColors = [];
+
+for (var c = 0; c < selection.count(); c++) {
+  var color = getColorOf(selection[c]);
+  var hexColor = "#" + color.hexValue();
+  referenceColors.push(hexColor);
+}
+
+// Loop through all pages, artboards, layers
+
+var count = 1;
+
+for (var i = 0; i < doc.pages().count(); i++) {
+
+  var page = doc.pages().objectAtIndex(i);
+
+  for (var j = 0; j < page.artboards().count(); j++) {
+
+    var artboard = page.artboards().objectAtIndex(j);
+
+    for (var k = 0; k < artboard.layers().count(); k++) {
+
+      var layer = artboard.layers().objectAtIndex(k);
+      parse(layer, 0);
+
+    }
+  }
+}
+
+// Show how many layers have been selected
+
+[doc showMessage: count + " layers selected."]
+
+// Util functions
+
+function parse(layer, level) {
+  if (layer.class() == MSLayerGroup) {
+    for (var i = 0; i < layer.layers().count(); i++) {
+      parse(layer.layers().objectAtIndex(i), level + 1);
+    }
+  } else if (layer.class() == MSShapeGroup){
+    var color = getColorOf(layer);
+    if (color != undefined) {
+      var hexColor = "#" + color.hexValue();
+
+      if (include(referenceColors, hexColor) == 1) {
+        // need to compare hex values for comparison in include function
+        [layer select:true byExpandingSelection:true]
+        count++;
+      }
+    }
+  }
+}
+
+function getColorOf(layer) {
+  var color = null;
+  switch ([layer class]) {
+    case MSTextLayer:
+      color = layer.textColor();
+      // Check if text layer has a fill color
+
+      var fill = layer.style().fills().firstObject();
+      if (fill != undefined && fill.isEnabled()) color = fill.color();
+    break;
+    default:
+      var fill = layer.style().fills().firstObject();
+      if (fill != undefined && fill.isEnabled()) color = fill.color();
+    break;
+  }
+  return color;
+}
+
+function include(arr, obj) {
+  // indexOf compares searchElement to elements of the Array using strict equality
+  // (the same method used by the ===, or triple-equals, operator).
+  return (arr.indexOf(obj) != -1);
+}

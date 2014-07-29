@@ -1,0 +1,54 @@
+// Selects all text layers that have the same text style as the reference text layer (command control t)
+
+// init
+
+var layerCount = 0;
+var pageCount = 0;
+var lastFoundOnPage = -1;
+var selectedLayers = [];
+
+// We can only search for similar text layers when a reference layer is selected
+
+if (selection.count() == 1) {
+
+	[doc showMessage: "Looking for similar text layers…"]
+
+	// Remember the reference text style
+
+	var reference = selection[0].style().textStyle().attributes();
+
+	// Loop through pages
+
+	for (var i = 0; i < doc.pages().count(); i++) {
+		var page = doc.pages().objectAtIndex(i),
+	    	layers = page.children();
+
+	    // Loop through all children of the page
+
+		for (var j = 0; j < layers.count(); j++) {
+
+			// get the current layer
+
+			var layer = layers.objectAtIndex(j);
+
+			// Check if the layer is a text layer
+
+		  	if ([layer isKindOfClass:MSTextLayer]) {
+		  		if(layer.style().textStyle().attributes() == reference) {
+		  			[layer select:true byExpandingSelection:true];
+		  			layerCount++;
+		  			selectedLayers.push(layer.name());
+		  		  	if (i != lastFoundOnPage) {
+		  		  		pageCount++;
+		  		  		lastFoundOnPage = i;
+		  		  	}
+		  		}
+		  	}
+		}
+	}
+	// Show how many layers have been selected
+	[doc showMessage: layerCount + " layers on " + pageCount + " pages selected."]
+
+} else {
+	[doc showMessage: "Please select a single reference text layer."]
+}

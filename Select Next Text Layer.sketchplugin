@@ -1,0 +1,91 @@
+// Selects all text layers that have the same text style as the reference text layer (control cmd n)
+
+// init
+
+var layerCount = -1;
+var pageCount = 0;
+var lastFoundOnPage = -1;
+var selectedLayers = [];
+var selectedLayersNames = [];
+var selectedLayersMeta = [];
+
+// We can only search for similar text layers when a reference layer is selected
+
+if (selection.count() == 1) {
+
+	[doc showMessage: "Looking for similar text layers…"]
+
+	// Remember the reference text style
+
+	var reference = selection[0].style().textStyle().attributes();
+	[[doc currentPage] deselectAllLayers]
+
+	// Loop through pages
+	var pages = [[doc pages] objectEnumerator]
+	while (page = [pages nextObject]) {
+		var layers = [[page children] objectEnumerator];
+		var i = 0;
+		while (layer = [layers nextObject]) {
+			if ([layer isKindOfClass:MSTextLayer]) {
+				if(layer.style().textStyle().attributes() == reference) {
+					selectedLayersNames.push(page.name() + ": " + layer.name());
+					selectedLayersMeta.push({
+						"name": layer.name(),
+						"layer": layer,
+						"page": page
+					});
+					selectedLayers.push(layer);
+					layerCount++;
+				  	if (i != lastFoundOnPage) {
+				  		pageCount++;
+				  		lastFoundOnPage = i;
+				  	}
+				}
+			}
+			i++;
+		}
+	}
+
+	// Show how many layers have been selected
+	[doc showMessage: layerCount + " similar layers found on " + pageCount + " pages."]
+
+	var choice = createSelect('Choose a similar text layer', selectedLayersNames, 0)
+	var index = choice[1];
+	var thePage = selectedLayersMeta[index].page;
+	var theLayer = selectedLayersMeta[index].layer;
+
+	// select the text layer
+	// todo: switch to correct page
+	[doc setCurrentPage:thePage];
+	[theLayer select:true byExpandingSelection:false]
+
+	centerView(theLayer);
+
+} else {
+	[doc showMessage: "Please select a single reference text layer."]
+}
+
+function createSelect(msg, items, selectedItemIndex){
+  selectedItemIndex = selectedItemIndex || 0
+
+  var accessory = [[NSComboBox alloc] initWithFrame:NSMakeRect(0,0,200,25)]
+  [accessory addItemsWithObjectValues:items]
+  [accessory selectItemAtIndex:selectedItemIndex]
+
+  var alert = [[NSAlert alloc] init]
+  [alert setMessageText:msg]
+  [alert addButtonWithTitle:'OK']
+  [alert addButtonWithTitle:'Cancel']
+  [alert setAccessoryView:accessory]
+
+  var responseCode = [alert runModal]
+  var sel = [accessory indexOfSelectedItem]
+
+  return [responseCode, sel]
+}
+
+function centerView(layer) {
+	var selected_object = layer,
+    	view = [doc currentView]
+	[view centerRect:[selected_object absoluteRect]]
+}

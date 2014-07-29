@@ -1,0 +1,58 @@
+#import 'alessndro_library.js'
+#import 'Style Inventory/inventory.js'
+
+var app = [NSApplication sharedApplication];
+
+var rgbColors = [];
+var hexColors = [];
+
+// Loop through pages
+var pages = [[doc pages] objectEnumerator]
+while (page = [pages nextObject]) {
+  var layers = [[page children] objectEnumerator];
+  while (layer = [layers nextObject]) {
+    if([layer isKindOfClass:MSShapeGroup]) {
+      var color = getColorOf(layer);
+
+      if (color != undefined) {
+        // need to compare hex values for comparison in include function
+        var hex_color = "#" + [color hexValue];
+
+        if(include(hexColors, hex_color) == 0) {
+          hexColors.push(hex_color);
+          rgbColors.push(color);
+        }
+      }
+    }
+  }
+}
+
+var styleSheetPage = inventory.common.getPageByName(inventory.config.name);
+var artboard = inventory.common.getArtboardByPageAndName(styleSheetPage, "Colors");
+artboard.frame().setX(3000);
+
+if (rgbColors.length > 0) alessndro.colour.drawColourPalette(selection[0], rgbColors)
+
+function include(arr, obj) {
+  return (arr.indexOf(obj) != -1);
+}
+
+function getColorOf(layer) {
+  var color = null;
+  switch ([layer class]) {
+    case MSTextLayer:
+    color = layer.textColor();
+
+    // Check if text layer has a fill color
+
+    var fill = layer.style().fills().firstObject();
+    if (fill != undefined && fill.isEnabled()) color = fill.color();
+    break;
+    default:
+    var fill = layer.style().fills().firstObject();
+    if (fill != undefined && fill.isEnabled()) color = fill.color();
+    break;
+  }
+  return color;
+}
+

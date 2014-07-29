@@ -1,0 +1,16 @@
+for (var i = 0; i < selection.count(); i++) {
+	var layer = selection.objectAtIndex(i);
+	centerView(layer);
+	var name = [doc askForUserInput:"Color name:" initialValue:""]
+	if(name != "") {
+		layer.setName(name);
+	} else {
+		break;
+	}
+}
+
+function centerView(layer) {
+	var selected_object = layer,
+    	view = [doc currentView]
+	[view centerRect:[selected_object absoluteRect]]
+}

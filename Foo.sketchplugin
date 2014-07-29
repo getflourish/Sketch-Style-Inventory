@@ -1,0 +1,50 @@
+function getColorOf(layer) {
+	var color = null;
+	switch ([layer class]) {
+		case MSTextLayer:
+	    	color = layer.textColor();
+			textLayer = layer;
+
+			// Check if text layer has a fill color
+
+			var fill = layer.style().fills().firstObject();
+			if (fill != undefined && fill.isEnabled()) color = fill.color();
+		break;
+	  	default:
+	    	var fill = layer.style().fills().firstObject();
+			color = fill.color();
+	    break;
+	}
+	return color;
+}
+
+var index = null;
+var referenceColor = getColorOf(selection[0]);
+
+for (var i = 0; i < doc.pages().count(); i++) {
+
+	var page = doc.pages().objectAtIndex(i);
+
+	for (var j = 0; j < page.artboards().count(); j++) {
+
+		var artboard = page.artboards().objectAtIndex(j);
+
+		for (var k = 0; k < artboard.layers().count(); k++) {
+
+			var layer = artboard.layers().objectAtIndex(k);
+			if(layer == selection[0]) index = k;
+
+			if (k > index) {
+				// check color
+				var color = getColorOf(layer);
+				if (color == referenceColor) {
+					// select layer and break
+					[layer select:true byExpandingSelection:true]
+					break;
+				}
+			}
+		}
+	}
+}
+
+// parse layers and find next layer with same fill color
