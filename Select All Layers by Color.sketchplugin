@@ -1,5 +1,6 @@
 // This plugin selects all layers that have the same fill color as the currently selected layer/s (command shift c)
 // Can be used to combine colors that are visually very similar
+// todo: Does not work across pages?
 
 
 // Get an array of all selected colors

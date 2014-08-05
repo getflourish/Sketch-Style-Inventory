@@ -1,0 +1,48 @@
+var definedTextStyles = [];
+function analyseTextStyles () {
+	var styles = [[[doc documentData] layerTextStyles] objects]
+
+	for (var i = 0; i < styles.count(); i++) {
+		var style = styles.objectAtIndex(i);
+		theID = style.style().sharedObjectID();
+		// Set the id
+		log(theID)
+		selection[0].style().sharedObjectID
+		log(selection[0].style().sharedObjectID())
+		dump_obj(style)
+		selection[0].style().setSharedObjectID(theID)
+	}
+}
+
+analyseTextStyles();
+
+// Dump Object
+function dump_obj(obj){
+  log("#####################################################################################")
+  log("## Dumping object " + obj )
+  log("## obj class is: " + [obj className])
+  log("#####################################################################################")
+
+  log("obj.properties:")
+  log([obj class].mocha().properties())
+  log("obj.propertiesWithAncestors:")
+  log([obj class].mocha().propertiesWithAncestors())
+
+  log("obj.classMethods:")
+  log([obj class].mocha().classMethods())
+  log("obj.classMethodsWithAncestors:")
+  log([obj class].mocha().classMethodsWithAncestors())
+
+  log("obj.instanceMethods:")
+  log([obj class].mocha().instanceMethods())
+  log("obj.instanceMethodsWithAncestors:")
+  log([obj class].mocha().instanceMethodsWithAncestors())
+
+  log("obj.protocols:")
+  log([obj class].mocha().protocols())
+  log("obj.protocolsWithAncestors:")
+  log([obj class].mocha().protocolsWithAncestors())
+
+  log("obj.treeAsDictionary():")
+  log(obj.treeAsDictionary())
+}

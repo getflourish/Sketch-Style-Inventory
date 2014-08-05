@@ -1,0 +1,107 @@
+// init (cmd control alt t)
+
+#import 'inventory.js'
+#import 'sandbox.js'
+
+var definedTextStyles = [];
+var uniqueTextStyles = [];
+
+
+function analyseTextStyles () {
+	var styles = [[[doc documentData] layerTextStyles] objects]
+
+	for (var i = 0; i < styles.count(); i++) {
+		var style = styles.objectAtIndex(i);
+		var textStyle = style.style().textStyle().attributes();
+		if (!inventory.common.isIncluded(definedTextStyles, textStyle)) {
+	    	definedTextStyles.push({
+	    		"textStyle": textStyle,
+	    		"name": style.name()
+	    	});
+	    }
+	}
+	// sort by font size
+	definedTextStyles.sort(compareTextStyleFontSize);
+}
+
+function compareTextStyleFontSize(a, b) {
+	if (a.textStyle.NSFont.fontDescriptor().objectForKey(NSFontSizeAttribute) < b.textStyle.NSFont.fontDescriptor().objectForKey(NSFontSizeAttribute))
+		return -1;
+	if (a.textStyle.NSFont.fontDescriptor().objectForKey(NSFontSizeAttribute) > b.textStyle.NSFont.fontDescriptor().objectForKey(NSFontSizeAttribute))
+		return 1;
+	return 0;
+}
+
+function addCheckeredBackground(artboard) {
+	var layer = artboard.addLayerOfType("rectangle");
+	layer.frame().setWidth(artboard.frame().width())
+	layer.frame().setHeight(artboard.frame().height())
+	layer.style().fills().addNewStylePart();
+	layer.style().fill().setFillType(4);
+	layer.setName("Background");
+
+	var image = [[NSImage alloc] initWithContentsOfFile:inventory.config.background_image];
+
+	layer.style().fill().setPatternImage(image)
+}
+
+function createTextStyles (artboard) {
+	var top = 0;
+	var margin = 20;
+	var maxWidth = 0;
+
+	for (var i = 0; i < definedTextStyles.length; i++) {
+		var definedTextStyle = definedTextStyles[i];
+		var textLayer = artboard.addLayerOfType("text");
+		textLayer.setStringValue(inventory.config.textStylePlaceholder)
+		textLayer.style().textStyle().setAttributes(definedTextStyle.textStyle);
+		textLayer.setName(definedTextStyle.name)
+		var theWidth = textLayer.frame().width();
+
+		if (theWidth > maxWidth) maxWidth = theWidth;
+		textLayer.frame().setX(margin);
+		textLayer.frame().setY(top);
+
+		top += textLayer.frame().height() + margin;
+	}
+
+	[textLayer select:true byExpandingSelection:false]
+	// centerView(textLayer)
+
+	// Resize artboard and background to match the newly created text layers
+	var background = artboard.layers().objectAtIndex(0);
+	artboard.frame().setWidth(maxWidth + margin);
+	background.frame().setWidth(maxWidth + margin);
+	artboard.frame().setHeight(top + margin);
+	background.frame().setHeight(top + margin);
+	background.setIsLocked(true);
+
+	// Zoom the view to make the entire artboard visible
+	inventory.view.zoomTo(artboard)
+
+}
+
+function exportStyles(artboard) {
+	var styleSheetString = inventory.css.generateStyleSheet(artboard.children());
+
+	var view = [doc currentView];
+	view.refresh();
+
+	// Document path
+	var document_path = [[doc fileURL] path].split([doc displayName])[0];
+
+	var path = document_path + "/typography.css"
+
+	inventory.common.save_file_from_string(path, styleSheetString);
+}
+
+analyseTextStyles();
+
+// for large files, sketch crashes after adding the style sheet page (a second time)
+var styleSheetPage = inventory.common.getPageByName(inventory.config.pageName);
+var artboard = inventory.common.getArtboardByPageAndName(styleSheetPage, "Typography");
+inventory.common.removeAllLayersFromArtboard(artboard)
+addCheckeredBackground(artboard);
+createTextStyles(artboard);
+
+exportStyles(artboard);
