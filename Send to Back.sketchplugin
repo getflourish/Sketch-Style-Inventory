@@ -1,0 +1,12 @@
+// Example of executing a menu command - in this case moveToBack
+
+function sendAction(commandToPerform) {
+		try {
+			[NSApp sendAction:commandToPerform to:nil from:doc]
+		} catch(e) {
+			my.log(e)
+		}
+	};
+
+
+sendAction('moveBackward:');

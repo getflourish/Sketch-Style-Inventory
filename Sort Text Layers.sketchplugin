@@ -1,0 +1,207 @@
+// Sort selected layers by their text layer content (ctrl option command s)
+
+var numberOfTextLayersPerGroup = 0;
+var sortableValues = [];
+var sortIndex = 0;
+var textLayersMeta = [];
+var leftPositions = [];
+var topPositions = [];
+
+
+function sortLayers () {
+
+	// Loop through all selected layers
+
+	for (var i = 0; i < selection.count(); i++) {
+		var layers = selection[i].children();
+		var textLayers = [];
+		var numTextLayers = 0;
+		var strings = [];
+
+		// Loop through all child layers of the group
+
+		for (var j = 0; j < layers.count(); j++) {
+			var layer = layers[j];
+
+			// Proceed with text layers
+
+			if (layer.className() == "MSTextLayer") {
+
+				// Remember the string
+
+				strings.push(layer.stringValue());
+				numTextLayers++;
+
+				// Remember the maximum number of text layers per group
+
+				if (numTextLayers > numberOfTextLayersPerGroup) {
+					numberOfTextLayersPerGroup = numTextLayers;
+					sortableValues.push("Text layer " + numTextLayers + ": " + layer.name());
+				}
+			}
+		}
+
+		// For each layer group, save the corresponding values of the text layers
+
+		textLayersMeta.push({
+			"name": layer.name(),
+			"layer": selection[i],
+			"strings": strings
+		});
+
+		// Remember the position of each layer
+
+		topPositions.push(parseInt(selection[i].frame().y()));
+		leftPositions.push(parseInt(selection[i].frame().x()));
+	}
+
+	// Sort positions
+	topPositions.sort(sortNumber);
+	leftPositions.sort(sortNumber);
+
+	// Let the user select the text field that should be sorted on
+	if (numberOfTextLayersPerGroup > 1) {
+		var choice = createSelect('What text layer do you want to sort on?', sortableValues, 0)
+		var index = choice[1];
+		sortIndex = index;
+	}
+
+	// Show sort options
+
+	var options = ["Ascending", "Descending", "Random"];
+	var choice = createSelect('How do you want to sort?', options, 0)
+	var index = choice[1];
+	sortMode = index;
+
+	switch (sortMode) {
+		case 0:
+			textLayersMeta.sort(asc);
+			break;
+		case 1:
+			textLayersMeta.sort(desc);
+			break;
+		case 2:
+			shuffle(textLayersMeta);
+			break;
+		default:
+			textLayersMeta.sort(asc);
+			break;
+	}
+
+	log(textLayersMeta)
+	log(topPositions)
+
+	// Finally, layout the sorted layers
+
+	for (var i = 0; i < textLayersMeta.length; i++) {
+		textLayersMeta[i].layer.frame().setY(topPositions[i]);
+		textLayersMeta[i].layer.frame().setX(leftPositions[i]);
+	}
+}
+
+// Run
+if (selection.count() > 1) {
+	sortLayers();
+} else {
+	[doc showMessage:"Please select at least two layers."]
+}
+
+doc.currentPage().deselectAllLayers();
+
+for (var i = 0; i < textLayersMeta.length; i++) {
+	var layer = textLayersMeta[textLayersMeta.length - i - 1].layer;
+	// select
+	layer.setIsSelected(true);
+	sendBack();
+	doc.currentPage().deselectAllLayers();
+}
+
+var numberOfTextLayersPerGroup = null;
+var sortableValues = null;
+var sortIndex = null;
+var textLayersMeta = null;
+var leftPositions = null;
+var topPositions = null;
+
+
+
+function asc(a, b) {
+	if (a.strings[sortIndex] < b.strings[sortIndex])
+		return -1;
+	if (a.strings[sortIndex] > b.strings[sortIndex])
+		return 1;
+	return 0;
+}
+
+function desc(a, b) {
+	if (a.strings[sortIndex] > b.strings[sortIndex])
+		return -1;
+	if (a.strings[sortIndex] < b.strings[sortIndex])
+		return 1;
+	return 0;
+}
+
+function sortNumber(a,b) {
+    return a - b;
+}
+
+// Shuffle array
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex ;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
+// Creates a dialog with a drop down
+
+function createSelect(msg, items, selectedItemIndex){
+  selectedItemIndex = selectedItemIndex || 0
+
+  var accessory = [[NSComboBox alloc] initWithFrame:NSMakeRect(0,0,200,25)]
+  [accessory addItemsWithObjectValues:items]
+  [accessory selectItemAtIndex:selectedItemIndex]
+
+  var alert = [[NSAlert alloc] init]
+  [alert setMessageText:msg]
+  [alert addButtonWithTitle:'OK']
+  [alert addButtonWithTitle:'Cancel']
+  [alert setAccessoryView:accessory]
+
+  var responseCode = [alert runModal]
+  var sel = [accessory indexOfSelectedItem]
+
+  return [responseCode, sel]
+}
+
+// Example of executing a menu command - in this case moveToBack
+
+function sendAction(commandToPerform) {
+	try {
+		[NSApp sendAction:commandToPerform to:nil from:doc]
+	} catch(e) {
+		my.log(e)
+	}
+};
+
+function sendBackward() {
+	sendAction('moveBackward:');
+}
+function sendForward() {
+	sendAction('moveForward:');
+}
+function sendBack() {
+	sendAction('moveToBack:');
+}

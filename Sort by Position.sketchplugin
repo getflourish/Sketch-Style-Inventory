@@ -1,0 +1,45 @@
+// Sort artboards in layer list based on position
+// Select all artboards
+
+var meta = [];
+
+for (var i = 0; i < selection.count(); i++) {
+	var layer = selection[i];
+	var left = layer.frame().x();
+	meta.push({
+		layer: layer,
+		left: left
+	});
+}
+
+meta.sort(sortNumber);
+doc.currentPage().deselectAllLayers();
+
+for (var i = 0; i < meta.length; i++) {
+	var layer = meta[i].layer;
+	layer.setIsSelected(true);
+	sendBack();
+	doc.currentPage().deselectAllLayers();
+}
+
+function sortNumber(a,b) {
+    return a.left - b.left;
+}
+
+function sendAction(commandToPerform) {
+	try {
+		[NSApp sendAction:commandToPerform to:nil from:doc]
+	} catch(e) {
+		my.log(e)
+	}
+};
+
+function sendBackward() {
+	sendAction('moveBackward:');
+}
+function sendForward() {
+	sendAction('moveForward:');
+}
+function sendBack() {
+	sendAction('moveToBack:');
+}

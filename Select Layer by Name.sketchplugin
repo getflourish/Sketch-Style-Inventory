@@ -1,0 +1,22 @@
+// select next layer with same fill color as selected layer (control cmd l)
+
+
+var index = -1;
+var found = -1;
+
+var referenceName = selection[0].name();
+var artboard = doc.currentPage().currentArtboard();
+
+for (var k = 0; k < artboard.children().count(); k++) {
+
+	var layer = artboard.children().objectAtIndex(k);
+
+	// check name
+	var name = layer.name();
+
+	if (name == referenceName) {
+		// select layer and break
+		[layer select:true byExpandingSelection:true]
+	}
+	index++;
+}

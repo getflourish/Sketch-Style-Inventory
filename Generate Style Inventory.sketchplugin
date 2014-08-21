@@ -6,6 +6,8 @@
 var definedTextStyles = [];
 var uniqueTextStyles = [];
 
+var top = 100;
+
 
 function analyseTextStyles () {
 	var styles = [[[doc documentData] layerTextStyles] objects]
@@ -88,30 +90,168 @@ function addCheckeredBackground(artboard) {
 	layer.style().fill().setPatternImage(image)
 }
 
+function addHeading(artboard, label) {
 
-function layoutDefinedTextStyles(artboard) {
+	var left = 20;
 
+	// Add label
+	var title = inventory.common.addTextLayer(artboard, label);
+	title.setFontPostscriptName("HelveticaNeue-Bold");
+	title.setFontSize(28);
+
+	// set color
+	var color = [MSColor colorWithHex: "#484848" alpha: 1];
+	title.setTextColor(color);
+
+	// todo: calculate max width of all titles
+	title.frame().setWidth(200);
+
+	// right align title
+	title.setTextAlignment(1);
+
+	// position title
+	title.frame().setX(left);
+	title.frame().setY(top);
+
+	top += title.frame().height();
+
+	// Add sub title
+	var subtitle = inventory.common.addTextLayer(artboard, "Text Styles");
+	subtitle.setFontPostscriptName("HelveticaNeue");
+	subtitle.setFontSize(28);
+
+	// set color
+	var color = [MSColor colorWithHex: "#484848" alpha: 1];
+	subtitle.setTextColor(color);
+
+	// todo: calculate max width of all subtitles
+	subtitle.frame().setWidth(200);
+
+	// right align subtitle
+	subtitle.setTextAlignment(1);
+
+	// position subtitle
+	subtitle.frame().setX(left);
+	subtitle.frame().setY(top);
+
+	top += subtitle.frame().height();
+
+	// Add sub dash
+	var dash = inventory.common.addTextLayer(artboard, "—");
+	dash.setFontPostscriptName("HelveticaNeue");
+	dash.setFontSize(28);
+
+	// set color
+	var color = [MSColor colorWithHex: "#484848" alpha: 1];
+	dash.setTextColor(color);
+
+	// todo: calculate max width of all dashs
+	dash.frame().setWidth(200);
+
+	// right align dash
+	dash.setTextAlignment(1);
+
+	// position dash
+	dash.frame().setX(left);
+	dash.frame().setY(top);
+
+	top += dash.frame().height() + 15;
 }
 
 function createTextStyles (artboard) {
-	var top = 0;
 	var margin = 20;
 	var maxWidth = 0;
+	var offset = 220;
+
+	bar = null;
+
+	var numberOfStyles = definedTextStyles.length;
+	addHeading(artboard, numberOfStyles + " Defined");
 
 	for (var i = 0; i < definedTextStyles.length; i++) {
+
+		// Get the text style
 		var definedTextStyle = definedTextStyles[i];
+
+		if (definedTextStyle.textStyle.NSColor.hexValue() == "FFFFFF") {
+			// draw rectangle behind text
+			var color = [MSColor colorWithHex: "#484848" alpha: 1];
+			var bar = inventory.colors.addColorShape(artboard, color, 100, 100)
+		}
+
+		// Add label
+		var label = inventory.common.addTextLayer(artboard, definedTextStyle.name.toUpperCase());
+		label.setFontPostscriptName("HelveticaNeue-Bold");
+		label.setFontSize(11);
+
+		// set color
+		var color = [MSColor colorWithHex: "#7E7E7E" alpha: 1];
+		label.setTextColor(color);
+
+		// todo: calculate max width of all labels
+		label.frame().setWidth(200);
+
+		// right align label
+		label.setTextAlignment(1);
+
+		// position label
+		label.frame().setX(margin);
+		label.frame().setY(top);
+
+		// Add sample
 		var textLayer = artboard.addLayerOfType("text");
 		textLayer.setStringValue(inventory.config.textStylePlaceholder)
-		textLayer.style().textStyle().setAttributes(definedTextStyle.textStyle);
+		// textLayer.style().textStyle().setAttributes(definedTextStyle.textStyle);
+		applySharedObjectToLayer(textLayer, definedTextStyle);
+
 		textLayer.setName(definedTextStyle.name)
+
+		// Get the width to calculate the max width
 		var theWidth = textLayer.frame().width();
+		var theHeight = textLayer.frame().height();
 
 		if (theWidth > maxWidth) maxWidth = theWidth;
-		textLayer.frame().setX(margin);
+		textLayer.frame().setX(margin + offset);
 		textLayer.frame().setY(top);
 
-		top += textLayer.frame().height() + margin;
+		// position the bar
+		if (definedTextStyle.textStyle.NSColor.hexValue() == "FFFFFF") {
+			bar.frame().setX(margin + offset);
+			bar.frame().setY(top)
+			bar.frame().setWidth(theWidth)
+			bar.frame().setHeight(theHeight)
+		}
+
+		top += theHeight + margin;
 	}
+
+	[textLayer select:true byExpandingSelection:false]
+	// centerView(textLayer)
+
+	// Resize artboard and background to match the newly created text layers
+	var background = artboard.layers().objectAtIndex(0);
+	artboard.frame().setWidth(maxWidth + margin + offset);
+	background.frame().setWidth(maxWidth + margin + offset);
+	artboard.frame().setHeight(top + margin);
+	background.frame().setHeight(top + margin);
+	background.setIsLocked(true);
+
+	// Zoom the view to make the entire artboard visible
+	inventory.view.zoomTo(artboard)
+
+}
+
+function applySharedObjectToLayer(layer, sharedObject) {
+
+    var document = MSDocument.currentDocument();
+    var inspector = document.inspectorController().normalInspector().stackView().sectionViewControllers().objectAtIndex(0).sharedStyleController();
+    for(var i=0;i<selection.count();i++) {
+        [inspector applySharedObject:sharedObject toLayer:layer];
+    }
+}
+
+
+function createUniqueTextSamples () {
 
 	for (var i = 0; i < uniqueTextStyles.length; i++) {
 		var textLayer = artboard.addLayerOfType("text");
@@ -126,21 +266,6 @@ function createTextStyles (artboard) {
 
 		top += textLayer.frame().height() + margin;
 	}
-
-	[textLayer select:true byExpandingSelection:false]
-	// centerView(textLayer)
-
-	// Resize artboard and background to match the newly created text layers
-	var background = artboard.layers().objectAtIndex(0);
-	artboard.frame().setWidth(maxWidth + margin);
-	background.frame().setWidth(maxWidth + margin);
-	artboard.frame().setHeight(top + margin);
-	background.frame().setHeight(top + margin);
-	background.setIsLocked(true);
-
-	// Zoom the view to make the entire artboard visible
-	inventory.view.zoomTo(artboard)
-
 }
 
 function exportStyles() {
@@ -170,10 +295,12 @@ log("got page")
 var artboard = inventory.common.getArtboardByPageAndName(styleSheetPage, "Typography");
 log("got artboard")
 inventory.common.removeAllLayersFromArtboard(artboard)
-log("removed layers")
-addCheckeredBackground(artboard);
+
+inventory.common.addSolidBackground(artboard, "#ffffff")
 log("added background")
 createTextStyles(artboard);
 log("created styles")
 
 // exportStyles();
+
+com = null;

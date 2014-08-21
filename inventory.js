@@ -18,8 +18,8 @@ inventory.config = {
 inventory.common = {
 	// Adds an artboard to the given page
 	addArtboard: function(page, name) {
-		artboard = [MSArtboardGroup new]
-		frame = [artboard frame];
+		artboard = MSArtboardGroup.new();
+		frame = artboard.frame();
 		frame.width = 400;
 		frame.height = 400;
 		frame.constrainProportions = false;
@@ -40,21 +40,40 @@ inventory.common = {
 		layer.style().fill().setPatternImage(image)
 		return layer;
 	},
+	addSolidBackground: function (artboard, hex_string) {
+		var layer = artboard.addLayerOfType("rectangle");
+		layer.frame().setWidth(artboard.frame().width());
+		layer.frame().setHeight(artboard.frame().height());
+		layer.style().fills().addNewStylePart();
+		layer.style().fill().setFillType(0);
+		layer.setName("Background");
+
+		color = [MSColor colorWithHex: hex_string alpha: 1];
+
+		layer.style().fill().setColor(color)
+
+		return layer;
+	},
 	// Adds a new page to the document
 	addPage: function(name) {
 		// look for existing style sheet, otherwise create a new page with the styles
 		var page = doc.addBlankPage();
 		page.setName(name);
-		[doc setCurrentPage:page]
-		inventory.common.refreshPage();
+		doc.setCurrentPage(page);
+		// inventory.common.refreshPage();
 		return page;
+	},
+	addTextLayer: function (artboard, label) {
+		var textLayer = artboard.addLayerOfType("text");
+		textLayer.setStringValue(label)
+		textLayer.setName(label)
 	},
 	// Returns the page if it exists or creates a new page
 	getPageByName: function(name) {
 		for (var i = 0; i < doc.pages().count(); i++) {
 			var page = doc.pages().objectAtIndex(i);
 			if (page.name() == name) {
-				[doc setCurrentPage:page]
+				doc.setCurrentPage(page);
 				return page;
 			}
 		}
@@ -83,16 +102,16 @@ inventory.common = {
 	  return (arr.indexOf(obj) != -1);
 	},
 	refreshPage: function() {
-		var c = [doc currentPage]
-		[doc setCurrentPage:0]
-		[doc setCurrentPage:([[doc pages] count] - 1)]
-		[doc setCurrentPage:c]
+		var c = doc.currentPage();
+		doc.setCurrentPage(0);
+		doc.setCurrentPage(doc.pages().count() - 1);
+		doc.setCurrentPage(c);
 	},
 	// Removes all layers from an artboard
 	removeAllLayersFromArtboard: function(artboard) {
 
-		var layers = [[artboard children] objectEnumerator]
-		while (layer = [layers nextObject]) {
+		var layers = artboard.children().objectEnumerator();
+		while (layer = layers.nextObject()) {
 			artboard.removeLayer(layer);
 		}
 	},
@@ -125,22 +144,24 @@ inventory.colors = {
     	var first_colour = colours_array[0];
     	var palette_layers = [base_layer];
 
-    	var first_fill = [[[base_layer style] fills] firstObject];
-    	[first_fill setColor: first_colour];
+    	var first_fill = base_layer.style().fills().firstObject();
+    	first_fill.setColor(first_colour);
 
-    	var hex_string = "#" + [first_colour hexValue];
-    	[base_layer setName:"Color Swatch " + hex_string];
+    	var hex_string = "#" + first_colour.hexValue();
+    	base_layer.setName("Color Swatch " + hex_string);
 
     	for(var i = 1; i < colours_array.length; i++) {
     	  	var previous_layer = palette_layers[palette_layers.length -1];
-    	 	var new_colour_layer = [previous_layer duplicate];
+    	 	var new_colour_layer = previous_layer.duplicate();
     	 	var new_colour = colours_array[i];
-    	 	[[[[new_colour_layer style] fills] firstObject] setColor: new_colour];
-    	 	var current_x_pos = [[new_colour_layer frame] x];
-    	 	var new_x_position = current_x_pos + [[new_colour_layer frame] width];
-    	 	new_colour_layer.frame().setX(new_x_position + 10);
-    	 	hex_string = "#" + [new_colour hexValue];
-    	 	[new_colour_layer setName:"Color Swatch " + hex_string];
+    	 	new_colour_layer.style().fills().firstObject().setColor(new_colour);
+
+    	 	var frame = new_colour_layer.frame().width();
+    	 	var current_x_pos = frame.x();
+    	 	var new_x_position = current_x_pos + frame.width();
+    	 	frame.setX(new_x_position + 10);
+    	 	hex_string = "#" + new_colour.hexValue();
+    	 	new_colour_layer.setName("Color Swatch " + hex_string);
     	 	palette_layers.push(new_colour_layer);
     	}
   	},
@@ -150,6 +171,9 @@ inventory.colors = {
   		var top = 30;
   		var margin = 30;
   		var width = 0;
+
+  		inventory.common.removeAllLayersFromArtboard(artboard);
+
   		for (var i = 0; i < colors_array.length; i++) {
   			left += margin;
   			var colorChip = inventory.colors.addColorChip(artboard, colors_array[i]);
@@ -176,21 +200,24 @@ inventory.colors = {
   		var hex_string = "#" + color.hexValue();
   		// add layer group
   		var group = artboard.addLayerOfType("group");
-  		group.setName("Color Swatch " + hex_string);
+  		var group_name = "Color Swatch " + hex_string;
+  		group.setName(group_name);
   		// draw square color
-  		var colorSquare = inventory.colors.addColorShape(group, color, 100, 100)
+  		var colorSquare = inventory.colors.addColorShape(group, color, 100, 100);
   		// draw white label rectangle
   		var label = inventory.common.addTextLayer(group, hex_string);
-  		label.frame().setY(colorSquare.frame().height() + padding)
+  		label.frame().setY(colorSquare.frame().height() + padding);
   		// draw text with variable name / color
+  		//var variable_label = inventory.common.addTextLayer(group, hex_string);
+  		//variable_label.frame().setY(label.frame().y() + label.frame().height() + padding)
 
   		return group;
   	},
   	addColorShape: function (artboard, color, width, height) {
   		// add layer
   		var layer = artboard.addLayerOfType("rectangle");
-  		layer.frame().setWidth(width)
-  		layer.frame().setHeight(height)
+  		layer.frame().setWidth(width);
+  		layer.frame().setHeight(height);
   		layer.style().fills().addNewStylePart();
   		layer.style().fill().setFillType(0);
   		layer.style().fill().setColor(color);
@@ -201,19 +228,14 @@ inventory.colors = {
   	},
   	getColorOf: function(layer) {
   		var color = null;
-  		switch ([layer class]) {
-  		  case MSTextLayer:
-  		  color = layer.textColor();
-
-  		  // Check if text layer has a fill color
-
-  		  var fill = layer.style().fills().firstObject();
-  		  if (fill != undefined && fill.isEnabled()) color = fill.color();
-  		  break;
-  		  default:
-  		  var fill = layer.style().fills().firstObject();
-  		  if (fill != undefined && fill.isEnabled()) color = fill.color();
-  		  break;
+  		var fill = null;
+  		var className = layer.className();
+  		if (className != "MSBitmapLayer" && className != "MSLayerGroup") {
+  			try {
+  				fill = [[[layer style] fills] firstObject];
+  			} catch (error) {
+  			}
+  			if (fill !== null && [fill isEnabled] && [fill fillType] === 0) color = [fill color];
   		}
   		return color;
 	}
@@ -254,12 +276,12 @@ inventory.clipboard = {
 inventory.view = {
 	centerTo: function(layer) {
 		var selected_object = layer;
-    	var view = [doc currentView];
-		[view centerRect:[selected_object absoluteRect]]
+    	var view = doc.currentView();
+		view.centerRect(selected_object.absoluteRect());
 	},
 	zoomTo: function (layer) {
-		var view = [doc currentView];
-		[view zoomToFitRect:[layer absoluteRect]]
+		var view = doc.currentView();
+		view.zoomToFitRect(layer.absoluteRect());
 	}
 }
 

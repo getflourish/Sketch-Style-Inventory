@@ -1,0 +1,7 @@
+// Resizes the artboard to fit the bottom right edge of the selected element (shift control a)
+
+artboard = doc.currentPage().currentArtboard();
+width = selection[0].frame().x() + selection[0].frame().width();
+height = selection[0].frame().y() + selection[0].frame().height();
+artboard.frame().setWidth(width)
+artboard.frame().setHeight(height)

@@ -5,6 +5,8 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 ## Style Inventory
 Generate a visual style sheet with all colors and text styles that you are using. This will help you to get an overview of your used styles so you can merge styles that are very close together. (-> Select all matching layers by color or text style) You can also export a SCSS or JSON file to use your styles in your web projects. (-> Style Inventory Tagger) When you run this plugin again, Sketch will update your Style Inventory while keeping variable names.
 
+![Screenshot](https://raw.githubusercontent.com/getflourish/Sketch-Style-Inventory/master/_screenshots/Text%20Styles.png)
+
 ## Style Inventory Exporter
 Export your style inventory as CSS, SCSS or JSON.
 
@@ -13,6 +15,8 @@ A simple wizard that will guide you through your styles that are missing variabl
 
 ## Select layer by color or text style
 Based on a selection, Sketch will show you a list of layers that have the exact same color or text style.
+
+![Screenshot](https://raw.githubusercontent.com/getflourish/Sketch-Style-Inventory/master/_screenshots/Select%20Layer%20by%20Similar%20Style.png)
 
 ## Select all matching layers by color or text style
 Based on a selection, Sketch will expand the selection to all other layers with the exact same color or text style.
