@@ -1,0 +1,35 @@
+// Duplicates the selected artboard right next to it.
+// If there are other artboards nearby, they will be pushed away.
+// (shift command d)
+
+// Make sure an artboard is selected
+if (selection.count() == 1 && selection[0].className() == "MSArtboardGroup") {
+	var selectedArtboard = selection[0];
+	var width = selectedArtboard.frame().width();
+
+	artboards = doc.currentPage().artboards();
+
+	// Move all artboards that are next to the selected one
+	for (var i = 0; i < artboards.count(); i++) {
+		// only move artboards on the same y position
+		if (artboards[i] != selectedArtboard) {
+			if (artboards[i].frame().y() == selectedArtboard.frame().y() && artboards[i].frame().x() > selectedArtboard.frame().x()) {
+				var newX = artboards[i].frame().x() + width + 100;
+				artboards[i].frame().setX(newX);
+			}
+		}
+
+	}
+	var action = doc.actionsController().actionWithName("MSCanvasActions");
+    action.duplicate(nil);
+} else {
+	doc.showMessage("Please select an artboard.");
+}
+
+function sendAction(commandToPerform) {
+	try {
+		[NSApp sendAction:commandToPerform to:nil from:doc]
+	} catch(e) {
+		log(e)
+	}
+};

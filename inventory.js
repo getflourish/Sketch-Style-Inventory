@@ -9,7 +9,7 @@ var lastSlash = pluginPath.lastIndexOf("/");
 var basePath = pluginPath.substr(0, lastSlash);
 
 inventory.config = {
-	background_image: basePath + "/assets/pattern.png",
+	background_image: basePath + "/_assets/pattern.png",
 	pageName: "Style Sheet",
 	textStylePlaceholder: "The big brown fox jumps over the lazy dog.",
 	maxColorsPerRow: 5
