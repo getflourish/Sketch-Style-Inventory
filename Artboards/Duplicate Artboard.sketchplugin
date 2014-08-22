@@ -1,6 +1,5 @@
-// Duplicates the selected artboard right next to it.
+// Duplicates the selected artboard right next to it. (shift command d)
 // If there are other artboards nearby, they will be pushed away.
-// (shift command d)
 
 // Make sure an artboard is selected
 if (selection.count() == 1 && selection[0].className() == "MSArtboardGroup") {
