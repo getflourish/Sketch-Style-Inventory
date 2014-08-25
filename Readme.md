@@ -2,10 +2,11 @@
 
 Design requires free, sometimes chaotic exploration. But design also means organisation and structure. Sketch can be good in both aspects, but moving from exploration to structured layouts with text styles and unified colors is hard. Either you start clean files from scratch, or you use what you have and try to tidy it up. The Style Inventory is meant to help you with that. It gives you an overview of all your used styles and helps you to merge styles of similar layers into one. Does select layer by color or select layer by text style ring a bell? :)
 
+
 ## Plugins
 
 #### Artboards
-* Duplicate Artboard
+* [Duplicate Artboard](#duplicate-artboard-next-to-the-current-artboard)
 * Fit Artboard Height
 * Sort Artboards
 
