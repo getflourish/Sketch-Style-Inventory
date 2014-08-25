@@ -7,13 +7,13 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 
 #### Artboards
 * [Duplicate Artboard](#duplicate-artboard-next-to-the-current-artboard)
-* Fit Artboard Height
-* Sort Artboards
+* [Fit Artboard Height](#fit-artboard)
+* [Sort Artboards](#sort-artboards)
 
 #### Selection
 * Select All Layers By Selected Color
-* Select All Layers By Selected Color on Artboard
-* Select All Layers By Selected Layer Name
+* [Select All Layers By Selected Color on Artboard](#select-all-layers-by-selected-color)
+* [Select All Layers By Name](#select-all-layers-by-name)
 * Select Next Layer By Color
 * Select Next Text Layer By Style
 * Select Previous Text Layer By Style
