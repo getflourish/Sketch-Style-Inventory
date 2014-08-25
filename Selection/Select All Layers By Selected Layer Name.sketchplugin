@@ -1,0 +1,30 @@
+// Selects all layers with the same layer name (control cmd l)
+
+var index = -1;
+var found = -1;
+var layerCount = 0;
+
+var referenceName = selection[0].name();
+end = referenceName.lastIndexOf(" ");
+if (end != -1) referenceName = referenceName.substr(0, end);
+
+var artboard = doc.currentPage().currentArtboard();
+
+for (var k = 0; k < artboard.children().count(); k++) {
+
+	var layer = artboard.children().objectAtIndex(k);
+
+	// Remmember name
+	var name = layer.name();
+	log(name.indexOf(referenceName))
+
+	// Select layer if name contains reference name at the beginning (includes "layer 1", "layer 2", …)
+	if (name.indexOf(referenceName) == 0) {
+		// select layer and break
+		[layer select:true byExpandingSelection:true];
+		layerCount++;
+	}
+	index++;
+}
+
+doc.showMessage(layerCount + " layers with name '" + referenceName + "' selected.");
