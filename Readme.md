@@ -20,6 +20,10 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 * Select Similar Text Layers By Style
 * Select Similar Text Layers By Style on Artboard
 
+
+### Sorting
+* Sort Layers
+
 ## Installation
 
 To install all plugins, [download](https://github.com/getflourish/Sketch-Style-Inventory/archive/master.zip) them all first, unzip the archive, and place the folder contents in your Sketch Plugins folder by navigating to `Sketch > Plugins > Reveal Plugins Folder…`
@@ -83,16 +87,25 @@ Based on a selected layer, all layers that match the fill or text color will be 
 
 ### Select All Layers By Name
 
-Based on a selected layer, all layers that match the name of the reference layer. This will include dupicated layers that have appended numbers.
+Based on a selected layer, all layers that match the name of the reference layer. This will include duplicated layers that have appended numbers.
 
 `control` + `command` + `l`
 
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Name.gif)
 
 ## Style Inventory
-Generate a visual style sheet with all colors and text styles that you are using. This will help you to get an overview of your used styles so you can merge styles that are very close together. (-> Select all matching layers by color or text style) You can also export a SCSS or JSON file to use your styles in your web projects. (-> Style Inventory Tagger) When you run this plugin again, Sketch will update your Style Inventory while keeping variable names.
+Generate a visual style sheet with all colors and text styles that you are using. This will help you to get an overview of your used styles so you can merge styles that are very close together. This will also export a CSS file with text styles.
 
 ![Screenshot](https://raw.githubusercontent.com/getflourish/Sketch-Style-Inventory/master/_screenshots/Text%20Styles.png)
+
+## Sorting
+
+### Sort Layers
+
+Sorts the selected layers. 
+Options: `Ascending`, `Descending`, `Random`
+
+`control` + `command` + `option` + `s`
 
 ## Style Inventory Exporter
 Export your style inventory as CSS, SCSS or JSON.
