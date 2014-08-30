@@ -107,6 +107,8 @@ Options: `Ascending`, `Descending`, `Random`
 
 `control` + `command` + `option` + `s`
 
+![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Sorting.gif)
+
 ## Style Inventory Exporter
 Export your style inventory as CSS, SCSS or JSON.
 
