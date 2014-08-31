@@ -1,5 +1,4 @@
 // Sort layers (ctrl option command s)
-/
 
 var artboards = false;
 var maxExamples = 3;

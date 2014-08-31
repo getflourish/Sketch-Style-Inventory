@@ -10,20 +10,32 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 * [Fit Artboard Height](#fit-artboard)
 * [Sort Artboards](#sort-artboards)
 
+#### Inventory
+* Export Symbols
+* Export Text Styles
+* Generate Color Inventory
+* Genereate Style Inventory
+* Generate Text Style Inventory
+* Rename Selected Layers
+
 #### Selection
-* Select Layers By Selected Color
+* Select Layers by Color `instable`
 * [Select Layers by Selected Color on Artboard](#select-all-layers-by-selected-color)
 * [Select Layers by Name](#select-all-layers-by-name)
 * [Select Layers of Group](#select-all-layers-by-name)
-* Select Next Layer By Color
-* Select Next Text Layer By Style
-* Select Previous Text Layer By Style
-* Select Similar Text Layers By Style
-* Select Similar Text Layers By Style on Artboard
+* Select Next Layer by Color
+* Select Next Text Layer by Style
+* Select Previous Text Layer by Style
+* Select Similar Text Layers by Style `instable`
+* Select Similar Text Layers by Style on Artboard
 
 
 ### Sorting
 * Sort Layers
+* Reverse Positions
+
+#### Text
+Set Line Height
 
 ## Installation
 
@@ -82,7 +94,7 @@ Plugin that allows you to set the line height of a text layer as a multiple of t
 
 A set of plugins that select layers based on color, name & text style.
 
-### Select All Layers By Selected Color
+### Select Layers By Selected Color
 
 Based on a selected layer, all layers that match the fill or text color will be selected.
 
@@ -90,7 +102,7 @@ Based on a selected layer, all layers that match the fill or text color will be 
 
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Color.gif)
 
-### Select All Layers By Name
+### Select Layers By Name
 
 Based on a selected layer, all layers that match the name of the reference layer. This will include duplicated layers that have appended numbers.
 
@@ -98,7 +110,7 @@ Based on a selected layer, all layers that match the name of the reference layer
 
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Name.gif)
 
-### Select All Layers of Group
+### Select Layers of Group
 Selects all layers of group.
 
 ## Sorting
