@@ -71,8 +71,6 @@ Resizes the artboard to fit the height of its layers. Useful when designing list
 Sorts selected artboard layers by their horizontal position. Useful when your layer list does not reflect the artboard arrangement on your canvas.
 
 
-![Sort Artboard Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Sort%20Artboards.gif)
-
 ## Selection
 
 A set of plugins that select layers based on color, name & text style.
@@ -93,21 +91,26 @@ Based on a selected layer, all layers that match the name of the reference layer
 
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Name.gif)
 
+## Sorting
+
+### Sort Layers
+
+Sorts the selected layers or artboards. Note: This plugin will also reorder the layers in the layer list to match the visual order. For best results, group your layers before sorting.
+
+Options: `Text (A->Z)`, `Text (Z->A)`, `Layer Name (A->Z)`, `Layer Name (Z->A)`, `Top`, `Left`, `Random`
+
+`control` + `command` + `option` + `s`
+
+![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Sorting.gif)
+
+### Reverse Positions
+This plugin reverses the positions of selected layers.
+
 ## Style Inventory
 Generate a visual style sheet with all colors and text styles that you are using. This will help you to get an overview of your used styles so you can merge styles that are very close together. This will also export a CSS file with text styles.
 
 ![Screenshot](https://raw.githubusercontent.com/getflourish/Sketch-Style-Inventory/master/_screenshots/Text%20Styles.png)
 
-## Sorting
-
-### Sort Layers
-
-Sorts the selected layers. 
-Options: `Ascending`, `Descending`, `Random`
-
-`control` + `command` + `option` + `s`
-
-![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Sorting.gif)
 
 ## Style Inventory Exporter
 Export your style inventory as CSS, SCSS or JSON.
