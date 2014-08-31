@@ -55,12 +55,8 @@ function createTextStyles (artboard) {
 		var textLayer = artboard.addLayerOfType("text");
 		textLayer.setStringValue(inventory.config.textStylePlaceholder)
 		textLayer.style().textStyle().setAttributes(definedTextStyle.textStyle);
-
 		textLayer.setName(definedTextStyle.name)
 		var theWidth = textLayer.frame().width();
-
-		// Set opacity
-		// opacity
 
 		if (theWidth > maxWidth) maxWidth = theWidth;
 		textLayer.frame().setX(margin);
@@ -94,7 +90,7 @@ function exportStyles(artboard) {
 	// Document path
 	var document_path = [[doc fileURL] path].split([doc displayName])[0];
 
-	var path = document_path + "/" + doc.displayName() + ".css"
+	var path = document_path + "/typography.css"
 
 	inventory.common.save_file_from_string(path, styleSheetString);
 }
@@ -109,7 +105,3 @@ addCheckeredBackground(artboard);
 createTextStyles(artboard);
 
 exportStyles(artboard);
-
-// Show how many layers have been selected
-
-[doc showMessage: "Exported CSS"]

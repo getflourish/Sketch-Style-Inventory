@@ -1,6 +1,6 @@
 # Style Inventory for Sketch
 
-Design requires free, sometimes chaotic exploration. But design also means organisation and structure. Sketch can be good in both aspects, but moving from exploration to structured layouts with text styles and unified colors is hard. Either you start clean files from scratch, or you use what you have and try to tidy it up. The Style Inventory is meant to help you with that. It gives you an overview of all your used styles and helps you to merge styles of similar layers into one. Does select layer by color or select layer by text style ring a bell? :)
+Design requires free, sometimes chaotic exploration. But design also means organisation and structure. Sketch can be good in both aspects, but moving from exploration to structured layouts with text styles and unified colors is hard. Either you start clean files from scratch, or you use what you have and try to tidy it up. The Style Inventory is meant to help you with that. It gives you an overview of all your used styles and helps you to merge styles of similar layers into one. This repositiory also contains a few other helpful plugins.
 
 
 ## Plugins
@@ -11,9 +11,10 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 * [Sort Artboards](#sort-artboards)
 
 #### Selection
-* Select All Layers By Selected Color
-* [Select All Layers By Selected Color on Artboard](#select-all-layers-by-selected-color)
-* [Select All Layers By Name](#select-all-layers-by-name)
+* Select Layers By Selected Color
+* [Select Layers by Selected Color on Artboard](#select-all-layers-by-selected-color)
+* [Select Layers by Name](#select-all-layers-by-name)
+* [Select Layers of Group](#select-all-layers-by-name)
 * Select Next Layer By Color
 * Select Next Text Layer By Style
 * Select Previous Text Layer By Style
@@ -70,6 +71,12 @@ Resizes the artboard to fit the height of its layers. Useful when designing list
 
 Sorts selected artboard layers by their horizontal position. Useful when your layer list does not reflect the artboard arrangement on your canvas.
 
+## Text
+### Set Line Height
+
+Plugin that allows you to set the line height of a text layer as a multiple of the font size. It’s like using em in CSS. By default, ⌘ + L will trigger the dialog, but you can change the shortcut in the first line of the plugin.
+
+![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Sketch-Line-Height.png)
 
 ## Selection
 
@@ -91,6 +98,9 @@ Based on a selected layer, all layers that match the name of the reference layer
 
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Name.gif)
 
+### Select All Layers of Group
+Selects all layers of group.
+
 ## Sorting
 
 ### Sort Layers
@@ -109,8 +119,17 @@ This plugin reverses the positions of selected layers.
 ## Style Inventory
 Generate a visual style sheet with all colors and text styles that you are using. This will help you to get an overview of your used styles so you can merge styles that are very close together. This will also export a CSS file with text styles.
 
-![Screenshot](https://raw.githubusercontent.com/getflourish/Sketch-Style-Inventory/master/_screenshots/Text%20Styles.png)
 
+# Export Text Styles to CSS
+
+This plugin generates an overview of all your text styles and exports it as CSS. [Watch the demo](https://vimeo.com/102635978 "Demo")
+This is more proof of concept and only the foundation of a set of helpful plugins that will follow soon.
+
+To do: export opacity, remove attributes that have the default value
+
+[![Demo on Vimeo](https://dl.dropboxusercontent.com/u/974773/_keepalive/Sketch%20CSS%20Vimeo.png)](https://vimeo.com/102635978)
+
+![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Sketch%20CSS.png)
 
 ## Style Inventory Exporter
 Export your style inventory as CSS, SCSS or JSON.
