@@ -2,8 +2,9 @@
 
 Design requires free, sometimes chaotic exploration. But design also means organisation and structure. Sketch can be good in both aspects, but moving from exploration to structured layouts with text styles and unified colors is hard. Either you start clean files from scratch, or you use what you have and try to tidy it up. The Style Inventory is meant to help you with that. It gives you an overview of all your used styles and helps you to merge styles of similar layers into one. This repositiory also contains a few other helpful plugins.
 
-
-## Plugins
+*****
+## Plugin Directory
+*****
 
 #### Artboards
 * [Duplicate Artboard](#duplicate-artboard-next-to-the-current-artboard)
@@ -12,10 +13,10 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 
 #### Inventory
 * Export Symbols
-* Export Text Styles
-* Generate Color Inventory
-* Genereate Style Inventory
-* Generate Text Style Inventory
+* Export Text Styles to CSS
+* Generate Color Inventory `instable`
+* Genereate Style Inventory `instable`
+* Generate Text Style Inventory `instable`
 * Rename Selected Layers
 
 #### Selection
@@ -29,15 +30,16 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 * Select Similar Text Layers by Style `instable`
 * Select Similar Text Layers by Style on Artboard
 
-
-### Sorting
+#### Sorting
 * Sort Layers
 * Reverse Positions
 
 #### Text
 Set Line Height
 
+*****
 ## Installation
+*****
 
 To install all plugins, [download](https://github.com/getflourish/Sketch-Style-Inventory/archive/master.zip) them all first, unzip the archive, and place the folder contents in your Sketch Plugins folder by navigating to `Sketch > Plugins > Reveal Plugins Folder…`
 
@@ -53,7 +55,7 @@ For example, the first line of `Duplicate Artboard.sketchplugin`:
 
 > // Duplicates the current artboard right next to it. (shift command d)
 
-You can use modifier keys such as `option`, `command`, `control`, `shift`
+You can use modifier keys such as `option`, `command`, `control`, `⇧`
 
 *****
 **Important note:** These plugins are still in development and may not work as expected. 
@@ -65,8 +67,7 @@ You can use modifier keys such as `option`, `command`, `control`, `shift`
 
 This improves the built in behavior of artboard duplication in Sketch. If the current artboard is in the middle of other artboards, all artboards on the right side will be shifted to the right before the artboard is duplicated. Requires any layer of an artboard to be selected.
 
-`shift` + `command` + `d`
-
+`⇧` + `⌘` + `D`
 
 ![Duplicate Artboard Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Duplicate%20Artboard.gif)
 
@@ -74,19 +75,23 @@ This improves the built in behavior of artboard duplication in Sketch. If the cu
 
 Resizes the artboard to fit the height of its layers. Useful when designing lists.
 
-`shift` + `control` + `a`
-
+`⇧` + `ctrl` + `A`
 
 ![Resize Artboard Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Resize%20Artboard.gif)
+
 
 ### Sort Artboards
 
 Sorts selected artboard layers by their horizontal position. Useful when your layer list does not reflect the artboard arrangement on your canvas.
 
+*****
 ## Text
+*****
 ### Set Line Height
 
-Plugin that allows you to set the line height of a text layer as a multiple of the font size. It’s like using em in CSS. By default, ⌘ + L will trigger the dialog, but you can change the shortcut in the first line of the plugin.
+Plugin that allows you to set the line height of a text layer as a multiple of the font size. It’s like using em in CSS.
+
+`⌘` + `L`
 
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Sketch-Line-Height.png)
 
@@ -98,7 +103,7 @@ A set of plugins that select layers based on color, name & text style.
 
 Based on a selected layer, all layers that match the fill or text color will be selected.
 
-`shift` + `control` + `c`
+`⇧` + `ctrl` + `C`
 
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Color.gif)
 
@@ -106,7 +111,7 @@ Based on a selected layer, all layers that match the fill or text color will be 
 
 Based on a selected layer, all layers that match the name of the reference layer. This will include duplicated layers that have appended numbers.
 
-`control` + `command` + `l`
+`ctrl` + `⌘` + `L`
 
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Name.gif)
 
@@ -121,7 +126,7 @@ Sorts the selected layers or artboards. Note: This plugin will also reorder the 
 
 Options: `Text (A->Z)`, `Text (Z->A)`, `Layer Name (A->Z)`, `Layer Name (Z->A)`, `Top`, `Left`, `Random`
 
-`control` + `command` + `option` + `s`
+`ctrl` + `⌘` + `⌥` + `S`
 
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Sorting.gif)
 
@@ -132,7 +137,7 @@ This plugin reverses the positions of selected layers.
 Generate a visual style sheet with all colors and text styles that you are using. This will help you to get an overview of your used styles so you can merge styles that are very close together. This will also export a CSS file with text styles.
 
 
-# Export Text Styles to CSS
+## Export Text Styles to CSS
 
 This plugin generates an overview of all your text styles and exports it as CSS. [Watch the demo](https://vimeo.com/102635978 "Demo")
 This is more proof of concept and only the foundation of a set of helpful plugins that will follow soon.
