@@ -1,5 +1,6 @@
 // Sort selected layers by their text layer content (ctrl option command s)
 
+var maxExamples = 3;
 var numberOfTextLayersPerGroup = 0;
 var sortableValues = [];
 var sortIndex = 0;
@@ -36,8 +37,18 @@ function sortLayers () {
 
 				if (numTextLayers > numberOfTextLayersPerGroup) {
 					numberOfTextLayersPerGroup = numTextLayers;
-					sortableValues.push("Text layer " + numTextLayers + ": " + layer.name());
-				}
+
+                    // Create example string for the drop down
+
+					sortableString = layer.name();
+                    sortableValues.push(sortableString);
+				} else {
+                    if (i < maxExamples) {
+                        sortableValues[numTextLayers-1] += ", " + layer.name();
+                    } else if(i == maxExamples) {
+                        sortableValues[numTextLayers-1] += ", …";
+                    }
+                }
 			}
 		}
 
@@ -46,7 +57,8 @@ function sortLayers () {
 		textLayersMeta.push({
 			"name": layer.name(),
 			"layer": selection[i],
-			"strings": strings
+			"strings": strings,
+            "top": selection[i].frame().top()
 		});
 
 		// Remember the position of each layer
@@ -56,40 +68,71 @@ function sortLayers () {
 	}
 
 	// Sort positions
+
 	topPositions.sort(sortNumber);
 	leftPositions.sort(sortNumber);
 
 	// Let the user select the text field that should be sorted on
-	if (numberOfTextLayersPerGroup > 1) {
-		var choice = createSelect('What text layer do you want to sort on?', sortableValues, 0)
-		var index = choice[1];
-		sortIndex = index;
-	}
 
-	// Show sort options
+	if (numberOfTextLayersPerGroup > 0) {
 
-	var options = ["Ascending", "Descending", "Random"];
-	var choice = createSelect('How do you want to sort?', options, 0)
-	var index = choice[1];
-	sortMode = index;
+        // Show sort options
 
-	switch (sortMode) {
-		case 0:
-			textLayersMeta.sort(asc);
-			break;
-		case 1:
-			textLayersMeta.sort(desc);
-			break;
-		case 2:
-			shuffle(textLayersMeta);
-			break;
-		default:
-			textLayersMeta.sort(asc);
-			break;
-	}
+        var options = ["Ascending (A->Z)", "Descending (Z->A)", "Random", "By Top Position", "Layer Name"];
+        var choice = createSelect('How do you want to sort?', options, 0)
+        var index = choice[1];
+        sortMode = index;
 
-	log(textLayersMeta)
-	log(topPositions)
+        switch (sortMode) {
+            case 0:
+                textLayersMeta.sort(asc);
+                break;
+            case 1:
+                textLayersMeta.sort(desc);
+                break;
+            case 2:
+                shuffle(textLayersMeta);
+                break;
+            case 3:
+                textLayersMeta.sort(sortTop);
+                break;
+            case 4:
+                textLayersMeta.sort(nameAsc);
+                break;
+            default:
+                textLayersMeta.sort(asc);
+                break;
+        }
+
+        if (numberOfTextLayersPerGroup > 1) {
+            // Show text layer selection menu
+
+            var choice = createSelect('What text layer do you want to sort on?', sortableValues, 0)
+            var index = choice[1];
+            sortIndex = index;
+        }
+
+	} else if (numberOfTextLayersPerGroup == 0) {
+
+        // Limit the sort options if there are no text layers
+
+        var options = ["By Top Position", "Layer Name"];
+        var choice = createSelect('How do you want to sort?', options, 0)
+        var index = choice[1];
+        sortMode = index;
+
+        switch (sortMode) {
+            case 0:
+                textLayersMeta.sort(sortTop);
+                break;
+            case 1:
+                textLayersMeta.sort(nameAsc);
+                break;
+            default:
+                textLayersMeta.sort(asc);
+                break;
+        }
+    }
 
 	// Finally, layout the sorted layers
 
@@ -108,10 +151,12 @@ if (selection.count() > 1) {
 
 doc.currentPage().deselectAllLayers();
 
+// Re-order the layer stack to represent the new order
 for (var i = 0; i < textLayersMeta.length; i++) {
 	var layer = textLayersMeta[textLayersMeta.length - i - 1].layer;
-	// select
+	// Select the layer
 	layer.setIsSelected(true);
+    // Send it to the back
 	sendBack();
 	doc.currentPage().deselectAllLayers();
 }
@@ -124,6 +169,7 @@ var leftPositions = null;
 var topPositions = null;
 
 
+// Sorts text layer strings in a ascending order
 
 function asc(a, b) {
 	if (a.strings[sortIndex] < b.strings[sortIndex])
@@ -133,6 +179,8 @@ function asc(a, b) {
 	return 0;
 }
 
+// Sorts text layer strings in a descending order
+
 function desc(a, b) {
 	if (a.strings[sortIndex] > b.strings[sortIndex])
 		return -1;
@@ -141,8 +189,33 @@ function desc(a, b) {
 	return 0;
 }
 
+// Sorts text layer strings in a ascending order
+
+function nameAsc(a, b) {
+    if (a.name[sortIndex] < b.name[sortIndex])
+        return -1;
+    if (a.name[sortIndex] > b.name[sortIndex])
+        return 1;
+    return 0;
+}
+
+// Sorts text layer strings in a descending order
+function nameDesc(a, b) {
+    if (a.name[sortIndex] > b.name[sortIndex])
+        return -1;
+    if (a.name[sortIndex] < b.name[sortIndex])
+        return 1;
+    return 0;
+}
+
+// Sorts numbers. By default, sort would handle numbers as strings and thus not sort them as intended.
 function sortNumber(a,b) {
     return a - b;
+}
+
+// Sorts layers by their top position
+function sortTop(a,b) {
+    return a.top - b.top;
 }
 
 // Shuffle array
@@ -186,7 +259,7 @@ function createSelect(msg, items, selectedItemIndex){
   return [responseCode, sel]
 }
 
-// Example of executing a menu command - in this case moveToBack
+// Calls menu commands
 
 function sendAction(commandToPerform) {
 	try {
