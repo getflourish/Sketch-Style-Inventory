@@ -124,7 +124,7 @@ Based on a selected layer, all layers that match the name of the reference layer
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Name.gif)
 
 ### Select Layers of Group
-Selects the layers of a selected group.
+Selects the layers of a group.
 
 **Shortcut:** `ctrl` + `⌘` + `G`
 
@@ -155,8 +155,10 @@ This plugin reverses the positions of selected layers.
 ## Style Inventory
 Generate a visual style sheet with all colors and text styles that you are using. This will help you to get an overview of your used styles so you can merge styles that are very close together. This will also export a CSS file with text styles.
 
+### Export/Symbols to PNG
+`experimental` Exports symbols on the current page as PNG to the project folder. In a future release, this plugin may export all symbols from the document.
 
-## Export Text Styles to CSS
+### Export/Text Styles to CSS
 
 This plugin generates an overview of all your text styles and exports it as CSS. [Watch the demo](https://vimeo.com/102635978 "Demo")
 This is more proof of concept and only the foundation of a set of helpful plugins that will follow soon.
@@ -167,25 +169,14 @@ To do: export opacity, remove attributes that have the default value
 
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Sketch%20CSS.png)
 
-## Style Inventory Exporter
-Export your style inventory as CSS, SCSS or JSON.
+### Generate/Color Inventory
+Generates an artboard with all colors that are used in the document.
 
-## Style Inventory Tagger
-A simple wizard that will guide you through your styles that are missing variable names. Use this to provide more information for SASS and JSON export. 
+### Generate/Style Inventory
+Generates both, the color and text style inventory.
 
-## Select layer by color or text style
-Based on a selection, Sketch will show you a list of layers that have the exact same color or text style.
+### Generate/Text Style Inventory
+Generates an artboard with all text styles that are used in the document.
 
-![Screenshot](https://raw.githubusercontent.com/getflourish/Sketch-Style-Inventory/master/_screenshots/Select%20Layer%20by%20Similar%20Style.png)
-
-## Select all matching layers by color or text style
-Based on a selection, Sketch will expand the selection to all other layers with the exact same color or text style.
-
-## Select next layer by color or text style
-Based on a selection, Sketch will select the next layer with the same color or text style.
-
-## Select previous layer by color or text style
-Based on a selection, Sketch will select the previous layer with the same color or text style.
-
-## Export all symbols
-Will export all symbols as PNG.
+### Rename/Rename selected layers
+`experimental` A simple wizard that will guide you through your styles that are missing variable names. This will be used to to provide more information for SASS and JSON export. 
