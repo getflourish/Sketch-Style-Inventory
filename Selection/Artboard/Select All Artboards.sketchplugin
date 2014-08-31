@@ -1,0 +1,12 @@
+// Select all artboard of the currents page (control cmd a)
+// Original plugin by Ale Muñoz https://github.com/bomberstudios
+
+var page = [doc currentPage],
+    artboards = [page artboards]
+
+[page deselectAllLayers]
+
+var loop = [artboards objectEnumerator]
+while (artboard = loop.nextObject()) {
+  [artboard select:true byExpandingSelection:true]
+}

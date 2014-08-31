@@ -2,44 +2,42 @@
 
 Design requires free, sometimes chaotic exploration. But design also means organisation and structure. Sketch can be good in both aspects, but moving from exploration to structured layouts with text styles and unified colors is hard. Either you start clean files from scratch, or you use what you have and try to tidy it up. The Style Inventory is meant to help you with that. It gives you an overview of all your used styles and helps you to merge styles of similar layers into one. This repositiory also contains a few other helpful plugins.
 
-*****
+
 ## Plugin Directory
-*****
 
 #### Artboards
-* [Duplicate Artboard](#duplicate-artboard-next-to-the-current-artboard)
-* [Fit Artboard Height](#fit-artboard)
-* [Sort Artboards](#sort-artboards)
+* Duplicate Artboard `shift` + `⌘` + `D`
+* Fit Artboard Height `ctrl` + `shift` + `A`
+* Sort Artboards
 
 #### Inventory
-* Export Symbols
-* Export Text Styles to CSS
-* Generate Color Inventory `instable`
-* Genereate Style Inventory `instable`
-* Generate Text Style Inventory `instable`
-* Rename Selected Layers
+* Export/Symbols to PNG
+* Export/Text Styles to CSS
+* Generate/Color Inventory `experimental`
+* Generate/Style Inventory `experimental`
+* Generate/Text Style Inventory `experimental`
+* Misc/Rename Selected Layers
 
 #### Selection
-* Select Layers by Color `instable`
-* [Select Layers by Selected Color on Artboard](#select-all-layers-by-selected-color)
-* [Select Layers by Name](#select-all-layers-by-name)
-* [Select Layers of Group](#select-all-layers-by-name)
-* Select Next Layer by Color
-* Select Next Text Layer by Style
-* Select Previous Text Layer by Style
-* Select Similar Text Layers by Style `instable`
-* Select Similar Text Layers by Style on Artboard
+* Artboard/Select All Artboards `ctrl` + `⌘` + `A`
+* Artboard/Select Layers by Color on Artboard `ctrl` + `⌘` + `C`
+* Artboard/Select Layers by Name `ctrl` + `⌘` + `N`
+* Document/Select Layers by Color `experimental`
+* Document/Select Next/Previous Layer by Color
+* Document/Select Next/Previous Layer by Text Style
+* Document/Select Similar Text Layers by Style `experimental`
+* Document/Select Similar Text Layers by Style on Artboard
+* Group/Select Layers of Group `ctrl` + `⌘` + `G`
 
 #### Sorting
-* Sort Layers
+* Sort Layers `ctrl` + `⌘` + `⌥` + `S`
 * Reverse Positions
 
 #### Text
-Set Line Height
+Set Line Height `⌘` + `L`
 
-*****
+
 ## Installation
-*****
 
 To install all plugins, [download](https://github.com/getflourish/Sketch-Style-Inventory/archive/master.zip) them all first, unzip the archive, and place the folder contents in your Sketch Plugins folder by navigating to `Sketch > Plugins > Reveal Plugins Folder…`
 
@@ -55,7 +53,7 @@ For example, the first line of `Duplicate Artboard.sketchplugin`:
 
 > // Duplicates the current artboard right next to it. (shift command d)
 
-You can use modifier keys such as `option`, `command`, `control`, `⇧`
+You can use modifier keys such as `option`, `command`, `control`, `shift`
 
 *****
 **Important note:** These plugins are still in development and may not work as expected. 
@@ -67,7 +65,7 @@ You can use modifier keys such as `option`, `command`, `control`, `⇧`
 
 This improves the built in behavior of artboard duplication in Sketch. If the current artboard is in the middle of other artboards, all artboards on the right side will be shifted to the right before the artboard is duplicated. Requires any layer of an artboard to be selected.
 
-`⇧` + `⌘` + `D`
+**Shortcut:** `shift` + `⌘` + `D`
 
 ![Duplicate Artboard Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Duplicate%20Artboard.gif)
 
@@ -75,7 +73,7 @@ This improves the built in behavior of artboard duplication in Sketch. If the cu
 
 Resizes the artboard to fit the height of its layers. Useful when designing lists.
 
-`⇧` + `ctrl` + `A`
+**Shortcut:** `shift` + `ctrl` + `A`
 
 ![Resize Artboard Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Resize%20Artboard.gif)
 
@@ -84,14 +82,14 @@ Resizes the artboard to fit the height of its layers. Useful when designing list
 
 Sorts selected artboard layers by their horizontal position. Useful when your layer list does not reflect the artboard arrangement on your canvas.
 
-*****
+
 ## Text
-*****
+
 ### Set Line Height
 
 Plugin that allows you to set the line height of a text layer as a multiple of the font size. It’s like using em in CSS.
 
-`⌘` + `L`
+**Shortcut:** `⌘` + `L`
 
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Sketch-Line-Height.png)
 
@@ -99,24 +97,44 @@ Plugin that allows you to set the line height of a text layer as a multiple of t
 
 A set of plugins that select layers based on color, name & text style.
 
-### Select Layers By Selected Color
+### Select All Artboards
 
-Based on a selected layer, all layers that match the fill or text color will be selected.
+Selects all artboards on the current page.
 
-`⇧` + `ctrl` + `C`
+**Shortcut:** `ctrl` + `⌘` + `A`
+
+### Select Layers by Color on Artboard
+
+Based on a selected layer, all layers on the current artboard that match the fill or text color will be selected.
+
+**Shortcut:** `ctrl` + `⌘` + `C`
 
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Color.gif)
 
-### Select Layers By Name
+### Select Layers by Color
 
-Based on a selected layer, all layers that match the name of the reference layer. This will include duplicated layers that have appended numbers.
+`experimental` Based on a selected layer, all document layers that match the fill or text color will be selected.
 
-`ctrl` + `⌘` + `L`
+### Select Layers by Name
+
+Based on a selected layer, all layers that match the name of the reference layer will be selected. This will also include layers that have appended numbers from duplication (e.g. Rectangle 1, Rectangle 2, …)
+
+**Shortcut:** `ctrl` + `⌘` + `N`
 
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Name.gif)
 
 ### Select Layers of Group
-Selects all layers of group.
+Selects the layers of a selected group.
+
+**Shortcut:** `ctrl` + `⌘` + `G`
+
+### Select Next Layer by Color
+
+`experimental` Based on a selection, the next layer with the same fill color will be selected.
+
+### Select Next Layer by Text Style
+
+`experimental` Based on a selection, the next layer with the same fill color will be selected.
 
 ## Sorting
 
@@ -124,14 +142,15 @@ Selects all layers of group.
 
 Sorts the selected layers or artboards. Note: This plugin will also reorder the layers in the layer list to match the visual order. For best results, group your layers before sorting.
 
-Options: `Text (A->Z)`, `Text (Z->A)`, `Layer Name (A->Z)`, `Layer Name (Z->A)`, `Top`, `Left`, `Random`
+**Options:** `Text (A->Z)`, `Text (Z->A)`, `Layer Name (A->Z)`, `Layer Name (Z->A)`, `Top`, `Left`, `Random`
 
-`ctrl` + `⌘` + `⌥` + `S`
+**Shortcut:** `ctrl` + `⌘` + `⌥` + `S`
 
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Sorting.gif)
 
 ### Reverse Positions
 This plugin reverses the positions of selected layers.
+
 
 ## Style Inventory
 Generate a visual style sheet with all colors and text styles that you are using. This will help you to get an overview of your used styles so you can merge styles that are very close together. This will also export a CSS file with text styles.

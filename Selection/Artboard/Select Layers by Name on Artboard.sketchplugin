@@ -1,4 +1,4 @@
-// Selects all layers with the same layer name (control cmd l)
+// Selects all layers with the same layer name (control cmd n)
 
 var index = -1;
 var found = -1;
@@ -16,7 +16,6 @@ for (var k = 0; k < artboard.children().count(); k++) {
 
 	// Remmember name
 	var name = layer.name();
-	log(name.indexOf(referenceName))
 
 	// Select layer if name contains reference name at the beginning (includes "layer 1", "layer 2", …)
 	if (name.indexOf(referenceName) == 0) {

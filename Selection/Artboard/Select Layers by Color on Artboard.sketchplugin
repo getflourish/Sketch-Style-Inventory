@@ -1,4 +1,4 @@
-// Selects all text layers that have the same color as the reference layer (command shift c)
+// Selects all text layers that have the same color as the reference layer (control cmd c)
 
 // init
 (function() {

@@ -1,4 +1,4 @@
-// select next layer with same fill color as selected layer (control n)
+// select next layer with same fill color as selected layer
 
 function getColorOf(layer) {
 	var color = null;

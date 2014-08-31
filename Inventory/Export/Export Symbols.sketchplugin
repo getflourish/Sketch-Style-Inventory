@@ -1,4 +1,10 @@
-var layers = [[doc currentPage] layers],
+// Exports all symbols on the canvas to PNG
+// Courtesy of Ale Muñoz https://github.com/bomberstudios
+// Original source: https://gist.github.com/bomberstudios/6397517fb84d2f0b124c
+
+// todo: Use sandbox.js and generate overview page of all symbols in document
+
+var layers = [[[doc currentPage] currentArtboard] layers],
     document_path = [[doc fileURL] path].split([doc displayName])[0],
     currentFilePath = [[doc fileURL] path];
 
@@ -18,6 +24,7 @@ for (var i=0; i < [layers count]; i++) {
 if(Object.keys(allSymbols).length == 0){
   [doc showMessage:"Please place a symbol on the canvas"]
 } else {
+log(allSymbols)
   for (var currentID in allSymbols) {
     var currentSymbol = allSymbols[currentID],
         symbolName = [currentSymbol name],
@@ -27,5 +34,6 @@ if(Object.keys(allSymbols).length == 0){
     slice.page = [[doc currentPage] copyLightweight]
     slice.format = "png"
     [[MSSliceExporter dataForRequest:slice] writeToFile:exportFilename atomically:true]
+    [doc showMessage:"Exported"]
   }
 }
