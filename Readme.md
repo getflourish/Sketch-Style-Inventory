@@ -134,7 +134,9 @@ Selects the layers of a group.
 
 ### Select Next Layer by Text Style
 
-`experimental` Based on a selection, the next layer with the same fill color will be selected.
+`experimental` Based on a selection, the next layer with the same text style will be selected.
+
+![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20Layer%20by%20Similar%20Style.png)
 
 ## Sorting
 

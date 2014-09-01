@@ -6,7 +6,16 @@ var layerCount = 0;
 
 var referenceName = selection[0].name();
 end = referenceName.lastIndexOf(" ");
-if (end != -1) referenceName = referenceName.substr(0, end);
+var baseName;
+if (end != -1) baseName = referenceName.substr(0, end);
+
+// todo : search for appended number first
+// 
+// 
+// 
+// 
+// 
+var regex = new RegExp(baseName + " [0-9]", "ig");
 
 var artboard = doc.currentPage().currentArtboard();
 
@@ -18,7 +27,8 @@ for (var k = 0; k < artboard.children().count(); k++) {
 	var name = layer.name();
 
 	// Select layer if name contains reference name at the beginning (includes "layer 1", "layer 2", …)
-	if (name.indexOf(referenceName) == 0) {
+
+	if (name === referenceName || name.match(regex) != null) {
 		// select layer and break
 		[layer select:true byExpandingSelection:true];
 		layerCount++;
