@@ -5,16 +5,20 @@ var found = -1;
 var layerCount = 0;
 
 var referenceName = selection[0].name();
-end = referenceName.lastIndexOf(" ");
-var baseName;
-if (end != -1) baseName = referenceName.substr(0, end);
+var baseName = referenceName;
 
-// todo : search for appended number first
-// 
-// 
-// 
-// 
-// 
+// Get the last part of the layer name and check if it is an appended number
+var end = referenceName.lastIndexOf(" ");
+if (end != -1) {
+	var endString = referenceName.substr(end, referenceName.length());
+	// Check if the last part is a number
+	var numberRegex = new RegExp("[0-9]");
+	if (endString.match(numberRegex) != null) {
+		// Found a number, so the search string needs to be trimmed
+		baseName = referenceName.substr(0, end);
+	}
+}
+
 var regex = new RegExp(baseName + " [0-9]", "ig");
 
 var artboard = doc.currentPage().currentArtboard();
@@ -28,7 +32,7 @@ for (var k = 0; k < artboard.children().count(); k++) {
 
 	// Select layer if name contains reference name at the beginning (includes "layer 1", "layer 2", …)
 
-	if (name === referenceName || name.match(regex) != null) {
+	if (name == baseName || name.match(regex) != null) {
 		// select layer and break
 		[layer select:true byExpandingSelection:true];
 		layerCount++;
