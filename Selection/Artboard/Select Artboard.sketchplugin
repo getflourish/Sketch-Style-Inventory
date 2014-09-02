@@ -1,0 +1,18 @@
+// Selects the current artboard if a layer was selected, (shift cmd a)
+// or selects all artboards if an artboard was selected
+
+var sel = selection[0];
+if ([sel className] == "MSArtboardGroup") {
+	var page = [doc currentPage],
+	    artboards = [page artboards]
+
+	[page deselectAllLayers]
+
+	var loop = [artboards objectEnumerator]
+	while (artboard = loop.nextObject()) {
+	  [artboard select:true byExpandingSelection:true]
+	}
+} else {
+	[[doc currentPage] deselectAllLayers];
+	[[[doc currentPage] currentArtboard] select:true byExpandingSelection:true]
+}

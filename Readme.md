@@ -23,7 +23,7 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 * Misc/Rename Selected Layers
 
 #### Selection
-* Artboard/Select All Artboards `ctrl` + `⌘` + `A`
+* Artboard/Select Artboard `shift` + `⌘` + `A`
 * Artboard/Select Layers by Color on Artboard `ctrl` + `⌘` + `C`
 * Artboard/Select Layers by Name `ctrl` + `⌘` + `N`
 * Document/Select Layers by Color `experimental`
@@ -97,11 +97,11 @@ Plugin that allows you to set the line height of a text layer as a multiple of t
 
 A set of plugins that select layers based on color, name & text style.
 
-### Select All Artboards
+### Select Artboard
 
-Selects all artboards on the current page.
+Depending whether the selection is a layer or an artboard, this plugin will select the current artboard or all artboards of the current page.
 
-**Shortcut:** `ctrl` + `⌘` + `A`
+**Shortcut:** `shift` + `⌘` + `A`
 
 ### Select Layers by Color on Artboard
 
@@ -142,16 +142,17 @@ Selects the layers of a group.
 
 ### Sort Layers
 
-Sorts the selected layers or artboards. Note: This plugin will also reorder the layers in the layer list to match the visual order. For best results, group your layers before sorting.
+There are also plugins to reverse the order of the layers in the layer list and a plugin that reverses the position of the selected layers on the artboard.
 
 **Options:** `Text (A->Z)`, `Text (Z->A)`, `Layer Name (A->Z)`, `Layer Name (Z->A)`, `Top`, `Left`, `Random`
 
 **Shortcut:** `ctrl` + `⌘` + `⌥` + `S`
 
+## Sorting Layers by text, visually
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Sorting.gif)
 
-### Reverse Positions
-This plugin reverses the positions of selected layers.
+## Sorting Layers in the layer list by position
+![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Sorting%20Layers%202.gif)
 
 
 ## Style Inventory
