@@ -101,6 +101,8 @@ A set of plugins that select layers based on color, name & text style.
 
 Depending whether the selection is a layer or an artboard, this plugin will select the current artboard or all artboards of the current page.
 
+![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20Artboard.gif)
+
 **Shortcut:** `shift` + `⌘` + `A`
 
 ### Select Layers by Color on Artboard
