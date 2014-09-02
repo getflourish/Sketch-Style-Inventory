@@ -70,7 +70,8 @@ function sortLayers () {
             "name": layer.name(),
             "layer": selection[i],
             "strings": strings,
-            "top": selection[i].frame().top()
+            "top": selection[i].frame().top(),
+            "left": selection[i].frame().left()
         });
 
         // Remember the position of each layer
