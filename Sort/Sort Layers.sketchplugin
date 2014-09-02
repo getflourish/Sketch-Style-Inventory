@@ -1,6 +1,8 @@
 // Sort layers (ctrl option command s)
 
 var artboards = false;
+var keepTop = false;
+var keepLeft = false;
 var maxExamples = 3;
 var numberOfTextLayersPerGroup = 0;
 var sortableValues = [];
@@ -119,9 +121,11 @@ function sortLayers () {
                 break;
             case 4:
                 textLayersMeta.sort(sortTop);
+                keepLeft = true;
                 break;
             case 5:
                 textLayersMeta.sort(sortLeft);
+                keepTop = true;
                 break;
             case 6:
                 shuffle(textLayersMeta);
@@ -142,9 +146,11 @@ function sortLayers () {
         switch (sortMode) {
             case 0:
                 textLayersMeta.sort(sortTop);
+                keepLeft = true;
                 break;
             case 1:
                 textLayersMeta.sort(sortLeft);
+                keepTop = true;
                 break;
             case 2:
                 textLayersMeta.sort(sortName);
@@ -161,8 +167,8 @@ function sortLayers () {
 	// Finally, layout the sorted layers
 
 	for (var i = 0; i < textLayersMeta.length; i++) {
-		textLayersMeta[i].layer.frame().setY(topPositions[i]);
-		textLayersMeta[i].layer.frame().setX(leftPositions[i]);
+        if (!keepTop) textLayersMeta[i].layer.frame().setY(topPositions[i]);
+		if (!keepLeft) textLayersMeta[i].layer.frame().setX(leftPositions[i]);
 	}
 }
 
