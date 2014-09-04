@@ -1,0 +1,27 @@
+// (cmd option j)
+
+var layer = selection[0];
+var parent = layer.parentGroup();
+var topPositions = [];
+
+for (var i = 0; i < parent.layers().count(); i++) {
+	var child = parent.children().objectAtIndex(i);
+	topPositions.push(child.frame().y() + child.frame().height());
+}
+
+topPositions.sort(sortNumber);
+
+var newY = topPositions[0];
+
+for (var j = 0; j < topPositions.length; j++) {
+	if (topPositions[j] < layer.frame().y()) {
+		newY = topPositions[j];
+	}
+}
+
+layer.frame().setY(newY)
+
+// Sorts numbers. By default, sort would handle numbers as strings and thus not sort them as intended.
+function sortNumber(a,b) {
+    return a - b;
+}
