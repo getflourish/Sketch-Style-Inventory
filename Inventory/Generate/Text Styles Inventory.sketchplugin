@@ -69,12 +69,8 @@ function createTextStyles (artboard) {
 	// centerView(textLayer)
 
 	// Resize artboard and background to match the newly created text layers
-	var background = artboard.layers().objectAtIndex(0);
 	artboard.frame().setWidth(maxWidth + margin);
-	background.frame().setWidth(maxWidth + margin);
 	artboard.frame().setHeight(top + margin);
-	background.frame().setHeight(top + margin);
-	background.setIsLocked(true);
 
 	// Zoom the view to make the entire artboard visible
 	inventory.view.zoomTo(artboard)
@@ -101,7 +97,6 @@ analyseTextStyles();
 var styleSheetPage = inventory.common.getPageByName(inventory.config.pageName);
 var artboard = inventory.common.getArtboardByPageAndName(styleSheetPage, "Typography");
 inventory.common.removeAllLayersFromArtboard(artboard)
-addCheckeredBackground(artboard);
 createTextStyles(artboard);
 
 exportStyles(artboard);
