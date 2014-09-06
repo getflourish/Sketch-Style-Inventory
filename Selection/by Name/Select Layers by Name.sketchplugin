@@ -1,3 +1,5 @@
+// Selects all layers with the same layer name
+
 var index = -1;
 var found = -1;
 var layerCount = 0;

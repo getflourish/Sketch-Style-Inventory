@@ -212,7 +212,6 @@ for (var i = 0; i < layersMeta.length; i++) {
     layersMetaArray.push(layersMeta[i].layer);
 }
 
-log(layersMetaArray)
 inventory.layers.sortIndices(layersMetaArray);
 
 // Restore selection

@@ -1,4 +1,4 @@
-// Selects all layers with the same layer name (control cmd n)
+// Selects all layers with the same layer name on the current artboard (control cmd n)
 
 var index = -1;
 var found = -1;
