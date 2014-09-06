@@ -104,15 +104,17 @@ inventory.common = {
     },
 	// Returns an artboard from a given page
 	getArtboardByPageAndName: function(page, name) {
-		for (var i = 0; i < page.artboards().count(); i++) {
-			var artboard = page.artboards().objectAtIndex(i);
-			if (artboard.name() == name) {
-				[artboard select:true byExpandingSelection:false]
-				return artboard;
-			}
-		}
-		var artboard = inventory.common.addArtboard(page, name);
-		return artboard;
+        var theArtboard = null;
+        var abs = page.artboards().objectEnumerator();
+
+        while (a = abs.nextObject()) {
+            if (a.name() == name) {
+                theArtboard = a;
+                break;
+            }
+        }
+        if (theArtboard == null) theArtboard = inventory.common.addArtboard(page, name);
+		return theArtboard;
 	},
 	isIncluded: function(arr, obj) {
 	  return (arr.indexOf(obj) != -1);
@@ -123,6 +125,17 @@ inventory.common = {
 		doc.setCurrentPage(doc.pages().count() - 1);
 		doc.setCurrentPage(c);
 	},
+    removeArtboardFromPage: function (page, name) {
+        var theArtboard = null;
+        var abs = page.artboards().objectEnumerator();
+
+        while (a = abs.nextObject()) {
+            if (a.name() == name) {
+                page.removeLayer(a)
+                break;
+            }
+        }
+    },
 	// Removes all layers from an artboard
 	removeAllLayersFromArtboard: function(artboard) {
 

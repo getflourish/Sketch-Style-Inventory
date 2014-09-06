@@ -9,117 +9,138 @@
 
 #import 'inventory.js'
 
-// rgb color storage is needed for color sheet generation
-var rgbColors = [];
+(function() {
 
-// hex color storage is needed for duplication checks
-var hexColors = [];
+    var artboards = null,
+        colorArtboard = null,
+        hexColors = [],
+        layers = null,
+        rgbColor = [],
+        rma = null,
+        styleSheetPage = null;
 
-// page that the artboard will be created on
-// var styleSheetPage = inventory.common.getPageByName(inventory.config.pageName);
-var styleSheetPage = doc.currentPage();
 
-// artboard that will hold all color swatches
-var colorArtboard = inventory.common.getArtboardByPageAndName(styleSheetPage, inventory.config.colorInventoryName);
+    // rgb color storage is needed for color sheet generation
+    rgbColors = [];
 
-// get artboards
-var artboards = doc.currentPage().artboards().objectEnumerator();
+    // hex color storage is needed for duplication checks
+    hexColors = [];
 
-// loop through all artboards
-while (artboard = artboards.nextObject()) {
+    // page that the artboard will be created on
+    // var styleSheetPage = inventory.common.getPageByName(inventory.config.pageName);
+    styleSheetPage = doc.currentPage();
 
-    // get layers
-    var layers = artboard.children().objectEnumerator();
+    // dirty hack that will prevent crashes
+    // todo: find out why Sketch crashes when a existing artboard is selected
+    inventory.common.removeArtboardFromPage(styleSheetPage, inventory.config.colorInventoryName)
 
-    // loop through all layers
-    while (layer = layers.nextObject()) {
+    // artboard that will hold all color swatches
+    colorArtboard = inventory.common.getArtboardByPageAndName(styleSheetPage, inventory.config.colorInventoryName);
 
-        // consider text and shapes
-        if(layer.isKindOfClass(MSShapeGroup) || layer.isKindOfClass(MSTextLayer)) {
+    // get artboards
+    artboards = doc.currentPage().artboards().objectEnumerator();
 
-            // the color of the layer
-            var color = inventory.colors.getColorOf(layer);
+    // loop through all artboards
+    while (artboard = artboards.nextObject()) {
 
-            if (color != undefined) {
+        // get layers
+        layers = artboard.children().objectEnumerator();
 
-                // need to compare hex values for comparison in include function
-                var hex_color = "#" + color.hexValue();
+        // loop through all layers
+        while (layer = layers.nextObject()) {
 
-                // Check if the current color is a new one
-                if(inventory.common.isIncluded(hexColors, hex_color) == 0) {
-                    hexColors.push(hex_color);
-                    rgbColors.push(color);
+            // consider text and shapes
+            if(layer.isKindOfClass(MSShapeGroup) || layer.isKindOfClass(MSTextLayer)) {
+
+                // the color of the layer
+                var color = inventory.colors.getColorOf(layer);
+
+                if (color != undefined) {
+
+                    // need to compare hex values for comparison in include function
+                    var hex_color = "#" + color.hexValue();
+
+                    // Check if the current color is a new one
+                    if(inventory.common.isIncluded(hexColors, hex_color) == 0) {
+                        hexColors.push(hex_color);
+                        rgbColors.push(color);
+                    }
                 }
             }
         }
     }
-}
 
 
-// only create a color sheet when there are colors
+    // only create a color sheet when there are colors
 
-if (rgbColors.length > 0) {
-  inventory.colors.createColorSheet(colorArtboard, rgbColors);
-}
+    if (rgbColors.length > 0) {
+      inventory.colors.createColorSheet(colorArtboard, rgbColors);
+    }
 
-var rgbColors = null;
-var hexColors = null;
+    // Position the artboard next to the last artboard
 
-// Position the artboard next to the last artboard
+    rma = getRightmostArtboard();
 
-var rma = getRightmostArtboard();
+    // The actual position that we want is the right edge of the
+    // rightmost artboard plus a margin of 100px.
 
-// The actual position that we want is the right edge of the
-// rightmost artboard plus a margin of 100px.
+    if(rma.name() != inventory.config.colorInventoryName) {
+        var left = rma.frame().width() + rma.frame().x() + 100;
+        var top = rma.frame().y();
+        colorArtboard.frame().setX(left);
+        colorArtboard.frame().setY(top);
+    }
 
-if(rma.name() != inventory.config.colorInventoryName) {
-    var left = rma.frame().width() + rma.frame().x() + 100;
-    var top = rma.frame().y();
-    colorArtboard.frame().setX(left);
-    colorArtboard.frame().setY(top);
-}
+    // focus the view on the artboard
+    inventory.view.centerTo(colorArtboard);
 
-// focus the view on the artboard
-inventory.view.centerTo(colorArtboard);
+    // refresh
+    inventory.common.refreshPage();
 
-// refresh
-inventory.common.refreshPage();
+    // reset variable
+    artboards = null;
+    colorArtboard = null;
+    hexColors = null;
+    layers = null;
+    rgbColor = null;
+    styleSheetPage = null;
 
-/**
- * Returns the x position of the leftmost artboard
- * @return {artboard} artboard
- */
-function getRightmostArtboard() {
-  var meta = [];
+    /**
+     * Returns the x position of the leftmost artboard
+     * @return {artboard} artboard
+     */
+    function getRightmostArtboard() {
+      var meta = [];
 
-  // Loop through all artboards of the current page
-  for (var i = 0; i < doc.currentPage().artboards().count(); i++) {
+      // Loop through all artboards of the current page
+      for (var i = 0; i < doc.currentPage().artboards().count(); i++) {
 
-    // remember the artboard
-    var artboard = doc.currentPage().artboards().objectAtIndex(i);
+        // remember the artboard
+        var artboard = doc.currentPage().artboards().objectAtIndex(i);
 
-    // the left position of the artboard
-    var left = artboard.frame().x();
+        // the left position of the artboard
+        var left = artboard.frame().x();
 
-    // save properties of the artboard
-    meta.push({
-      artboard: artboard,
-      left: left
-    });
-  }
-  // Sort the artboards by their left position
-  meta.sort(sortLeft);
+        // save properties of the artboard
+        meta.push({
+          artboard: artboard,
+          left: left
+        });
+      }
+      // Sort the artboards by their left position
+      meta.sort(sortLeft);
 
-  // Return the rightmost artboard
-  var artboard = meta[meta.length-1].artboard;
-  return artboard;
-}
+      // Return the rightmost artboard
+      var artboard = meta[meta.length-1].artboard;
+      return artboard;
+    }
 
-/**
- * Used to sort the left positions of two given layers
- * @param  {layer} a
- * @param  {layer} b
- */
-function sortLeft(a, b) {
-    return a.left - b.left;
-}
+    /**
+     * Used to sort the left positions of two given layers
+     * @param  {layer} a
+     * @param  {layer} b
+     */
+    function sortLeft(a, b) {
+        return a.left - b.left;
+    }
+}());
