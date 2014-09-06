@@ -1,19 +1,16 @@
 // Namespaced library of functions common across multiple plugins
 var inventory = inventory || {};
 
+#import 'inventory_config.json'
+
+// todo: update pattern code to [self setPatternImage:image collection:self.documentData.images]
+
 // Get the path of the plugin, without the name of the plugin
 // todo: Could need some regex love for sure
 
 var pluginPath = sketch.scriptPath;
 var lastSlash = pluginPath.lastIndexOf("/");
 var basePath = pluginPath.substr(0, lastSlash);
-
-inventory.config = {
-	background_image: basePath + "/_assets/pattern.png",
-	pageName: "Style Sheet",
-	textStylePlaceholder: "The big brown fox jumps over the lazy dog.",
-	maxColorsPerRow: 5
-}
 
 inventory.common = {
 	// Adds an artboard to the given page
@@ -36,8 +33,8 @@ inventory.common = {
 		layer.setName("Background");
 
 		var image = [[NSImage alloc] initWithContentsOfFile:inventory.config.background_image];
-
-		layer.style().fill().setPatternImage(image)
+		var fill = layer.style().fill();
+		[fill setPatternImage:image collection:self.documentData.images]
 		return layer;
 	},
 	addSolidBackground: function (artboard, hex_string) {
@@ -63,11 +60,12 @@ inventory.common = {
 		// inventory.common.refreshPage();
 		return page;
 	},
-	addTextLayer: function (artboard, label) {
-		var textLayer = artboard.addLayerOfType("text");
-		textLayer.setStringValue(label)
-		textLayer.setName(label)
-	},
+    addTextLayer: function(target, label) {
+        var textLayer = target.addLayerOfType("text");
+        textLayer.setStringValue(label)
+        textLayer.setName(label)
+        return textLayer;
+    },
 	// Returns the page if it exists or creates a new page
 	getPageByName: function(name) {
 		for (var i = 0; i < doc.pages().count(); i++) {
@@ -80,12 +78,30 @@ inventory.common = {
 		var page = inventory.common.addPage(name);
 		return page;
 	},
-	addTextLayer: function(target, label) {
-		var textLayer = target.addLayerOfType("text");
-		textLayer.setStringValue(label)
-		textLayer.setName(label)
-		return textLayer;
-	},
+    dump: function (obj) {
+        log("#####################################################################################")
+        log("## Dumping object " + obj )
+        log("## obj class is: " + [obj className])
+        log("#####################################################################################")
+        log("obj.properties:")
+        log([obj class].mocha().properties())
+        log("obj.propertiesWithAncestors:")
+        log([obj class].mocha().propertiesWithAncestors())
+        log("obj.classMethods:")
+        log([obj class].mocha().classMethods())
+        log("obj.classMethodsWithAncestors:")
+        log([obj class].mocha().classMethodsWithAncestors())
+        log("obj.instanceMethods:")
+        log([obj class].mocha().instanceMethods())
+        log("obj.instanceMethodsWithAncestors:")
+        log([obj class].mocha().instanceMethodsWithAncestors())
+        log("obj.protocols:")
+        log([obj class].mocha().protocols())
+        log("obj.protocolsWithAncestors:")
+        log([obj class].mocha().protocolsWithAncestors())
+        log("obj.treeAsDictionary():")
+        log(obj.treeAsDictionary())
+    },
 	// Returns an artboard from a given page
 	getArtboardByPageAndName: function(page, name) {
 		for (var i = 0; i < page.artboards().count(); i++) {
@@ -136,6 +152,12 @@ inventory.common = {
 }
 
 inventory.colors = {
+
+    // compares two colors and returns true if they are equal
+    areEqual: function(colorA, colorB) {
+        return colorA.hexValue() === colorB.hexValue();
+    },
+
 	// Draws a colour palette from a array of colors
 	// Based on alessndro_library.js
 	drawColourPalette: function(base_layer, colours_array) {
@@ -230,7 +252,17 @@ inventory.colors = {
   		var color = null;
   		var fill = null;
   		var className = layer.className();
-  		if (className != "MSBitmapLayer" && className != "MSLayerGroup") {
+
+        if (className == "MSTextLayer") {
+
+            // get the text color
+            color = layer.textColor();
+            textLayer = layer;
+
+            // check if the text layer has a fill color
+            var fill = layer.style().fills().firstObject();
+            if (fill != undefined && fill.isEnabled()) color = fill.color();
+        } else if (className != "MSBitmapLayer" && className != "MSLayerGroup") {
   			try {
   				fill = [[[layer style] fills] firstObject];
   			} catch (error) {
@@ -322,4 +354,10 @@ inventory.css = {
 		}
 		return stylesheet;
 	}
+}
+
+inventory.layer = {
+    isEqual: function (layer1, layer2) {
+        return layer1.objectID() === layer2.objectID();
+    }
 }

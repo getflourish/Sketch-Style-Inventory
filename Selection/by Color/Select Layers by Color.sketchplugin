@@ -1,0 +1,67 @@
+#import 'inventory.js'
+
+/**
+ * This plugin selects all same-colored layers based on the selected layer.
+ * Scope: current page
+ *
+ * Florian Schulz Copyright 2014, MIT License
+ */
+
+
+// init
+(function() {
+  var artboardCount = 0,
+  color = null,
+  fill = null,
+  i = 0,
+  lastFoundOnPage = -1,
+  layer,
+  layerCount = 0,
+  layers,
+  page,
+  pages,
+  referenceColor = null,
+  referenceLayer = null,
+  selected = null,
+  selectedLayerCount = 0,
+  selectedLayers = [],
+  shapeLayerCount = 0;
+
+  // We need a reference layer
+
+  if (selection.count() === 1) {
+
+    // the selected layer
+    selected = selection[0];
+
+    // get the color of the selected layer
+
+    referenceColor = inventory.colors.getColorOf(selected);
+
+    // loop through all artboards of the current page
+    var artboards = doc.currentPage().artboards().objectEnumerator();
+
+    while (artboard = artboards.nextObject()) {
+
+        // Loop through all children of the page
+        layers = artboard.children().objectEnumerator();
+
+        while (layer = layers.nextObject()) {
+
+            // get the color of the layer
+            color = inventory.colors.getColorOf(layer);
+
+            // Check if the layer is a shape group
+            if (color != null && inventory.colors.areEqual(referenceColor, color)) {
+                layer.setIsSelected(true);
+                selectedLayerCount++;
+            }
+        }
+    }
+
+    // Show how many layers have been selected
+    doc.showMessage(selectedLayerCount + " layers selected.")
+  } else {
+    doc.showMessage("Please select one layer.");
+  }
+}());

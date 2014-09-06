@@ -1,7 +1,6 @@
 // This plugin selects all layers of a layer group (control command g)
 
 if (selection.count() == 1) {
-    log(selection[0].className() )
     if (selection[0].className() == "MSLayerGroup") {
         var group = selection[0];
         doc.currentPage().deselectAllLayers();
