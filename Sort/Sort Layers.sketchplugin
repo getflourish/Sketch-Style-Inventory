@@ -1,39 +1,49 @@
-// Sort layers (ctrl option command s)
+// (ctrl option command s)
+
+/**
+ * This plugin can sort layers by positions, layer name or text value
+ *
+ * Florian Schulz Copyright 2014, MIT License
+ */
+
+
+#import 'inventory.js'
 
 var artboards = false;
 var keepTop = false;
 var keepLeft = false;
 var maxExamples = 3;
 var numberOfTextLayersPerGroup = 0;
+var _selection;
 var sortableValues = [];
 var sortIndex = 0;
-var textLayersMeta = [];
+var layersMeta = [];
 var leftPositions = [];
 var topPositions = [];
 
 
-function sortLayers () {
+function sortLayers (_selection) {
 
 	// Loop through all selected layers
 
-	for (var i = 0; i < selection.count(); i++) {
+	for (var i = 0; i < _selection.count(); i++) {
 
-        var layers = selection[i].children();
+        var layers = _selection.objectAtIndex(i).children();
         var textLayers = [];
         var numTextLayers = 0;
         var strings = [];
 
         // Check if the selected layers is an artboard
 
-        if (selection[i].className() == "MSArtboardGroup") {
+        if (_selection[i].className() == "MSArtboardGroup") {
             artboards = true;
-            var layer = selection[i];
+            var layer = _selection[i];
         } else {
 
             // Loop through all child layers of the group
 
             for (var j = 0; j < layers.count(); j++) {
-                var layer = layers[j];
+                var layer = layers.objectAtIndex(j);
 
                 // Proceed with text layers
 
@@ -66,18 +76,19 @@ function sortLayers () {
 
         // For each layer group, save the corresponding values of the text layers
 
-        textLayersMeta.push({
+        layersMeta.push({
             "name": layer.name(),
-            "layer": selection[i],
+            "layer": _selection[i],
             "strings": strings,
-            "top": selection[i].frame().top(),
-            "left": selection[i].frame().left()
+            "top": _selection[i].frame().top(),
+            "left": _selection[i].frame().left()
         });
 
         // Remember the position of each layer
 
-        topPositions.push(parseInt(selection[i].frame().y()));
-        leftPositions.push(parseInt(selection[i].frame().x()));
+        topPositions.push(parseInt(_selection[i].frame().y()));
+        leftPositions.push(parseInt(_selection[i].frame().x()));
+
 
 	}
 
@@ -85,6 +96,7 @@ function sortLayers () {
 
 	topPositions.sort(sortNumber);
 	leftPositions.sort(sortNumber);
+
 
 	// Let the user select the text field that should be sorted on
 
@@ -107,29 +119,29 @@ function sortLayers () {
 
         switch (sortMode) {
             case 0:
-                textLayersMeta.sort(sortText);
+                layersMeta.sort(sortText);
                 break;
             case 1:
-                textLayersMeta.sort(sortText);
-                textLayersMeta.reverse();
+                layersMeta.sort(sortText);
+                layersMeta.reverse();
                 break;
             case 2:
-                textLayersMeta.sort(sortName);
-                textLayersMeta.reverse();
+                layersMeta.sort(sortName);
+                layersMeta.reverse();
                 break;
             case 3:
-                textLayersMeta.sort(sortName);
+                layersMeta.sort(sortName);
                 break;
             case 4:
-                textLayersMeta.sort(sortTop);
+                layersMeta.sort(sortTop);
                 keepLeft = true;
                 break;
             case 5:
-                textLayersMeta.sort(sortLeft);
+                layersMeta.sort(sortLeft);
                 keepTop = true;
                 break;
             case 6:
-                shuffle(textLayersMeta);
+                shuffle(layersMeta);
                 break;
             default:
                 break;
@@ -146,19 +158,19 @@ function sortLayers () {
 
         switch (sortMode) {
             case 0:
-                textLayersMeta.sort(sortTop);
+                layersMeta.sort(sortTop);
                 keepLeft = true;
                 break;
             case 1:
-                textLayersMeta.sort(sortLeft);
+                layersMeta.sort(sortLeft);
                 keepTop = true;
                 break;
             case 2:
-                textLayersMeta.sort(sortName);
+                layersMeta.sort(sortName);
                 break;
             case 3:
-                textLayersMeta.sort(sortName);
-                textLayersMeta.reverse();
+                layersMeta.sort(sortName);
+                layersMeta.reverse();
                 break;
             default:
                 break;
@@ -167,32 +179,45 @@ function sortLayers () {
 
 	// Finally, layout the sorted layers
 
-	for (var i = 0; i < textLayersMeta.length; i++) {
-        if (!keepTop) textLayersMeta[i].layer.frame().setY(topPositions[i]);
-		if (!keepLeft) textLayersMeta[i].layer.frame().setX(leftPositions[i]);
+	for (var i = 0; i < layersMeta.length; i++) {
+        if (!keepTop) layersMeta[i].layer.frame().setY(topPositions[i]);
+		if (!keepLeft) layersMeta[i].layer.frame().setX(leftPositions[i]);
 	}
 }
 
 // Run
 if (selection.count() > 1) {
-	sortLayers();
+
+    // remember the selection
+    _selection = selection;
+
+    // sort selected layers
+    sortLayers(selection);
+} else if (selection.count() == 1 && selection[0].children().count() > 0){
+
+    // remember the selection
+    _selection = selection;
+
+    var group = _selection[0];
+
+    // sort selected group
+    sortLayers(group.layers().array());
 } else {
-	[doc showMessage:"Cannot sort single layers."]
+    [doc showMessage:"Cannot sort single layers."]
 }
 
-doc.currentPage().deselectAllLayers();
+var layersMetaArray = [];
 
-// Re-order the layer stack to represent the new order
-for (var i = 0; i < textLayersMeta.length; i++) {
-	var layer = textLayersMeta[textLayersMeta.length - i - 1].layer;
-
-    // Select the layer
-	layer.setIsSelected(true);
-
-    // Send it to the back
-	sendBack();
-	doc.currentPage().deselectAllLayers();
+for (var i = 0; i < layersMeta.length; i++) {
+    layersMetaArray.push(layersMeta[i].layer);
 }
+
+log(layersMetaArray)
+inventory.layers.sortIndices(layersMetaArray);
+
+// Restore selection
+inventory.layers.select(_selection);
+
 
 // Sorts text layer strings in a ascending order
 
@@ -370,6 +395,6 @@ function sendBack() {
 var numberOfTextLayersPerGroup = null;
 var sortableValues = null;
 var sortIndex = null;
-var textLayersMeta = null;
+var layersMeta = null;
 var leftPositions = null;
 var topPositions = null;

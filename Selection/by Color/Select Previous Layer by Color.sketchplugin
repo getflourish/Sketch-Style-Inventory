@@ -32,7 +32,7 @@ if (selection.count() == 1) {
 
             // if the layer matches the selection,
             // we have our starting point for the search
-            if (found == null && inventory.layer.isEqual(layer, selected)) {
+            if (found == null && inventory.layers.areEqual(layer, selected)) {
                 found = j;
 
             } else if (found != null && match == null) {

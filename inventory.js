@@ -356,8 +356,95 @@ inventory.css = {
 	}
 }
 
-inventory.layer = {
-    isEqual: function (layer1, layer2) {
+inventory.layers = {
+    areEqual: function (layer1, layer2) {
         return layer1.objectID() === layer2.objectID();
+    },
+    select: function (layers) {
+        // deselect first
+        doc.currentPage().deselectAllLayers();
+
+        // then select all layers from the original selection
+        for (var i = 0; i < layers.count(); i++) {
+            layers[i].setIsSelected(true);
+        }
+    },
+    sortIndices: function (array) {
+        // Orders the array in the layer list
+        for (var i = 0; i < array.length - 1; i++) {
+
+            // get two array
+            var a = array[i];
+            var b = array[i + 1];
+
+            // check if both layers are in the same group
+            var parent_a = a.parentGroup();
+            var parent_b = b.parentGroup();
+
+            if (parent_a == parent_b) {
+                var parent = parent_a;
+
+                if (parent.indexOfLayer(a) > parent.indexOfLayer(b)) {
+                    // swap index
+                    inventory.layers.swapIndex(b, a);
+                }
+            } else {
+                doc.showMessage("couldn’t sort indices");
+            }
+        }
+    },
+    swapIndex: function (layer1, layer2) {
+
+        var a = layer1;
+        var b = layer2;
+
+        // check if both layers are in the same group
+        var parent_a = a.parentGroup();
+        var parent_b = b.parentGroup();
+
+        if (parent_a == parent_b) {
+
+            var parent = parent_a;
+
+            // deselect all layers
+            doc.currentPage().deselectAllLayers();
+
+            // select b
+            a.setIsSelected(true);
+
+            var steps = Math.abs(parent.indexOfLayer(b) - parent.indexOfLayer(a));
+
+            for (var i = 0; i < steps; i++) {
+                inventory.utils.sendForward();
+            }
+        } else {
+            doc.showMessage("Please select layers of the same group")
+        }
+    },
+    reverseLayerOrder: function (layers) {
+        // Reverses the layer order
+        for (var i = 0; i < layers.length; i++) {
+            var first = layers[i].layer;
+            var next = layers[layers.length-1].layer;
+
+           inventory.layers.swapIndex(first, next);
+        }
+    }
+}
+
+inventory.utils = {
+
+    sendAction: function (commandToPerform) {
+        try {
+            [NSApp sendAction:commandToPerform to:nil from:doc]
+        } catch(e) {
+            my.log(e)
+        }
+    },
+    sendBackward: function () {
+        inventory.utils.sendAction('moveBackward:');
+    },
+    sendForward: function () {
+        inventory.utils.sendAction('moveForward:');
     }
 }
