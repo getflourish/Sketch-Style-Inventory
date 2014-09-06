@@ -2,7 +2,7 @@
 
 /**
  * This plugin generates an artboard containing color swatches
- * of all used fill and text colors of the document.
+ * of all used fill and text colors of the current page.
  *
  * Florian Schulz Copyright 2014, MIT License
  */
@@ -20,7 +20,7 @@ var hexColors = [];
 var styleSheetPage = doc.currentPage();
 
 // artboard that will hold all color swatches
-var artboard = inventory.common.getArtboardByPageAndName(styleSheetPage, "Colors");
+var artboard = inventory.common.getArtboardByPageAndName(styleSheetPage, inventory.config.colorInventoryName);
 
 // loop through pages
 var pages = doc.pages().objectEnumerator();
@@ -73,12 +73,15 @@ var rma = getRightmostArtboard();
 // The actual position that we want is the right edge of the
 // rightmost artboard plus a margin of 100px.
 
-var left = rma.frame().width() + rma.frame().x() + 100;
-artboard.frame().setX(left);
+if(rma.name() != inventory.config.colorInventoryName) {
+    var left = rma.frame().width() + rma.frame().x() + 100;
+    var top = rma.frame().y();
+    artboard.frame().setX(left);
+    artboard.frame().setY(top);
+}
 
 // focus the view on the artboard
 inventory.view.centerTo(artboard);
-inventory.view.zoomTo(artboard);
 
 /**
  * Returns the x position of the leftmost artboard
@@ -105,7 +108,7 @@ function getRightmostArtboard() {
   // Sort the artboards by their left position
   meta.sort(sortLeft);
 
-  // Return the leftmost artboard
+  // Return the rightmost artboard
   var artboard = meta[meta.length-1].artboard;
   return artboard;
 }
