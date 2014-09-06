@@ -20,47 +20,46 @@ var hexColors = [];
 var styleSheetPage = doc.currentPage();
 
 // artboard that will hold all color swatches
-var artboard = inventory.common.getArtboardByPageAndName(styleSheetPage, inventory.config.colorInventoryName);
+var colorArtboard = inventory.common.getArtboardByPageAndName(styleSheetPage, inventory.config.colorInventoryName);
 
-// loop through pages
-var pages = doc.pages().objectEnumerator();
-while (page = pages.nextObject()) {
+// get artboards
+var artboards = doc.currentPage().artboards().objectEnumerator();
 
-  // search for the style sheet page
-  if (page.name() != inventory.config.pageName) {
+// loop through all artboards
+while (artboard = artboards.nextObject()) {
 
     // get layers
-    var layers = page.children().objectEnumerator();
+    var layers = artboard.children().objectEnumerator();
 
     // loop through all layers
     while (layer = layers.nextObject()) {
 
-      // consider text and shapes
-      if(layer.isKindOfClass(MSShapeGroup) || layer.isKindOfClass(MSTextLayer)) {
+        // consider text and shapes
+        if(layer.isKindOfClass(MSShapeGroup) || layer.isKindOfClass(MSTextLayer)) {
 
-        // the color of the layer
-        var color = inventory.colors.getColorOf(layer);
+            // the color of the layer
+            var color = inventory.colors.getColorOf(layer);
 
-        if (color != undefined) {
+            if (color != undefined) {
 
-          // need to compare hex values for comparison in include function
-          var hex_color = "#" + color.hexValue();
+                // need to compare hex values for comparison in include function
+                var hex_color = "#" + color.hexValue();
 
-          // Check if the current color is a new one
-          if(inventory.common.isIncluded(hexColors, hex_color) == 0) {
-            hexColors.push(hex_color);
-            rgbColors.push(color);
-          }
+                // Check if the current color is a new one
+                if(inventory.common.isIncluded(hexColors, hex_color) == 0) {
+                    hexColors.push(hex_color);
+                    rgbColors.push(color);
+                }
+            }
         }
-      }
     }
-  }
 }
+
 
 // only create a color sheet when there are colors
 
 if (rgbColors.length > 0) {
-  inventory.colors.createColorSheet(artboard, rgbColors);
+  inventory.colors.createColorSheet(colorArtboard, rgbColors);
 }
 
 var rgbColors = null;
@@ -76,12 +75,15 @@ var rma = getRightmostArtboard();
 if(rma.name() != inventory.config.colorInventoryName) {
     var left = rma.frame().width() + rma.frame().x() + 100;
     var top = rma.frame().y();
-    artboard.frame().setX(left);
-    artboard.frame().setY(top);
+    colorArtboard.frame().setX(left);
+    colorArtboard.frame().setY(top);
 }
 
 // focus the view on the artboard
-inventory.view.centerTo(artboard);
+inventory.view.centerTo(colorArtboard);
+
+// refresh
+inventory.common.refreshPage();
 
 /**
  * Returns the x position of the leftmost artboard

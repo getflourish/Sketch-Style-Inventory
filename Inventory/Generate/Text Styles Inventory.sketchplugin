@@ -1,4 +1,4 @@
-// init (cmd control alt t)
+// init
 
 #import 'inventory.js'
 #import 'sandbox.js'
@@ -30,19 +30,6 @@ function compareTextStyleFontSize(a, b) {
 	if (a.textStyle.NSFont.fontDescriptor().objectForKey(NSFontSizeAttribute) > b.textStyle.NSFont.fontDescriptor().objectForKey(NSFontSizeAttribute))
 		return 1;
 	return 0;
-}
-
-function addCheckeredBackground(artboard) {
-	var layer = artboard.addLayerOfType("rectangle");
-	layer.frame().setWidth(artboard.frame().width())
-	layer.frame().setHeight(artboard.frame().height())
-	layer.style().fills().addNewStylePart();
-	layer.style().fill().setFillType(4);
-	layer.setName("Background");
-
-	var image = [[NSImage alloc] initWithContentsOfFile:inventory.config.background_image];
-
-	layer.style().fill().setPatternImage(image)
 }
 
 function createTextStyles (artboard) {
