@@ -19,23 +19,24 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 * Export/Text Styles to CSS
 * Generate/Color Inventory `experimental`
 * Generate/Style Inventory `experimental`
-* Generate/Text Style Inventory `experimental`
-* Misc/Rename Selected Layers
+* Rename Selected Layers
 
 #### Selection
-* Artboard/Select Artboard `shift` + `⌘` + `A`
-* Artboard/Select Layers by Color on Artboard `ctrl` + `⌘` + `C`
-* Artboard/Select Layers by Name `ctrl` + `⌘` + `N`
-* Document/Select Layers by Color `experimental`
-* Document/Select Next/Previous Layer by Color
-* Document/Select Next/Previous Layer by Text Style
-* Document/Select Similar Text Layers by Style `experimental`
-* Document/Select Similar Text Layers by Style on Artboard
-* Group/Select Layers of Group `ctrl` + `⌘` + `G`
+* Select Artboard(s) `shift` + `⌘` + `A`
+* Select Group Layers `ctrl` + `⌘` + `G`
+* by Color/Select Layers by Color
+* by Color/Select Layers by Color on Artboard `ctrl` + `⌘` + `C` 
+* by Color/Select Next/Previous Layer by Color
+* by Name/Select Layers by Name
+* by Name/Select Layers by Name on Artboard `ctrl` + `⌘` + `N`
+* by Text Style/Choose Similar Text Layer
+* by Text Style/Select Similar Text Layers
+* by Text Style/Select Similar Text Layers on Artboard `⌘` + `control` + `NT`
 
 #### Sorting
 * Sort Layers `ctrl` + `⌘` + `⌥` + `S`
 * Reverse Positions
+* Reverse Layer Order
 
 #### Text
 Set Line Height `⌘` + `L`
