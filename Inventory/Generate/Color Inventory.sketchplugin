@@ -32,7 +32,7 @@
 
     // dirty hack that will prevent crashes
     // todo: find out why Sketch crashes when a existing artboard is selected
-    inventory.common.removeArtboardFromPage(styleSheetPage, inventory.config.colorInventoryName)
+    inventory.common.removeArtboardFromPage(styleSheetPage, inventory.config.colorInventoryName);
 
     // artboard that will hold all color swatches
     colorArtboard = inventory.common.getArtboardByPageAndName(styleSheetPage, inventory.config.colorInventoryName);
@@ -90,6 +90,8 @@
         colorArtboard.frame().setX(left);
         colorArtboard.frame().setY(top);
     }
+
+    inventory.common.addCheckeredBackground(colorArtboard);
 
     // focus the view on the artboard
     inventory.view.centerTo(colorArtboard);

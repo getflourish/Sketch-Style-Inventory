@@ -59,6 +59,8 @@ function createTextStyles (artboard) {
 	artboard.frame().setWidth(maxWidth + margin);
 	artboard.frame().setHeight(top + margin);
 
+    inventory.common.addCheckeredBackground(artboard);
+
 	// Zoom the view to make the entire artboard visible
 	inventory.view.zoomTo(artboard)
 

@@ -8,9 +8,13 @@ var inventory = inventory || {};
 // Get the path of the plugin, without the name of the plugin
 // todo: Could need some regex love for sure
 
+
 var pluginPath = sketch.scriptPath;
 var lastSlash = pluginPath.lastIndexOf("/");
 var basePath = pluginPath.substr(0, lastSlash);
+
+inventory.config.background_image = basePath + "/pattern.png";
+log(inventory.config.background_image)
 
 inventory.common = {
 	// Adds an artboard to the given page
@@ -28,13 +32,21 @@ inventory.common = {
 		var layer = artboard.addLayerOfType("rectangle");
 		layer.frame().setWidth(artboard.frame().width())
 		layer.frame().setHeight(artboard.frame().height())
-		layer.style().fills().addNewStylePart();
-		layer.style().fill().setFillType(4);
 		layer.setName("Background");
 
-		var image = [[NSImage alloc] initWithContentsOfFile:inventory.config.background_image];
-		var fill = layer.style().fill();
-		[fill setPatternImage:image collection:self.documentData.images]
+        var image = NSImage.alloc().initWithContentsOfFile(inventory.config.background_image);
+
+        var fill = layer.style().fills().addNewStylePart();
+        if (fill) {
+            fill.setFillType(4);
+            fill.setPatternImage(image);
+            fill.setPatternFillType(0);
+            fill.setPatternTileScale(1);
+        }
+        doc.currentPage().deselectAllLayers();
+        layer.setIsSelected(true);
+        inventory.utils.sendToBack();
+
 		return layer;
 	},
 	addSolidBackground: function (artboard, hex_string) {
@@ -330,6 +342,25 @@ inventory.view = {
 	}
 }
 
+inventory.utils = {
+    sendAction: function (commandToPerform) {
+        try {
+            [NSApp sendAction:commandToPerform to:nil from:doc];
+        } catch(e) {
+            my.log(e)
+        }
+    },
+    sendToBack: function () {
+        inventory.utils.sendAction('moveToBack:');
+    },
+    sendBackward: function () {
+        inventory.utils.sendAction('moveBackward:');
+    },
+    sendForward: function () {
+        inventory.utils.sendAction('moveForward:');
+    }
+}
+
 inventory.css = {
 	/**
  	* createRuleSetStr by Tyler Gaw https://gist.github.com/tylergaw/adc3d6ad044f5afac446
@@ -442,22 +473,5 @@ inventory.layers = {
 
            inventory.layers.swapIndex(first, next);
         }
-    }
-}
-
-inventory.utils = {
-
-    sendAction: function (commandToPerform) {
-        try {
-            [NSApp sendAction:commandToPerform to:nil from:doc]
-        } catch(e) {
-            my.log(e)
-        }
-    },
-    sendBackward: function () {
-        inventory.utils.sendAction('moveBackward:');
-    },
-    sendForward: function () {
-        inventory.utils.sendAction('moveForward:');
     }
 }

@@ -1,5 +1,4 @@
 inventory.config = {
-    background_image: basePath + "/_assets/pattern.png",
     colorInventoryName: "Color Inventory",
     pageName: "Style Sheet",
     textStylePlaceholder: "The big brown fox jumps over the lazy dog.",

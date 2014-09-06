@@ -29,7 +29,7 @@
       referenceLayer = selection[0];
       referenceColor = referenceLayer.style().fills().objectAtIndex(0).color();
     }
-    
+
     // Loop through pages
     artboard = doc.currentPage().currentArtboard();
 
@@ -54,7 +54,6 @@
 
           }
         } else if (layer.isKindOfClass(MSTextLayer)) {
-          log(referenceColor)
           try {
             color = layer.textColor();
             // Check if text layer has a fill color
