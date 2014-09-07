@@ -1,0 +1,67 @@
+// (control command →)
+
+/**
+ * Move selection to the next top edge of a layer that is on the same level as the selected layer
+ *
+ * Florian Schulz Copyright 2014, MIT License
+ */
+
+#import 'inventory.js'
+
+var rightPositions = [];
+var leftPositions = [];
+var selected = selection[0];
+var parent = selected.parentGroup();
+var nextPosition = 0;
+
+
+// store the bottom positions first
+for (var i = 0; i < parent.layers().count(); i++) {
+
+    // check if child layer is selected layer
+    var child = parent.layers().array().objectAtIndex(i);
+
+    if (!inventory.layers.areEqual(child, selected)) {
+        var top = child.frame().x() - selected.frame().width();
+        leftPositions.push(top);
+
+        // get bottom positions
+        var bottom = child.frame().x() + child.frame().width();
+        rightPositions.push(bottom);
+    }
+}
+
+// sort positions
+leftPositions.sort(sortNumber);
+rightPositions.sort(sortNumber);
+
+// set max position
+nextPosition = leftPositions[leftPositions.length - 1];
+// if layer is already at the bottom
+if (selected.frame().x() >= nextPosition) {
+    // get the bottom position of the last layer
+    //
+    if (parent.className() == "MSArtboardGroup") {
+        // if the parent layer is an artboard, set position to the artboard’s bottom edge
+        nextPosition = doc.currentPage().currentArtboard().frame().width() - selected.frame().width();
+    } else {
+        nextPosition = rightPositions[rightPositions.length - 1];
+    }
+
+} else {
+    // search for the nearest bottom position
+    for (var j = 0; j < leftPositions.length; j++) {
+        if (leftPositions[j] > selected.frame().x() && leftPositions[j] < nextPosition) {
+            nextPosition = leftPositions[j];
+            break;
+        }
+    }
+}
+
+// finally set the position
+selected.frame().setX(nextPosition);
+
+// sorts numbers. By default, sort would handle numbers as strings and thus not sort them as intended.
+function sortNumber(a, b) {
+    return a - b;
+}

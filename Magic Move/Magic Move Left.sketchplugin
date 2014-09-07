@@ -1,0 +1,67 @@
+// (control command ←)
+
+/**
+ * Move selection to the previous left edge of a layer that is on the same level as the selected layer
+ *
+ * Florian Schulz Copyright 2014, MIT License
+ */
+
+#import 'inventory.js'
+
+var leftPositions = [];
+var rightPositions = [];
+var selected = selection[0];
+var parent = selected.parentGroup();
+var previousPosition = 0;
+
+// store the bottom positions first
+for (var i = 0; i < parent.layers().count(); i++) {
+
+    // get child layer
+    var child = parent.layers().array().objectAtIndex(i);
+
+    // check if child layer is the selected layer
+    if (!inventory.layers.areEqual(child, selected)) {
+        var bottom = child.frame().x() + child.frame().width();
+        leftPositions.push(bottom);
+
+        // get top positions
+        var top = child.frame().x();
+        rightPositions.push(top);
+    }
+}
+
+// sort positions
+leftPositions.sort(sortNumber);
+leftPositions.reverse();
+
+// sort positions
+rightPositions.sort(sortNumber);
+
+if (selected.frame().x() <= previousPosition) {
+    if (parent.className() == "MSArtboardGroup") {
+        // if the parent layer is an artboard, set position to the artboard’s top edge
+        previousPosition = 0;
+    } else {
+        previousPosition = rightPositions[0] - selected.frame().width();
+    }
+
+} else {
+    // search for the nearest bottom position
+    for (var j = 0; j < leftPositions.length; j++) {
+        if (leftPositions[j] < selected.frame().x() && leftPositions[j] > previousPosition) {
+            previousPosition = leftPositions[j];
+            break;
+        }
+    }
+}
+
+// finally set the position
+selected.frame().setX(previousPosition);
+
+
+
+// sorts numbers. By default, sort would handle numbers as strings and thus not sort them as intended.
+function sortNumber(a, b) {
+    return a - b;
+}
