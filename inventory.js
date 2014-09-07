@@ -14,7 +14,6 @@ var lastSlash = pluginPath.lastIndexOf("/");
 var basePath = pluginPath.substr(0, lastSlash);
 
 inventory.config.background_image = basePath + "/pattern.png";
-log(inventory.config.background_image)
 
 inventory.common = {
 	// Adds an artboard to the given page
@@ -443,8 +442,14 @@ inventory.layers = {
         var b = layer2;
 
         // check if both layers are in the same group
-        var parent_a = a.parentGroup();
-        var parent_b = b.parentGroup();
+        var parent_a = null;
+        var parent_b = null;
+
+        try {
+          parent_a = a.parentGroup();
+          parent_b = b.parentGroup();
+        } catch (error) {
+        }
 
         if (parent_a == parent_b) {
 

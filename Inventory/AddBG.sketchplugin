@@ -1,3 +1,0 @@
-#import 'inventory.js'
-
-inventory.common.addCheckeredBackground(doc.currentPage().currentArtboard());
