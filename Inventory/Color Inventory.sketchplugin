@@ -30,6 +30,9 @@
     // var styleSheetPage = inventory.common.getPageByName(inventory.config.pageName);
     styleSheetPage = doc.currentPage();
 
+    // the right most artboard
+    rma = getRightmostArtboard();
+
     // dirty hack that will prevent crashes
     // todo: find out why Sketch crashes when a existing artboard is selected
     inventory.common.removeArtboardFromPage(styleSheetPage, inventory.config.colorInventoryName);
@@ -78,9 +81,6 @@
     }
 
     // Position the artboard next to the last artboard
-
-    rma = getRightmostArtboard();
-
     // The actual position that we want is the right edge of the
     // rightmost artboard plus a margin of 100px.
 
@@ -89,9 +89,14 @@
         var top = rma.frame().y();
         colorArtboard.frame().setX(left);
         colorArtboard.frame().setY(top);
+    } else {
+        var left = rma.frame().x();
+        var top = rma.frame().y();
+        colorArtboard.frame().setX(left);
+        colorArtboard.frame().setY(top);
     }
 
-    inventory.common.addCheckeredBackground(colorArtboard);
+    bg = inventory.common.addCheckeredBackground(colorArtboard);
 
     // focus the view on the artboard
     inventory.view.centerTo(colorArtboard);
