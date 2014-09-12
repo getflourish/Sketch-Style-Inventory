@@ -1,0 +1,27 @@
+// (cmd option r)
+
+#import 'inventory.js'
+
+// Replaces the selection with the clipboard contents
+// Calls paste in place and removes the selected layer
+
+// Make sure a layer is selected
+
+if (selection.count() == 1) {
+
+	// Remember the selection
+	var selection = selection[0];
+
+	// Paste in Place
+	inventory.utils.sendPasteInPlace();
+
+	// Select the original layer
+	doc.currentPage().deselectAllLayers();
+	selection.setIsSelected(true);
+
+	// Remove
+	inventory.utils.sendDelete();
+
+} else {
+	doc.showMessage("Please select a layer.");
+}

@@ -45,6 +45,7 @@ inventory.common = {
         doc.currentPage().deselectAllLayers();
         layer.setIsSelected(true);
         inventory.utils.sendToBack();
+        layer.setIsLocked(true);
 
 		return layer;
 	},
@@ -355,9 +356,15 @@ inventory.utils = {
     sendBackward: function () {
         inventory.utils.sendAction('moveBackward:');
     },
+    sendDelete: function () {
+        inventory.utils.sendAction('delete:');
+    },
     sendForward: function () {
         inventory.utils.sendAction('moveForward:');
-    }
+    },
+    sendPasteInPlace: function () {
+        inventory.utils.sendAction('pasteInPlace:');
+    },
 }
 
 inventory.css = {
