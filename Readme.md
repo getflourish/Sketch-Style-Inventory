@@ -11,21 +11,23 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 
 #### Artboards
 * Duplicate Artboard `shift` + `⌘` + `D`
+* Fit Artboard
 * Fit Artboard Height `ctrl` + `shift` + `A`
 * Sort Artboards
 
 #### Inventory
-* Export/Symbols to PNG
-* Export/Text Styles to CSS
 * Generate/Color Inventory `experimental`
 * Generate/Style Inventory `experimental`
 * Rename Selected Layers
+
+#### Misc
+* Replace Layer
 
 #### Selection
 * Select Artboard(s) `shift` + `⌘` + `A`
 * Select Group Layers `ctrl` + `⌘` + `G`
 * by Color/Select Layers by Color
-* by Color/Select Layers by Color on Artboard `ctrl` + `⌘` + `C` 
+* by Color/Select Layers by Color on Artboard `ctrl` + `⌘` + `C`
 * by Color/Select Next/Previous Layer by Color
 * by Name/Select Layers by Name
 * by Name/Select Layers by Name on Artboard `ctrl` + `⌘` + `N`
@@ -187,4 +189,4 @@ Generates both, the color and text style inventory.
 Generates an artboard with all text styles that are used in the document.
 
 ### Rename/Rename selected layers
-`experimental` A simple wizard that will guide you through your styles that are missing variable names. This will be used to to provide more information for SASS and JSON export. 
+`experimental` A simple wizard that will guide you through your styles that are missing variable names. This will be used to to provide more information for SASS and JSON export.
