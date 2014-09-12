@@ -74,7 +74,7 @@ This improves the built in behavior of artboard duplication in Sketch. If the cu
 
 ### Fit Artboard
 
-Resizes the artboard to fit the height of its layers. Useful when designing lists.
+Resizes the artboard to fit its layers.
 
 **Shortcut:** `shift` + `ctrl` + `A`
 
@@ -90,11 +90,22 @@ Sorts selected artboard layers by their horizontal position. Useful when your la
 
 ### Set Line Height
 
-Plugin that allows you to set the line height of a text layer as a multiple of the font size. It’s like using em in CSS.
+Plugin that allows you to set the line height of a text layer as a multiple of the font size. It’s like using em in CSS. Supports multiple selections.
 
 **Shortcut:** `⌘` + `L`
 
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Sketch-Line-Height.png)
+
+
+## Misc
+
+### Replace Layer
+
+Replaces the selected layer with the content in the clipboard. Basically this plugin does paste in place while removing the original selection.
+
+**Shortcut:** `option` + `cmd` + `R`
+
+![Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Replace%20Layer.gif)
 
 ## Selection
 
