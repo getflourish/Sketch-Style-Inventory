@@ -26,10 +26,10 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 #### Selection
 * Select Artboard(s) `shift` + `⌘` + `A`
 * Select Group Layers `ctrl` + `⌘` + `G`
-* by Color/Select Layers by Color
+* by Color/Select Layers by Color `shift` + `ctrl` + `⌘` + `C`
 * by Color/Select Layers by Color on Artboard `ctrl` + `⌘` + `C`
 * by Color/Select Next/Previous Layer by Color
-* by Name/Select Layers by Name
+* by Name/Select Layers by Name `shift` + `ctrl` + `⌘` + `N`
 * by Name/Select Layers by Name on Artboard `ctrl` + `⌘` + `N`
 * by Text Style/Choose Similar Text Layer
 * by Text Style/Select Similar Text Layers

@@ -1,3 +1,5 @@
+// (shift control cmd n)
+
 // Selects all layers with the same layer name
 
 var index = -1;

@@ -1,3 +1,5 @@
+// (control cmd c)
+
  /**
  * This plugin selects all same-colored layers based on the selected layer.
  * Scope: current page
