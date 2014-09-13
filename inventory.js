@@ -180,7 +180,8 @@ inventory.colors = {
 
     // compares two colors and returns true if they are equal
     areEqual: function(colorA, colorB) {
-        return colorA.hexValue() === colorB.hexValue();
+        if (colorA != null && colorB != null) return colorA.hexValue() == colorB.hexValue();
+        return false;
     },
 
 	// Draws a colour palette from a array of colors

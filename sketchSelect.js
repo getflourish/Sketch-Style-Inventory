@@ -9,6 +9,11 @@ var classNames = ["MSArtboardGroup",  "MSDocument", "MSLayer", "MSLayerGroup", "
 function $(selector, context) {
     var elements = null;
 
+    // if no context is defined, look for the elements on the current page
+    if (context === undefined) {
+        context = doc.currentPage();
+    }
+
     if (classNames.indexOf(selector) != -1) {
         elements = $.fn.getElementsByClass(selector, context);
     } else {
@@ -24,11 +29,6 @@ $.fn = {
 
         var elements = [];
         var layers = null;
-
-        // if no context is defined, look for the elements on the current page
-        if (context === undefined) {
-            context = doc.currentPage();
-        }
 
         if (classNames.indexOf(String(context.className())) != -1) {
 
@@ -47,7 +47,7 @@ $.fn = {
                         case "MSRectangleShape":
                         case "MSTextLayer":
 
-                            elements.pushArray($.fn.children(selector, artboard));
+                            elements.pushArray($.fn.children(selector, context));
 
                         break;
 
@@ -106,7 +106,6 @@ $.fn = {
         } else {
             log("Unknown context.")
         }
-
         return elements;
     },
     getElementsByName: function (selector, context) {
@@ -114,14 +113,10 @@ $.fn = {
         var elements = [];
 
         // loop through all layers of current page and execute the function
-        var artboards = doc.currentPage().artboards().objectEnumerator();
-        while (artboard = artboards.nextObject()) {
-
-            var layers = artboard.children().objectEnumerator();
-            while (layer = layers.nextObject()) {
-                if (layer.name() === selector) {
-                    elements.push(layer);
-                }
+        var layers = context.children().objectEnumerator();
+        while (layer = layers.nextObject()) {
+            if (layer.name() == selector) {
+                elements.push(layer);
             }
         }
         return elements;
