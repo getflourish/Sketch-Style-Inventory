@@ -1,67 +1,46 @@
-#import 'inventory.js'
+// (control cmd c)
 
-/**
+ /**
  * This plugin selects all same-colored layers based on the selected layer.
  * Scope: current page
  *
  * Florian Schulz Copyright 2014, MIT License
  */
 
+#import 'inventory.js'
+#import 'sketchSelect.js'
 
-// init
-(function() {
-  var artboardCount = 0,
-  color = null,
-  fill = null,
-  i = 0,
-  lastFoundOnPage = -1,
-  layer,
-  layerCount = 0,
-  layers,
-  page,
-  pages,
-  referenceColor = null,
-  referenceLayer = null,
-  selected = null,
-  selectedLayerCount = 0,
-  selectedLayers = [],
-  shapeLayerCount = 0;
 
-  // We need a reference layer
+var color = null,
+    results = 0,
+    referenceColor = null,
+    selected = null;
 
-  if (selection.count() === 1) {
+if (selection.count() == 1) {
 
-    // the selected layer
+    // get the selected layer
     selected = selection[0];
 
-    // get the color of the selected layer
-
+    // get color of selected layer
     referenceColor = inventory.colors.getColorOf(selected);
 
-    // loop through all artboards of the current page
-    var artboards = doc.currentPage().artboards().objectEnumerator();
+    // loop through all layers of the page
+    $("MSLayer").each(function () {
 
-    while (artboard = artboards.nextObject()) {
+        // get color of layer
+        color = inventory.colors.getColorOf(this);
 
-        // Loop through all children of the page
-        layers = artboard.children().objectEnumerator();
+        // compare color to reference color
+        if (inventory.colors.areEqual(color, referenceColor)) {
 
-        while (layer = layers.nextObject()) {
-
-            // get the color of the layer
-            color = inventory.colors.getColorOf(layer);
-
-            // Check if the layer is a shape group
-            if (color != null && inventory.colors.areEqual(referenceColor, color)) {
-                layer.setIsSelected(true);
-                selectedLayerCount++;
-            }
+            // select layer if colors are equal
+            this.setIsSelected(true);
+            results++;
         }
-    }
+    });
 
-    // Show how many layers have been selected
-    doc.showMessage(selectedLayerCount + " layers selected.")
-  } else {
-    doc.showMessage("Please select one layer.");
-  }
-}());
+    doc.showMessage(results + " layers with color #" + referenceColor.hexValue() + " selected.");
+
+} else {
+    doc.showMessage("Please select a reference layer.");
+}

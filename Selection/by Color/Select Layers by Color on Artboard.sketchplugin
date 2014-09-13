@@ -1,101 +1,46 @@
-// Selects all text layers that have the same color as the reference layer (control cmd c)
+// (control cmd c)
 
-// init
-(function() {
-  var artboardCount = 0,
-  color = null,
-  fill = null,
-  i = 0,
-  lastFoundOnPage = -1,
-  layer,
-  layerCount = 0,
-  layers,
-  page,
-  pages,
-  referenceColor = null,
-  referenceLayer = null,
-  selectedLayerCount = 0,
-  selectedLayers = [],
-  shapeLayerCount = 0;
+ /**
+ * This plugin selects all same-colored layers based on the selected layer.
+ * Scope: current artboard
+ *
+ * Florian Schulz Copyright 2014, MIT License
+ */
 
-  // We need a reference layer
+#import 'inventory.js'
+#import 'sketchSelect.js'
 
-  if (selection.count() === 1) {
 
-    // Remember the reference color
-    if (selection[0].isKindOfClass(MSTextLayer)) {
-      referenceColor = selection[0].textColor();
-    } else {
-      referenceLayer = selection[0];
-      referenceColor = referenceLayer.style().fills().objectAtIndex(0).color();
-    }
+var color = null,
+    results = 0,
+    referenceColor = null,
+    selected = null;
 
-    // Loop through pages
-    artboard = doc.currentPage().currentArtboard();
+if (selection.count() == 1) {
 
-      // Loop through all children of the page
-      layers = artboard.children().objectEnumerator();
+    // get the selected layer
+    selected = selection[0];
 
-      while (layer = layers.nextObject()) {
-        layerCount++;
+    // get color of selected layer
+    referenceColor = inventory.colors.getColorOf(selected);
 
-        // Check if the layer is a shape group
-        if (layer.isKindOfClass(MSShapeGroup)) {
-          try {
-            fill = layer.style().fills().objectAtIndex(0);
-            color = fill.color();
-            if (fill != null) {
-              if (color.hexValue() === referenceColor.hexValue()) {
-                selectedLayerCount++;
-                layer.setIsSelected(true);
-              }
-            }
-          } catch (error) {
+    // loop through all layers of the page
+    $("MSLayer", doc.currentPage().currentArtboard()).each(function () {
 
-          }
-        } else if (layer.isKindOfClass(MSTextLayer)) {
-          try {
-            color = layer.textColor();
-            // Check if text layer has a fill color
+        // get color of layer
+        color = inventory.colors.getColorOf(this);
 
-            var fill = layer.style().fills().firstObject();
-            if (fill != undefined && fill.isEnabled()) color = fill.color();
-            if (color != null) {
-              if (color.hexValue() === referenceColor.hexValue()) {
-                selectedLayerCount++;
-                layer.setIsSelected(true);
-              }
-            }
-          } catch (error) {
+        // compare color to reference color
+        if (inventory.colors.areEqual(color, referenceColor)) {
 
-          }
-
+            // select layer if colors are equal
+            this.setIsSelected(true);
+            results++;
         }
-      }
+    });
 
-    // Show how many layers have been selected
-    doc.showMessage(selectedLayerCount + " layers selected.")
-  } else {
-    doc.showMessage("Please select a single reference text layer.");
-  }
-}());
+    doc.showMessage(results + " layers with color #" + referenceColor.hexValue() + " selected.");
 
-function getColorOf(layer) {
-  var color = null;
-  switch ([layer class]) {
-    case MSTextLayer:
-        color = layer.textColor();
-      textLayer = layer;
-
-      // Check if text layer has a fill color
-
-      var fill = layer.style().fills().firstObject();
-      if (fill != undefined && fill.isEnabled()) color = fill.color();
-    break;
-      default:
-        var fill = layer.style().fills().firstObject();
-      color = fill.color();
-      break;
-  }
-  return color;
+} else {
+    doc.showMessage("Please select a reference layer.");
 }
