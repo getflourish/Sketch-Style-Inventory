@@ -275,25 +275,27 @@ inventory.colors = {
   		return layer;
   	},
   	getColorOf: function(layer) {
+      // todo: support gradient fill
   		var color = null;
   		var fill = null;
   		var className = layer.className();
 
-        if (className == "MSTextLayer") {
+      if (className == "MSTextLayer") {
 
-            // get the text color
-            color = layer.textColor();
-            textLayer = layer;
+          // get the text color
+          color = layer.textColor();
+          textLayer = layer;
 
-            // check if the text layer has a fill color
-            var fill = layer.style().fills().firstObject();
-            if (fill != undefined && fill.isEnabled()) color = fill.color();
-        } else if (className != "MSBitmapLayer" && className != "MSLayerGroup") {
-  			try {
-  				fill = [[[layer style] fills] firstObject];
-  			} catch (error) {
+          // check if the text layer has a fill color
+          var fill = layer.style().fills().firstObject();
+          if (fill != undefined && fill.isEnabled()) color = fill.color();
+      } else if (className != "MSBitmapLayer" && className != "MSLayerGroup") {
+    		try {
+    			fill = layer.style().fills().firstObject();
+  	  	} catch (error) {
+          // log("Error retrieving color of " + layer)
   			}
-  			if (fill !== null && [fill isEnabled] && [fill fillType] === 0) color = [fill color];
+  		  if (fill != null && fill.isEnabled() && fill.fillType() == 0) color = fill.color();
   		}
   		return color;
 	}
