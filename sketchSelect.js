@@ -1,5 +1,6 @@
 /**
  * Sketch Select – A simple selector engine for Sketch
+ * Usage: $("MSLayer"), $("List Item"), $("MSLayer", artboard), $("MSArtboardGroup").each(function() {})
  *
  * Florian Schulz, 2014
  */
