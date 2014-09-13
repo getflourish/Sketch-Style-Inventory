@@ -37,29 +37,6 @@ $.fn = {
 
                 // Search on a specific Artboard
                 case "MSArtboardGroup":
-
-                    switch (selector) {
-
-                        case "MSLayer":
-                        case "MSLayerGroup":
-                        case "MSOvalShape":
-                        case "MSShapeGroup":
-                        case "MSShapePathLayer":
-                        case "MSRectangleShape":
-                        case "MSTextLayer":
-
-                            elements.pushArray($.fn.children(selector, context));
-
-                        break;
-
-                        default:
-                            log("Unknown selector");
-                        break;
-                    }
-                break;
-
-                // Search on a specific Layer Group
-
                 case "MSLayerGroup":
                     elements.pushArray($.fn.children(selector, context));
                 break;
