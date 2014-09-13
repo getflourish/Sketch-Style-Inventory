@@ -59,14 +59,15 @@
                 var color = inventory.colors.getColorOf(layer);
 
                 if (color != undefined) {
+                    if (color.className() == "MSColor") {
+                        // need to compare hex values for comparison in include function
+                        var hex_color = "#" + color.hexValue();
 
-                    // need to compare hex values for comparison in include function
-                    var hex_color = "#" + color.hexValue();
-
-                    // Check if the current color is a new one
-                    if(inventory.common.isIncluded(hexColors, hex_color) == 0) {
-                        hexColors.push(hex_color);
-                        rgbColors.push(color);
+                        // Check if the current color is a new one
+                        if(inventory.common.isIncluded(hexColors, hex_color) == 0) {
+                            hexColors.push(hex_color);
+                            rgbColors.push(color);
+                        }
                     }
                 }
             }

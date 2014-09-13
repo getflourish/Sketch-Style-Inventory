@@ -1,6 +1,8 @@
+// (control cmd c)
+
  /**
  * This plugin selects all same-colored layers based on the selected layer.
- * Scope: current artboard
+ * Scope: current page
  *
  * Florian Schulz Copyright 2014, MIT License
  */
@@ -37,7 +39,7 @@ if (selection.count() == 1) {
         }
     });
 
-    doc.showMessage(results + " layers with color #" + referenceColor.hexValue() + " selected.");
+    doc.showMessage(results + " layers selected. " + referenceColor);
 
 } else {
     doc.showMessage("Please select a reference layer.");

@@ -39,7 +39,7 @@ if (selection.count() == 1) {
         }
     });
 
-    doc.showMessage(results + " layers with color #" + referenceColor.hexValue() + " selected.");
+    doc.showMessage(results + " layers selected. " + referenceColor);
 
 } else {
     doc.showMessage("Please select a reference layer.");

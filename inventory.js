@@ -178,128 +178,195 @@ inventory.common = {
 
 inventory.colors = {
 
-    // compares two colors and returns true if they are equal
-    areEqual: function(colorA, colorB) {
-        if (colorA != null && colorB != null) return colorA.hexValue() == colorB.hexValue();
-        return false;
-    },
+  // compares two colors and returns true if they are equal
+  areEqual: function(a, b) {
+
+    var colorA = null,
+        colorB = null;
+
+    if (a && b) {
+      if (a.className() == "MSColor") colorA = a.hexValue();
+      if (b.className() == "MSColor") colorB = b.hexValue();
+      if (colorA && colorB) return colorA == colorB;
+
+      if (a.className() == "MSStyleFill" && b.className() == "MSStyleFill") {
+        // check if both fill types are the same
+        if (a.fillType() == b.fillType() && a.isEnabled() && b.isEnabled()) {
+          switch (a.fillType()) {
+            // solid color
+            case 0:
+              return a.color().hexValue() == b.color().hexValue();
+            break;
+
+            // gradient
+            case 1:
+
+              // check if both gradients have the same number of stops
+              var stopsA = a.gradient().stops();
+              var stopsB = b.gradient().stops();
+
+              if (stopsA.count() == stopsB.count()) {
+                for (var i = 0; i < stopsA.count(); i++) {
+                  if (stopsA.objectAtIndex(i).color() != stopsB.objectAtIndex(i).color() || stopsA.objectAtIndex(i).position() != stopsB.objectAtIndex(i).position()) {
+                    return false;
+                    break;
+                  }
+                }
+                return true;
+              }
+            break;
+
+            case 4: 
+              if (a.patternImage() == b.patternImage()) return true;
+            break;
+
+            default:
+            break;
+          }
+        }
+      }
+    }
+  },
 
 	// Draws a colour palette from a array of colors
 	// Based on alessndro_library.js
 	drawColourPalette: function(base_layer, colours_array) {
 
 		// todo: make this a proper color chip
-    	var first_colour = colours_array[0];
-    	var palette_layers = [base_layer];
+    var first_colour = colours_array[0];
+    var palette_layers = [base_layer];
 
-    	var first_fill = base_layer.style().fills().firstObject();
-    	first_fill.setColor(first_colour);
+    var first_fill = base_layer.style().fills().firstObject();
+    first_fill.setColor(first_colour);
 
-    	var hex_string = "#" + first_colour.hexValue();
-    	base_layer.setName("Color Swatch " + hex_string);
+    var hex_string = "#" + first_colour.hexValue();
+    base_layer.setName("Color Swatch " + hex_string);
 
-    	for(var i = 1; i < colours_array.length; i++) {
-    	  	var previous_layer = palette_layers[palette_layers.length -1];
-    	 	var new_colour_layer = previous_layer.duplicate();
-    	 	var new_colour = colours_array[i];
-    	 	new_colour_layer.style().fills().firstObject().setColor(new_colour);
+    for(var i = 1; i < colours_array.length; i++) {
+      	var previous_layer = palette_layers[palette_layers.length -1];
+     	var new_colour_layer = previous_layer.duplicate();
+     	var new_colour = colours_array[i];
+     	new_colour_layer.style().fills().firstObject().setColor(new_colour);
 
-    	 	var frame = new_colour_layer.frame().width();
-    	 	var current_x_pos = frame.x();
-    	 	var new_x_position = current_x_pos + frame.width();
-    	 	frame.setX(new_x_position + 10);
-    	 	hex_string = "#" + new_colour.hexValue();
-    	 	new_colour_layer.setName("Color Swatch " + hex_string);
-    	 	palette_layers.push(new_colour_layer);
-    	}
-  	},
-  	createColorSheet: function (artboard, colors_array) {
-  		// create color chip for each color
-  		var left = 0;
-  		var top = 30;
-  		var margin = 30;
-  		var width = 0;
+     	var frame = new_colour_layer.frame().width();
+     	var current_x_pos = frame.x();
+     	var new_x_position = current_x_pos + frame.width();
+     	frame.setX(new_x_position + 10);
+     	hex_string = "#" + new_colour.hexValue();
+     	new_colour_layer.setName("Color Swatch " + hex_string);
+     	palette_layers.push(new_colour_layer);
+    }
+  },
+  createColorSheet: function (artboard, colors_array) {
+  	// create color chip for each color
+  	var left = 0;
+  	var top = 30;
+  	var margin = 30;
+  	var width = 0;
 
-  		inventory.common.removeAllLayersFromArtboard(artboard);
+  	inventory.common.removeAllLayersFromArtboard(artboard);
 
-  		for (var i = 0; i < colors_array.length; i++) {
-  			left += margin;
-  			var colorChip = inventory.colors.addColorChip(artboard, colors_array[i]);
+  	for (var i = 0; i < colors_array.length; i++) {
+  		left += margin;
+  		var colorChip = inventory.colors.addColorChip(artboard, colors_array[i]);
 
-  			width = colorChip.frame().width();
-  			// offset color chip
-  			colorChip.frame().setX(left);
-  			colorChip.frame().setY(top);
-  			left += width;
+  		width = colorChip.frame().width();
+  		// offset color chip
+  		colorChip.frame().setX(left);
+  		colorChip.frame().setY(top);
+  		left += width;
 
-  			// todo: crash happens below this line
+  		// todo: crash happens below this line
 
-  			// after x color chips, star a new row
-  			if ((i + 1) % inventory.config.maxColorsPerRow == 0) {
-  				top += width + margin;
-  				left = 0;
-  			}
+  		// after x color chips, star a new row
+  		if ((i + 1) % inventory.config.maxColorsPerRow == 0) {
+  			top += width + margin;
+  			left = 0;
   		}
-  		inventory.common.resize(artboard, 680, top + margin + width);
-  	},
-  	addColorChip: function (artboard, color) {
-  		var padding = 5;
-  		// get hex color
-  		var hex_string = "#" + color.hexValue();
-  		// add layer group
-  		var group = artboard.addLayerOfType("group");
-  		var group_name = "Color Swatch " + hex_string;
-  		group.setName(group_name);
-  		// draw square color
-  		var colorSquare = inventory.colors.addColorShape(group, color, 100, 100);
-  		// draw white label rectangle
-  		var label = inventory.common.addTextLayer(group, hex_string);
-  		label.frame().setY(colorSquare.frame().height() + padding);
-  		// draw text with variable name / color
-  		//var variable_label = inventory.common.addTextLayer(group, hex_string);
-  		//variable_label.frame().setY(label.frame().y() + label.frame().height() + padding)
+  	}
+  	inventory.common.resize(artboard, 680, top + margin + width);
+  },
+  addColorChip: function (artboard, color) {
+  	var padding = 5;
+  	// get hex color
+  	var hex_string = "#" + color.hexValue();
+  	// add layer group
+  	var group = artboard.addLayerOfType("group");
+  	var group_name = "Color Swatch " + hex_string;
+  	group.setName(group_name);
+  	// draw square color
+  	var colorSquare = inventory.colors.addColorShape(group, color, 100, 100);
+  	// draw white label rectangle
+  	var label = inventory.common.addTextLayer(group, hex_string);
+  	label.frame().setY(colorSquare.frame().height() + padding);
+  	// draw text with variable name / color
+  	//var variable_label = inventory.common.addTextLayer(group, hex_string);
+  	//variable_label.frame().setY(label.frame().y() + label.frame().height() + padding)
 
-  		return group;
-  	},
-  	addColorShape: function (artboard, color, width, height) {
-  		// add layer
-  		var layer = artboard.addLayerOfType("rectangle");
-  		layer.frame().setWidth(width);
-  		layer.frame().setHeight(height);
-  		layer.style().fills().addNewStylePart();
-  		layer.style().fill().setFillType(0);
-  		layer.style().fill().setColor(color);
-  		var hex_string = "#" + color.hexValue();
-  		layer.setName("Color Swatch " + hex_string);
+  	return group;
+  },
+  addColorShape: function (artboard, color, width, height) {
+  	// add layer
+  	var layer = artboard.addLayerOfType("rectangle");
+  	layer.frame().setWidth(width);
+  	layer.frame().setHeight(height);
+  	layer.style().fills().addNewStylePart();
+  	layer.style().fill().setFillType(0);
+  	layer.style().fill().setColor(color);
+  	var hex_string = "#" + color.hexValue();
+  	layer.setName("Color Swatch " + hex_string);
 
-  		return layer;
-  	},
-  	getColorOf: function(layer) {
-      // todo: support gradient fill
-  		var color = null;
-  		var fill = null;
-  		var className = layer.className();
+  	return layer;
+  },
+  getColorOf: function(layer) {
+    var color = null;
+  	var fill = null;
+  	var className = layer.className();
 
-      if (className == "MSTextLayer") {
+    // check if layer is a text layer
+    if (className == "MSTextLayer") {
 
-          // get the text color
-          color = layer.textColor();
-          textLayer = layer;
+      // get the text color
+      color = layer.textColor();
 
-          // check if the text layer has a fill color
-          var fill = layer.style().fills().firstObject();
-          if (fill != undefined && fill.isEnabled()) color = fill.color();
-      } else if (className != "MSBitmapLayer" && className != "MSLayerGroup") {
-    		try {
-    			fill = layer.style().fills().firstObject();
-  	  	} catch (error) {
-          // log("Error retrieving color of " + layer)
-  			}
-  		  if (fill != null && fill.isEnabled() && fill.fillType() == 0) color = fill.color();
+      // check if the text layer has a fill color
+      var fill = layer.style().fills().firstObject();
+      if (fill != undefined && fill.isEnabled()) {
+        color = fill.color();
+      }
+    } else if (className != "MSBitmapLayer" && className != "MSLayerGroup") {
+  		try {
+  			fill = layer.style().fills().firstObject();
+    	} catch (error) {
+        // log("Error retrieving color of " + layer)
   		}
-  		return color;
-	}
+  	  if (fill != null && fill.isEnabled()) {
+        if(fill.fillType() == 0) {
+          color = fill.color();
+        } else {
+          color = fill;
+        }
+      }
+  	}
+    return color;
+	},
+  getTextColorOf: function (layer) {
+    var color = null;
 
+    // check if layer is a text layer
+    if (layer.className() == "MSTextLayer") {
+
+      // get the text color
+      color = layer.textColor();
+
+      // check if the text layer has a fill color
+      var fill = layer.style().fills().firstObject();
+      if (fill != undefined && fill.isEnabled()) {
+        color = fill.color();
+      }
+    }
+    return color;
+  }
 }
 
 inventory.clipboard = {
