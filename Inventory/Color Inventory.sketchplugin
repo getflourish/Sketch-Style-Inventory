@@ -101,6 +101,8 @@
 
     // focus the view on the artboard
     inventory.view.centerTo(colorArtboard);
+    doc.currentPage().deselectAllLayers();
+    colorArtboard.setIsSelected(true);
 
     // refresh
     inventory.common.refreshPage();
