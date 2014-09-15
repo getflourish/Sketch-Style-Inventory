@@ -319,39 +319,48 @@ inventory.colors = {
   	return layer;
   },
   getColorOf: function(layer) {
-    var color = null;
-  	var fill = null;
-    var className = String(layer.className());
-    log(className)
+    var color = null, 
+      fill = null, 
+      style = null,
+      fills = null,
+      className = String(layer.className());
 
     switch (className) {
       
       case "MSTextLayer":
+
+      try {
         // get the text color
         color = layer.textColor();
 
         // check if the text layer has a fill color
-        var fill = layer.style().fills().firstObject();
+        fill = layer.style().fills().firstObject();
         if (fill != undefined && fill.isEnabled()) {
           color = fill.color();
         }
+      } catch (error) {
+        
+      }
       break;
       case "MSShapeGroup":
-
-       var style = layer.style();
-        if (style.fills()) {
-          var fills = style.fills();
-          if (fills.count() > 0) {
-           fill = fills.firstObject();
-           if (fill != null && fill.isEnabled()) {
-             if(fill.fillType() == 0) {
-               color = fill.color();
-             } else {
-               color = fill;
-             }
+      try {
+        style = layer.style();
+         if (style.fills()) {
+           fills = style.fills();
+           if (fills.count() > 0) {
+            fill = fills.firstObject();
+            if (fill != null && fill.isEnabled()) {
+              if(fill.fillType() == 0) {
+                color = fill.color();
+              } else {
+                color = fill;
+              }
+            }
            }
-          }
-        }
+         }
+      } catch (error) {
+
+      }
       break;
       default:
       break;
