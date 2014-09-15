@@ -321,33 +321,41 @@ inventory.colors = {
   getColorOf: function(layer) {
     var color = null;
   	var fill = null;
-  	var className = layer.className();
+    var className = String(layer.className());
+    log(className)
 
-    // check if layer is a text layer
-    if (className == "MSTextLayer") {
+    switch (className) {
+      
+      case "MSTextLayer":
+        // get the text color
+        color = layer.textColor();
 
-      // get the text color
-      color = layer.textColor();
-
-      // check if the text layer has a fill color
-      var fill = layer.style().fills().firstObject();
-      if (fill != undefined && fill.isEnabled()) {
-        color = fill.color();
-      }
-    } else if (className != "MSBitmapLayer" && className != "MSLayerGroup") {
-  		try {
-  			fill = layer.style().fills().firstObject();
-    	} catch (error) {
-        // log("Error retrieving color of " + layer)
-  		}
-  	  if (fill != null && fill.isEnabled()) {
-        if(fill.fillType() == 0) {
+        // check if the text layer has a fill color
+        var fill = layer.style().fills().firstObject();
+        if (fill != undefined && fill.isEnabled()) {
           color = fill.color();
-        } else {
-          color = fill;
         }
-      }
-  	}
+      break;
+      case "MSShapeGroup":
+
+       var style = layer.style();
+        if (style.fills()) {
+          var fills = style.fills();
+          if (fills.count() > 0) {
+           fill = fills.firstObject();
+           if (fill != null && fill.isEnabled()) {
+             if(fill.fillType() == 0) {
+               color = fill.color();
+             } else {
+               color = fill;
+             }
+           }
+          }
+        }
+      break;
+      default:
+      break;
+    }
     return color;
 	},
   getTextColorOf: function (layer) {

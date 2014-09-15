@@ -10,37 +10,38 @@
 #import 'inventory.js'
 #import 'sketchSelect.js'
 
+(function() {
+    var color = null,
+        results = 0,
+        referenceColor = null,
+        selected = null;
 
-var color = null,
-    results = 0,
-    referenceColor = null,
-    selected = null;
+    if (selection.count() == 1) {
 
-if (selection.count() == 1) {
+        // get the selected layer
+        selected = selection[0];
 
-    // get the selected layer
-    selected = selection[0];
+        // get color of selected layer
+        referenceColor = inventory.colors.getColorOf(selected);
 
-    // get color of selected layer
-    referenceColor = inventory.colors.getColorOf(selected);
+        // loop through all layers of the page
+        $("MSLayer").each(function () {
 
-    // loop through all layers of the page
-    $("MSLayer").each(function () {
+            // get color of layer
+            color = inventory.colors.getColorOf(this);
 
-        // get color of layer
-        color = inventory.colors.getColorOf(this);
+            // compare color to reference color
+            if (inventory.colors.areEqual(color, referenceColor)) {
 
-        // compare color to reference color
-        if (inventory.colors.areEqual(color, referenceColor)) {
+                // select layer if colors are equal
+                this.setIsSelected(true);
+                results++;
+            }
+        });
 
-            // select layer if colors are equal
-            this.setIsSelected(true);
-            results++;
-        }
-    });
+        doc.showMessage(results + " layers selected. " + referenceColor);
 
-    doc.showMessage(results + " layers selected. " + referenceColor);
-
-} else {
-    doc.showMessage("Please select a reference layer.");
-}
+    } else {
+        doc.showMessage("Please select a reference layer.");
+    }
+}());
