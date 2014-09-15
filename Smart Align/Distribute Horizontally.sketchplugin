@@ -1,0 +1,5 @@
+// Distributes layers (control option cmd ,)
+
+#import 'inventory.js'
+
+inventory.utils.sendDistributeHorizontally();

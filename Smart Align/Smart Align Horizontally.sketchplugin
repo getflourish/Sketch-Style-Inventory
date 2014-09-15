@@ -1,0 +1,48 @@
+// Center aligns the selected layer (option cmd ,)
+
+#import 'inventory.js'
+
+var selected,
+	parent;
+
+if (selection.count() == 1) {
+
+	// the selected element
+	selected = selection[0];
+
+	// select parent group
+	parent = selected.parentGroup();
+	parent.setIsSelected(true);
+
+	// in case the selection is the outermost layer of the group
+	if (selected.absoluteRect().x() < parent.absoluteRect().x() || selected.absoluteRect().x() > parent.absoluteRect().x() + parent.frame().width()) {
+		// Move selection
+		selected.frame().setX(0);
+
+		// deselect to refresh boundin box
+		selected.setIsSelected(false);
+		parent.setIsSelected(false);
+
+		// select again
+		selected.setIsSelected(true);
+		parent.setIsSelected(true);
+
+		// center align
+		inventory.utils.sendAlignHorizontally();
+
+	// in case the selection is inside the group
+	} else {
+		// center selection within group
+		inventory.utils.sendAlignHorizontally();
+	}
+
+	// deselect parent
+	parent.setIsSelected(false);
+
+} else if (selection.count() == 2) {
+	// align layers
+	inventory.utils.sendAlignHorizontally();
+
+} else {
+	doc.showMessage("Please select a layer.");
+}

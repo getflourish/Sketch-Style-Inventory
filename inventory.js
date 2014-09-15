@@ -446,6 +446,30 @@ inventory.utils = {
     sendDelete: function () {
         inventory.utils.sendAction('delete:');
     },
+    sendAlignBottom: function () {
+        inventory.utils.sendAction('alignLayersBottom:');
+    },
+    sendAlignLeft: function () {
+        inventory.utils.sendAction('alignLayersLeft:');
+    },
+    sendAlignHorizontally: function () {
+        inventory.utils.sendAction('alignLayersCenter:');
+    },
+    sendAlignVertically: function () {
+        inventory.utils.sendAction('alignLayersMiddle:');
+    },
+    sendAlignRight: function () {
+        inventory.utils.sendAction('alignLayersRight:');
+    },
+    sendAlignTop: function () {
+        inventory.utils.sendAction('alignLayersTop:');
+    },
+    sendDistributeVertically: function () {
+        inventory.utils.sendAction('distributeVertically:');
+    },
+    sendDistributeHorizontally: function () {
+        inventory.utils.sendAction('distributeHorizontally:');
+    },
     sendForward: function () {
         inventory.utils.sendAction('moveForward:');
     },
