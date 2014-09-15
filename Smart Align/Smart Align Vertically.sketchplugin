@@ -1,4 +1,4 @@
-// Middle aligns the selected layer (option cmd .)
+// Middle aligns the selected layer within its group (option cmd .)
 
 #import 'inventory.js'
 

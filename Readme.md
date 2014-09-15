@@ -35,6 +35,12 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 * by Text Style/Select Similar Text Layers
 * by Text Style/Select Similar Text Layers on Artboard `⌘` + `control` + `NT`
 
+#### Smart Align
+* Smart Align Horizontally `⌘` + `⌥` + `,`
+* Smart Align Vertically `⌘` + `⌥` + `.`
+* Distribute Horizontally `control` + `⌘` + `⌥` + `,`
+* Distribute Vertically `control` + `⌘` + `⌥` + `.`
+
 #### Sorting
 * Sort Layers `ctrl` + `⌘` + `⌥` + `S`
 * Reverse Positions
