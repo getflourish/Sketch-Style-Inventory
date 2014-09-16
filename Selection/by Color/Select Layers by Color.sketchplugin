@@ -8,9 +8,8 @@
  */
 
 #import 'inventory.js'
-#import 'sketchSelect.js'
 
-(function() {
+function theFunction() {
     var color = null,
         results = 0,
         referenceColor = null,
@@ -22,26 +21,44 @@
         selected = selection[0];
 
         // get color of selected layer
-        referenceColor = inventory.colors.getColorOf(selected);
+        referenceColor = com.getflourish.colors.getColorOf(selected);
 
         // loop through all layers of the page
-        $("MSLayer").each(function () {
+        var layers = doc.currentPage().children().objectEnumerator();
 
+        while (layer = layers.nextObject()) {
             // get color of layer
-            color = inventory.colors.getColorOf(this);
+            try {
+                color = getColorOf(layer);
 
-            // compare color to reference color
-            if (inventory.colors.areEqual(color, referenceColor)) {
+                // compare color to reference color
+                if (com.getflourish.colors.areEqual(color, referenceColor)) {
 
-                // select layer if colors are equal
-                this.setIsSelected(true);
-                results++;
+                    // select layer if colors are equal
+                    layer.setIsSelected(true);
+                    results++;
+                }
+                log("worked")
+            } catch (error) {
+                log(error);
             }
-        });
+        }
 
         doc.showMessage(results + " layers selected. " + referenceColor);
 
     } else {
         doc.showMessage("Please select a reference layer.");
     }
-}());
+}
+
+com.getflourish.execute(theFunction);
+com = null;
+
+function getColorOf(_layer) {
+    log("foo");
+    try {
+        log("Color: " + _layer.style());
+    } catch (error) {
+        log(error);
+    }
+}
