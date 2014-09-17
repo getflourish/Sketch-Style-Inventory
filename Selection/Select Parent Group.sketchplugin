@@ -1,0 +1,14 @@
+// Selects the parent group of a layer (option cmd g)
+
+if (selection.count() > 0) {
+
+	// select parent group
+	selection[0].parentGroup().setIsSelected(true);
+
+	// deselect all previously selected layers
+	for (var i = 0; i < selection.count(); i++) {
+		selection[i].setIsSelected(false);
+	}
+} else {
+	doc.showMessage("Please select a layer.");
+}
