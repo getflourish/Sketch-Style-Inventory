@@ -10,55 +10,119 @@
 #import 'inventory.js'
 
 function theFunction() {
-    var color = null,
-        results = 0,
-        referenceColor = null,
-        selected = null;
+   var color = null,
+   results = 0,
+   referenceColor = null,
+   selected = null;
 
-    if (selection.count() == 1) {
+   if (selection.count() == 1) {
 
-        // get the selected layer
-        selected = selection[0];
+       // get the selected layer
+       selected = selection[0];
 
-        // get color of selected layer
-        referenceColor = com.getflourish.colors.getColorOf(selected);
+       // get color of selected layer
+       referenceColor = selected.style().fills().firstObject().color();
 
-        // loop through all layers of the page
-        var layers = doc.currentPage().children().objectEnumerator();
+       // loop through all layers of the page
+       var layers = doc.currentPage().children().objectEnumerator();
 
-        while (layer = layers.nextObject()) {
-            // get color of layer
-            try {
-                color = getColorOf(layer);
+       while (layer = layers.nextObject()) {
+           // get color of layer
+           try {
+               color = getColorOf(layer);
 
-                // compare color to reference color
-                if (com.getflourish.colors.areEqual(color, referenceColor)) {
+               if (areEqual(color, referenceColor)) {
 
-                    // select layer if colors are equal
-                    layer.setIsSelected(true);
-                    results++;
-                }
-                log("worked")
-            } catch (error) {
-                log(error);
-            }
-        }
+                   // select layer if colors are equal
+                    try {
+                        layer.setIsSelected(true);
+                    } catch (error) {
+                        log(error);
+                    }
+                   results++;
+               }
+               log("worked" + color)
+           } catch (error) {
+               log(error);
+           }
+       }
 
-        doc.showMessage(results + " layers selected. " + referenceColor);
+       doc.showMessage(results + " layers selected. " + referenceColor);
 
-    } else {
-        doc.showMessage("Please select a reference layer.");
-    }
+   } else {
+       doc.showMessage("Please select a reference layer.");
+   }
 }
 
 com.getflourish.execute(theFunction);
 com = null;
 
 function getColorOf(_layer) {
-    log("foo");
+    var color = null,
+    fill = null,
+    style = null,
+    fills = null,
+    className = String(_layer.className());
+    log(className);
+
+    switch (className) {
+
+        case "MSTextLayer":
+
+        try {
+            // get the text color
+            color = _layer.textColor();
+
+            // check if the text layer has a fill color
+            fill = _layer.style().fills().firstObject();
+            if (fill != undefined && fill.isEnabled()) {
+                color = fill.color();
+            }
+        } catch (error) {
+            log(error);
+        }
+        break;
+        case "MSShapeGroup":
+        case "MSRectangleShape":
+        try {
+            log("shape");
+            color = layer.style().fills().firstObject().color();
+            /*
+            if (style.fills()) {
+                fills = style.fills();
+                if (fills.count() > 0) {
+                    fill = fills.firstObject();
+                    if (fill != null && fill.isEnabled()) {
+                        if(fill.fillType() == 0) {
+                            color = fill.color();
+                        } else {
+                            color = fill;
+                        }
+                    }
+                }
+            }
+            */
+        } catch (error) {
+            log(error);
+        }
+        break;
+    }
+    return color;
+}
+
+
+function areEqual(a, b) {
     try {
-        log("Color: " + _layer.style());
+        var colorA = null,
+        colorB = null;
+
+        if (a && b) {
+            if (a.className() == "MSColor") colorA = a.hexValue();
+            if (b.className() == "MSColor") colorB = b.hexValue();
+            if (colorA && colorB) return colorA == colorB;
+        }
     } catch (error) {
         log(error);
     }
+    
 }
