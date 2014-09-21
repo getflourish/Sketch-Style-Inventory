@@ -199,51 +199,68 @@ com.getflourish = (function() {
     // compares two colors and returns true if they are equal
     areEqual: function(a, b) {
 
-      var colorA = null,
-          colorB = null;
+        var ca = null;
+        var cb = null;
+        var hex_a = null;
+        var hex_b = null;
 
-      if (a && b) {
-        if (a.className() == "MSColor") colorA = a.hexValue();
-        if (b.className() == "MSColor") colorB = b.hexValue();
-        if (colorA && colorB) return colorA == colorB;
+        try {
+            ca = String(a.className());
+            cb = String(b.className());
 
-        if (a.className() == "MSStyleFill" && b.className() == "MSStyleFill") {
-          // check if both fill types are the same
-          if (a.fillType() == b.fillType() && a.isEnabled() && b.isEnabled()) {
-            switch (a.fillType()) {
-              // solid color
-              case 0:
-                return a.color().hexValue() == b.color().hexValue();
-              break;
-
-              // gradient
-              case 1:
-
-                // check if both gradients have the same number of stops
-                var stopsA = a.gradient().stops();
-                var stopsB = b.gradient().stops();
-
-                if (stopsA.count() == stopsB.count()) {
-                  for (var i = 0; i < stopsA.count(); i++) {
-                    if (stopsA.objectAtIndex(i).color() != stopsB.objectAtIndex(i).color() || stopsA.objectAtIndex(i).position() != stopsB.objectAtIndex(i).position()) {
-                      return false;
-                      break;
-                    }
-                  }
-                  return true;
-                }
-              break;
-
-              case 4: 
-                if (a.patternImage() == b.patternImage()) return true;
-              break;
-
-              default:
-              break;
-            }
-          }
+            log("received classnames " + ca + " / " + cb);
+        } catch (error) {
+            log("could not receive classnames");
         }
-      }
+
+        try {
+          if (ca === "MSColor" && cb === "MSColor") {
+              try {
+                  hex_a = String(a.hexValue());
+              } catch (error) {
+                  log("couldn’t get hex a");
+              }
+
+              try {
+                  hex_b = String(b.hexValue());
+              } catch (error) {
+                  log("couldn’t get hex a");
+              }
+
+              if (hex_a && hex_b) {
+                  return hex_a === hex_b;
+              }
+          } else if (ca === "MSStyleFill" && cb === "MSStyleFill") {
+              switch (a.fillType()) {
+                  // pattern
+                  case 4:
+                      if (a.image() == b.image()) return true;
+                  break;
+                  // gradient
+                  case 1:
+                      // check if both gradients have the same number of stops
+                      var stopsA = a.gradient().stops();
+                      var stopsB = b.gradient().stops();
+
+                      if (stopsA.count() == stopsB.count()) {
+                          for (var i = 0; i < stopsA.count(); i++) {
+                              if (stopsA.objectAtIndex(i).color() != stopsB.objectAtIndex(i).color() || stopsA.objectAtIndex(i).position() != stopsB.objectAtIndex(i).position()) {
+                                  return false;
+                              }
+                          }
+                          return true;
+                      }
+                  break;
+
+                  default:
+                      log("default");
+                  break;
+              }
+          }
+        } catch (error) {
+            log("error comparing " + a.fillType() + " / " + b.fillType());
+        }
+        return false;
     },
 
     // Draws a colour palette from a array of colors
@@ -337,53 +354,57 @@ com.getflourish = (function() {
       return layer;
     },
     getColorOf: function(_layer) {
-      var color = null, 
-        fill = null, 
+        var color = null,
+        fill = null,
         style = null,
         fills = null,
         className = String(_layer.className());
 
-      switch (className) {
-        
-        case "MSTextLayer":
+        switch (className) {
 
-        try {
-          // get the text color
-          color = _layer.textColor();
+            case "MSTextLayer":
 
-          // check if the text layer has a fill color
-          fill = _layer.style().fills().firstObject();
-          if (fill != undefined && fill.isEnabled()) {
-            color = fill.color();
-          }
-        } catch (error) {
-          log(error);
-        }
-        break;
-        case "MSShapeGroup":
-        try {
-          style = layer.style();
-           if (style.fills()) {
-             fills = style.fills();
-             if (fills.count() > 0) {
-              fill = fills.firstObject();
-              if (fill != null && fill.isEnabled()) {
-                if(fill.fillType() == 0) {
-                  color = fill.color();
-                } else {
-                  color = fill;
+                try {
+                    // get the text color
+                    color = _layer.textColor();
+
+                    // check if the text layer has a fill color
+                    fill = layer.style().fills().firstObject();
+                    if (fill != undefined && fill.isEnabled()) {
+                        color = fill.color();
+                    }
+                } catch (error) {
+                    log(error);
                 }
-              }
-             }
-           }
-        } catch (error) {
-          log(error);
-        }
-        break;
-        default:
-        break;
-      }
-      return color;
+            break;
+                case "MSOvalShape":
+                case "MSShapeGroup":
+                case "MSShapePathLayer":
+                case "MSRectangleShape":
+                    try {
+                        // try to determin the fill type
+                        style = _layer.style();
+                        if (style.fills()) {
+                            fills = style.fills();
+                            if (fills.count() > 0) {
+                                fill = fills.firstObject();
+                                if (fill != null && fill.isEnabled()) {
+                                    if(fill.fillType() == 0) {
+                                        // solid color
+                                        color = fill.color();
+                                    } else {
+                                        // any other fill
+                                        color = fill;
+                                    }
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        log("could not get color");
+                    }
+            break;
+            }
+        return color;
     },
     getTextColorOf: function (layer) {
       var color = null;
