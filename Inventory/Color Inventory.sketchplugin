@@ -9,7 +9,7 @@
 
 #import 'inventory.js'
 
-(function() {
+function theFunction() {
 
     var artboards = null,
         colorArtboard = null,
@@ -18,16 +18,9 @@
         hexColor = null,
         hexColors = [],
         layers = null,
-        rgbColor = [],
+        rgbColors = [],
         rma = null,
         styleSheetPage = null;
-
-
-    // rgb color storage is needed for color sheet generation
-    rgbColors = [];
-
-    // hex color storage is needed for duplication checks
-    hexColors = [];
 
     // page that the artboard will be created on
     // var styleSheetPage = com.getflourish.common.getPageByName(com.getflourish.config.pageName);
@@ -47,42 +40,24 @@
     layers = doc.currentPage().children().objectEnumerator();
 
     // loop through all layers
-    while (layer = layers.nextObject()) {
+    while (l = layers.nextObject()) {
+        log(l);
+        log(l.name());
         try {
             // the color of the layer
+            log(l.name());
             color = com.getflourish.colors.getColorOf(layer);
             log("got color: " + color);
 
             if (color != null) {
                 // get classname
-                cname = String(color.className());
-                log(cname);
-
-                if (cname === "MSColor") {
-                    // need to compare hex values for comparison in include function
-
-                    try {
-                        hex_color = color.hexValue();
-                    } catch (error) {
-                        log("could not get hex color");
-                    }
-
-                    try {
-                        if (hex_color) {
-                            log(hex_color);
-                            // Check if the current color is a new one
-                            if(com.getflourish.common.isIncluded(hexColors, hex_color) == 0) {
-                                hexColors.push(hex_color);
-                                rgbColors.push(color);
-                            }
-                        }
-                    } catch (error) {
-                        log("could not check integration");
-                    }
+                if(com.getflourish.common.isIncluded(hexColors, color) == 0) {
+                    hexColors.push(hex_color);
+                    rgbColors.push(color);
                 }
             }
         } catch (error) {
-            log("could not finish loop");
+            log(error);
         }
     }
 
@@ -165,4 +140,6 @@
     function sortLeft(a, b) {
         return a.left - b.left;
     }
-}());
+};
+
+theFunction();
