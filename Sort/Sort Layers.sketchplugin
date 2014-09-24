@@ -213,10 +213,10 @@ for (var i = 0; i < layersMeta.length; i++) {
 }
 
 layersMetaArray.reverse();
-inventory.layers.sortIndices(layersMetaArray);
+com.getflourish.layers.sortIndices(layersMetaArray);
 
 // Restore selection
-inventory.layers.select(_selection);
+com.getflourish.layers.select(_selection);
 
 
 // Sorts text layer strings in a ascending order

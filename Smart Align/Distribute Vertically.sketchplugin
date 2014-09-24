@@ -2,4 +2,4 @@
 
 #import 'inventory.js'
 
-inventory.utils.sendDistributeVertically();
+com.getflourish.utils.sendDistributeVertically();

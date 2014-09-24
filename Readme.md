@@ -200,7 +200,7 @@ Generates an artboard with all colors that are used in the document.
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Colors.png)
 
 ### Generate/Style Inventory
-Generates both, the color and text style inventory.
+Generates both, the color and text style com.getflourish.
 
 ### Generate/Text Style Inventory
 Generates an artboard with all text styles that are used in the document.

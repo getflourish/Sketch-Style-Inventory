@@ -9,7 +9,7 @@
 
 #import 'inventory.js'
 
-function theFunction() {
+(function theFunction() {
 
     var artboards = null,
         colorArtboard = null,
@@ -41,23 +41,47 @@ function theFunction() {
 
     // loop through all layers
     while (l = layers.nextObject()) {
-        log(l);
-        log(l.name());
         try {
-            // the color of the layer
-            log(l.name());
-            color = com.getflourish.colors.getColorOf(layer);
-            log("got color: " + color);
-
-            if (color != null) {
-                // get classname
-                if(com.getflourish.common.isIncluded(hexColors, color) == 0) {
-                    hexColors.push(hex_color);
-                    rgbColors.push(color);
+            cname = String(l.className());
+            if (cname == null) continue;
+        } catch (error) {
+            log("error receiving class name");
+        }
+        if (cname === "MSShapeGroup") {
+            try {
+                // the color of the layer
+                color = com.getflourish.colors.getColorOf(l);
+                if (color == null) {
+                    continue;
                 }
+                try {
+                    cname = String(color.className());
+                } catch (error) {
+                    log("could not receive class name");
+                    continue;
+                }
+                try {
+                    if (cname === "MSColor") {
+                        try {
+
+                            hexColor = color.hexValue();
+                            // get classname
+                            if(com.getflourish.common.isIncluded(hexColors, hexColor) == 0) {
+                                hexColors.push(hexColor);
+                                rgbColors.push(color);
+                            }
+
+                        } catch (error) {
+                            log("error getting hex code");
+                            continue;
+                        }
+                    }
+                } catch (error) {
+                    log("could not check if color is included");
+                }
+            } catch (error) {
+                log("oh noes");
             }
-        } catch (error) {
-            log(error);
         }
     }
 
@@ -95,11 +119,16 @@ function theFunction() {
     com.getflourish.common.refreshPage();
 
     // reset variable
+    com = null;
     artboards = null;
     colorArtboard = null;
-    hexColors = null;
+    color = null;
+    cname = null;
+    hexColor = null;
+    hexColors = [];
     layers = null;
-    rgbColor = null;
+    rgbColors = [];
+    rma = null;
     styleSheetPage = null;
 
     /**
@@ -140,6 +169,4 @@ function theFunction() {
     function sortLeft(a, b) {
         return a.left - b.left;
     }
-};
-
-theFunction();
+}());

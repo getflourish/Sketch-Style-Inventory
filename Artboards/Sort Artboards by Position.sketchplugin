@@ -31,7 +31,7 @@ if (selection.count() > 1 && selection[0].className() == "MSArtboardGroup") {
     }
 
     // sort layer list
-    inventory.layers.sortIndices(layersMetaArray);
+    com.getflourish.layers.sortIndices(layersMetaArray);
 
 } else {
     doc.showMessage("Please select at least two artboards.")

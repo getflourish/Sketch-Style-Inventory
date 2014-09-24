@@ -297,6 +297,7 @@ com.getflourish = (function() {
       var left = 0;
       var top = 30;
       var margin = 30;
+      var margin_top = 50;
       var width = 0;
 
       my.common.removeAllLayersFromArtboard(artboard);
@@ -315,28 +316,48 @@ com.getflourish = (function() {
 
         // after x color chips, star a new row
         if ((i + 1) % my.config.maxColorsPerRow == 0) {
-          top += width + margin;
+          top += width + margin_top;
           left = 0;
         }
       }
-      my.common.resize(artboard, 680, top + margin + width);
+      my.common.resize(artboard, 680, top + margin_top + width);
     },
     addColorChip: function (artboard, color) {
       var padding = 5;
+
       // get hex color
       var hex_string = "#" + color.hexValue();
+
       // add layer group
       var group = artboard.addLayerOfType("group");
       var group_name = "Color Swatch " + hex_string;
       group.setName(group_name);
+
       // draw square color
       var colorSquare = my.colors.addColorShape(group, color, 100, 100);
+
       // draw white label rectangle
+      var white = [MSColor colorWithHex: "#FFFFFF" alpha: 1];
+      var labelBG = my.colors.addColorShape(group, white, 100, 40);
+      labelBG.frame().setY(100);
+
+      // Hex Label
       var label = my.common.addTextLayer(group, hex_string);
       label.frame().setY(colorSquare.frame().height() + padding);
-      // draw text with variable name / color
-      //var variable_label = my.common.addTextLayer(group, hex_string);
-      //variable_label.frame().setY(label.frame().y() + label.frame().height() + padding)
+
+      // RGB Label
+      var rgb = String(Math.ceil(color.red() * 255)) + ", " + String(Math.ceil(color.green() * 255)) + ", " + String(Math.ceil(color.blue() * 255)) + ", " + String(color.alpha());
+      newLabel = my.common.addTextLayer(group, rgb);
+      newLabel.frame().setY(label.frame().y() + 14 + padding);
+
+      // Shadow
+      var shadow = group.style().shadows().addNewStylePart();
+
+      var black = [MSColor colorWithHex: "#000000" alpha: 0.2];
+      shadow.setOffsetX(0);
+      shadow.setOffsetY(2);
+      shadow.setBlurRadius(3);
+      shadow.setSpread(0);
 
       return group;
     },

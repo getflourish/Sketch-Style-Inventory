@@ -28,8 +28,8 @@ if (selection.count() > 1) {
 }
 
 // Main
-inventory.layers.reverseLayerOrder(layersMeta);
-inventory.layers.select(_selection);
+com.getflourish.layers.reverseLayerOrder(layersMeta);
+com.getflourish.layers.select(_selection);
 
 
 // Sorting

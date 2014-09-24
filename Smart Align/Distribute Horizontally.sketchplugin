@@ -2,4 +2,4 @@
 
 #import 'inventory.js'
 
-inventory.utils.sendDistributeHorizontally();
+com.getflourish.utils.sendDistributeHorizontally();

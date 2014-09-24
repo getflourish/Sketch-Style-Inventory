@@ -28,10 +28,10 @@ if (selection.count() == 1) {
 		selected.setIsSelected(true);
 		parent.setIsSelected(true);
 		// center align
-		inventory.utils.sendAlignVertically();
+		com.getflourish.utils.sendAlignVertically();
 	} else {
 		// center selection within group
-		inventory.utils.sendAlignVertically();
+		com.getflourish.utils.sendAlignVertically();
 	}
 
 	// deselect parent
@@ -39,7 +39,7 @@ if (selection.count() == 1) {
 
 } else if (selection.count() == 2) {
 	// align layers
-	inventory.utils.sendAlignVertically();
+	com.getflourish.utils.sendAlignVertically();
 
 } else {
 	doc.showMessage("Please select a layer.");
