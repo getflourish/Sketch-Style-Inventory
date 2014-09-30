@@ -6,6 +6,23 @@
 
 Design requires free, sometimes chaotic exploration. But design also means organisation and structure. Sketch can be good in both aspects, but moving from exploration to structured layouts with text styles and unified colors is hard. Either you start clean files from scratch, or you use what you have and try to tidy it up. The Style Inventory is meant to help you with that. It gives you an overview of all your used styles and helps you to merge styles of similar layers into one. This repositiory also contains a few other helpful plugins.
 
+## Change Log
+
+**September 30, 2014**
+
+* Added "Remove Artboard"
+* Added "Replace Layer"
+* Added "Select Parent Group"
+* Added "Select Group Layers"
+* Added "Smart Align"
+* Added "Smart Move"
+* Color Inventory will also display RGB values
+* Support for gradients and image fills in Color Selection Plugins
+* Select Artboard will now select and collapse all Artboards when an Artboard was already selected
+* Set Line Height works as expected with multiple selections
+* Added Sketch Select, a simple selector engine for Sketch plugin developers
+* Improved performance of color selection
+
 
 ## Plugin Directory
 
