@@ -237,6 +237,11 @@ Distributes the selected elements vertically, with the same distante beetween th
 
 Allows you to pull or push layers in relation to the selected layer.
 
+* Pull Left `shift` + `⌘` + `⌥` + `←`
+* Pull Up `shift` + `⌘` + `⌥` + `↑`
+* Push Down `shift` + `⌘` + `⌥` + `↓`
+* Push Right `shift` + `⌘` + `⌥` + `→`
+
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Smart%20Move.gif)
 
 ## Sorting
