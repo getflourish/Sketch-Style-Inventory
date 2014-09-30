@@ -1,4 +1,4 @@
-// init
+// init (control alt cmd t)
 
 #import 'inventory.js'
 #import 'sandbox.js'

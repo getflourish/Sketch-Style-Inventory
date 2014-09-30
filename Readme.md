@@ -30,19 +30,21 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 * Duplicate Artboard `shift` + `⌘` + `D`
 * Fit Artboard
 * Fit Artboard Height `ctrl` + `shift` + `A`
+* Remove Artboard `⌘` + `⌫`
 * Sort Artboards
 
 #### Inventory
-* Generate/Color Inventory `experimental`
-* Generate/Style Inventory `experimental`
+* Generate/Color Inventory `experimental` `ctrl` + `⌘` + `⌥` + `C`
+* Generate/Text Styles Inventory `experimental` `ctrl` + `⌘` + `⌥` + `T`
 * Rename Selected Layers
 
 #### Misc
-* Replace Layer
+* Replace Layer `⌘` + `⌥` + `R`
 
 #### Selection
 * Select Artboard(s) `shift` + `⌘` + `A`
 * Select Group Layers `ctrl` + `⌘` + `G`
+* Select Parent Group `⌘` + `⌥` + `G`
 * by Color/Select Layers by Color `shift` + `ctrl` + `⌘` + `C`
 * by Color/Select Layers by Color on Artboard `ctrl` + `⌘` + `C`
 * by Color/Select Next/Previous Layer by Color
@@ -50,15 +52,24 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 * by Name/Select Layers by Name on Artboard `ctrl` + `⌘` + `N`
 * by Text Style/Choose Similar Text Layer
 * by Text Style/Select Similar Text Layers
-* by Text Style/Select Similar Text Layers on Artboard `⌘` + `control` + `NT`
+* by Text Style/Select Similar Text Layers on Artboard `⌘` + `control` + `T`
 
 #### Smart Align
 * Smart Align Horizontally `⌘` + `⌥` + `,`
 * Smart Align Vertically `⌘` + `⌥` + `.`
 * Distribute Horizontally `control` + `⌘` + `⌥` + `,`
 * Distribute Vertically `control` + `⌘` + `⌥` + `.`
+* Space Horizontal
+* Space Vertical
 
-#### Sorting
+#### Smart Move
+* Pull Left `shift` + `⌘` + `⌥` + `←`
+* Pull Up `shift` + `⌘` + `⌥` + `↑`
+* Push Down `shift` + `⌘` + `⌥` + `↓`
+* Push Right `shift` + `⌘` + `⌥` + `→`
+* Set Increments `shift` + `⌘` + `⌥` + `I`
+
+#### Sort
 * Sort Layers `ctrl` + `⌘` + `⌥` + `S`
 * Reverse Positions
 * Reverse Layer Order
@@ -89,15 +100,29 @@ You can use modifier keys such as `option`, `command`, `control`, `shift`
 
 ### Duplicate Artboard (next to the current artboard)
 
-This improves the built in behavior of artboard duplication in Sketch. If the current artboard is in the middle of other artboards, all artboards on the right side will be shifted to the right before the artboard is duplicated. Requires any layer of an artboard to be selected.
+This improves the built in behavior of artboard duplication in Sketch. If the selected artboard is in the middle of other artboards, all artboards on the right side will be shifted to the right before the artboard is duplicated. Requires any layer of an artboard to be selected.
 
 **Shortcut:** `shift` + `⌘` + `D`
 
 ![Duplicate Artboard Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Duplicate%20Artboard.gif)
 
+### Remove Artboard
+
+This improves the built in behavior of artboard removal in Sketch. If the selected artboard is in the middle of other artboards, all artboards on the right side will be shifted to the left after the artboard has been removed. Requires any layer of an artboard to be selected.
+
+**Shortcut:** `⌘` + `⌫` (Backspace)
+
+![Remove Artboard Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Remove%20Artboard.gif)
+
+
 ### Fit Artboard
 
 Resizes the artboard to fit its layers.
+
+
+### Fit Artboard Height
+
+Resizes the artboard to fit the height of its layers.
 
 **Shortcut:** `shift` + `ctrl` + `A`
 
@@ -126,7 +151,7 @@ Plugin that allows you to set the line height of a text layer as a multiple of t
 
 Replaces the selected layer with the content in the clipboard. Basically this plugin does paste in place while removing the original selection.
 
-**Shortcut:** `option` + `cmd` + `R`
+**Shortcut:** `⌥` + `cmd` + `R`
 
 ![Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Replace%20Layer.gif)
 
@@ -177,6 +202,39 @@ Selects the layers of a group.
 
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20Layer%20by%20Similar%20Style.png)
 
+
+## Smart Align
+
+### Distribute Horizontally
+Calls the menu command "Distribute Horizontally". Just for shortcut purposes. 
+
+**Shortcut:** `ctrl` + `⌘` + `⌥` + `,`
+
+### Distribute Vertically
+Calls the menu command "Distribute Vertically". Just for shortcut purposes. 
+
+**Shortcut:** `ctrl` + `⌘` + `⌥` + `.`
+
+### Smart Align Horizontally
+Aligns the selected layer relative to its parent group.
+
+**Shortcut:** `⌘` + `⌥` + `,`
+
+### Smart Align Vertically
+Aligns the selected layer relative to its parent group.
+
+**Shortcut:** `⌘` + `⌥` + `.`
+
+### Space Horizontal
+Distributes the selected elements horizontally, with the same distante beetween them. If only one layer is selected, the layer will be moved by the spacing that has been input.
+
+### Space Vertical
+Distributes the selected elements vertically, with the same distante beetween them. If only one layer is selected, the layer will be moved by the spacing that has been input.
+
+## Smart Move
+
+Allows you to pull or push layers in relation to the selected layer.
+
 ## Sorting
 
 ### Sort Layers
@@ -197,9 +255,6 @@ There are also plugins to reverse the order of the layers in the layer list and 
 ## Style Inventory
 Generate a visual style sheet with all colors and text styles that you are using. This will help you to get an overview of your used styles so you can merge styles that are very close together. This will also export a CSS file with text styles.
 
-### Export/Symbols to PNG
-`experimental` Exports symbols on the current page as PNG to the project folder. In a future release, this plugin may export all symbols from the document.
-
 ### Export/Text Styles to CSS
 
 This plugin generates an overview of all your text styles and exports it as CSS. [Watch the demo](https://vimeo.com/102635978 "Demo")
@@ -212,12 +267,9 @@ To do: export opacity, remove attributes that have the default value
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Sketch%20CSS.png)
 
 ### Generate/Color Inventory
-Generates an artboard with all colors that are used in the document.
+Generates an artboard with all colors that are used on the current page.
 
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Colors.png)
-
-### Generate/Style Inventory
-Generates both, the color and text style com.getflourish.
 
 ### Generate/Text Style Inventory
 Generates an artboard with all text styles that are used in the document.
