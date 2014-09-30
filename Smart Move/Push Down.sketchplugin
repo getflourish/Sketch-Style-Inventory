@@ -20,12 +20,12 @@ var persistent = [[NSThread mainThread] threadDictionary];
 // offset
 var offset;
 
-if (persistent["com.getflourish.increments"] != null) {
-	offset = persistent["com.getflourish.increments"];
-} else {
+if (persistent["com.getflourish.increments"] == null) {
 	var value = parseFloat([doc askForUserInput:"Increments:" initialValue:10]);
 	persistent["com.getflourish.increments"] = value;
 }
+
+offset = persistent["com.getflourish.increments"];
 
 
 // loop through all layers on the same level as the parent group
