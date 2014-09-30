@@ -297,7 +297,7 @@ com.getflourish = (function() {
       var left = 0;
       var top = 30;
       var margin = 30;
-      var margin_top = 50;
+      var margin_top = 70;
       var width = 0;
 
       my.common.removeAllLayersFromArtboard(artboard);
@@ -333,31 +333,41 @@ com.getflourish = (function() {
       var group_name = "Color Swatch " + hex_string;
       group.setName(group_name);
 
-      // draw square color
-      var colorSquare = my.colors.addColorShape(group, color, 100, 100);
-
       // draw white label rectangle
       var white = [MSColor colorWithHex: "#FFFFFF" alpha: 1];
-      var labelBG = my.colors.addColorShape(group, white, 100, 40);
-      labelBG.frame().setY(100);
+      var labelBG = my.colors.addColorShape(group, white, 100, 140);
+      labelBG.frame().setY(0);
+      labelBG.setName("Background");
+
+      // draw square color
+      var colorSquare = my.colors.addColorShape(group, color, 100, 100);
+      var hex_string = "#" + color.hexValue();
+      colorSquare.setName("Color Swatch " + hex_string);
 
       // Hex Label
       var label = my.common.addTextLayer(group, hex_string);
       label.frame().setY(colorSquare.frame().height() + padding);
+      label.frame().setX(4);
+      label.setName("Hex Label");
 
       // RGB Label
       var rgb = String(Math.ceil(color.red() * 255)) + ", " + String(Math.ceil(color.green() * 255)) + ", " + String(Math.ceil(color.blue() * 255)) + ", " + String(color.alpha());
       newLabel = my.common.addTextLayer(group, rgb);
       newLabel.frame().setY(label.frame().y() + 14 + padding);
+      newLabel.frame().setX(4);
+      newLabel.setName("RGB Label");
 
       // Shadow
-      var shadow = group.style().shadows().addNewStylePart();
+      var shadow = labelBG.style().shadows().addNewStylePart();
 
-      var black = [MSColor colorWithHex: "#000000" alpha: 0.2];
+      var black = [MSColor colorWithHex: "#000" alpha:0.2];
       shadow.setOffsetX(0);
       shadow.setOffsetY(2);
       shadow.setBlurRadius(3);
       shadow.setSpread(0);
+
+      shadow.setColor(black)
+
 
       return group;
     },
@@ -369,8 +379,6 @@ com.getflourish = (function() {
       layer.style().fills().addNewStylePart();
       layer.style().fill().setFillType(0);
       layer.style().fill().setColor(color);
-      var hex_string = "#" + color.hexValue();
-      layer.setName("Color Swatch " + hex_string);
 
       return layer;
     },
