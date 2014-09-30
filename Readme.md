@@ -216,12 +216,13 @@ Calls the menu command "Distribute Vertically". Just for shortcut purposes.
 **Shortcut:** `ctrl` + `⌘` + `⌥` + `.`
 
 ### Smart Align Horizontally
-Aligns the selected layer relative to its parent group.
+`experimental` Aligns the selected layer relative to its parent group.
 
 **Shortcut:** `⌘` + `⌥` + `,`
 
 ### Smart Align Vertically
-Aligns the selected layer relative to its parent group.
+
+`experimental` Aligns the selected layer relative to its parent group.
 
 **Shortcut:** `⌘` + `⌥` + `.`
 
@@ -235,7 +236,7 @@ Distributes the selected elements vertically, with the same distante beetween th
 
 ## Smart Move
 
-Allows you to pull or push layers in relation to the selected layer.
+`experimental` Allows you to pull or push layers in relation to the selected layer.
 
 * Pull Left `shift` + `⌘` + `⌥` + `←`
 * Pull Up `shift` + `⌘` + `⌥` + `↑`
