@@ -13,7 +13,7 @@ function analyseTextStyles () {
 	for (var i = 0; i < styles.count(); i++) {
 		var style = styles.objectAtIndex(i);
 		var textStyle = style.style().textStyle().attributes();
-		if (!inventory.common.isIncluded(definedTextStyles, textStyle)) {
+		if (!com.getflourish.common.isIncluded(definedTextStyles, textStyle)) {
 	    	definedTextStyles.push({
 	    		"textStyle": textStyle,
 	    		"name": style.name()
@@ -40,7 +40,7 @@ function createTextStyles (artboard) {
 	for (var i = 0; i < definedTextStyles.length; i++) {
 		var definedTextStyle = definedTextStyles[i];
 		var textLayer = artboard.addLayerOfType("text");
-		textLayer.setStringValue(inventory.config.textStylePlaceholder)
+		textLayer.setStringValue(com.getflourish.config.textStylePlaceholder)
 		textLayer.style().textStyle().setAttributes(definedTextStyle.textStyle);
 		textLayer.setName(definedTextStyle.name)
 		var theWidth = textLayer.frame().width();
@@ -59,15 +59,15 @@ function createTextStyles (artboard) {
 	artboard.frame().setWidth(maxWidth + margin);
 	artboard.frame().setHeight(top + margin);
 
-    inventory.common.addCheckeredBackground(artboard);
+    com.getflourish.common.addCheckeredBackground(artboard);
 
 	// Zoom the view to make the entire artboard visible
-	inventory.view.zoomTo(artboard)
+	com.getflourish.view.zoomTo(artboard)
 
 }
 
 function exportStyles(artboard) {
-	var styleSheetString = inventory.css.generateStyleSheet(artboard.children());
+	var styleSheetString = com.getflourish.css.generateStyleSheet(artboard.children());
 
 	var view = [doc currentView];
 	view.refresh();
@@ -77,15 +77,15 @@ function exportStyles(artboard) {
 
 	var path = document_path + "/typography.css"
 
-	inventory.common.save_file_from_string(path, styleSheetString);
+	com.getflourish.common.save_file_from_string(path, styleSheetString);
 }
 
 analyseTextStyles();
 
 // for large files, sketch crashes after adding the style sheet page (a second time)
-var styleSheetPage = inventory.common.getPageByName(inventory.config.pageName);
-var artboard = inventory.common.getArtboardByPageAndName(styleSheetPage, "Typography");
-inventory.common.removeAllLayersFromArtboard(artboard)
+var styleSheetPage = com.getflourish.common.getPageByName(com.getflourish.config.pageName);
+var artboard = com.getflourish.common.getArtboardByPageAndName(styleSheetPage, "Typography");
+com.getflourish.common.removeAllLayersFromArtboard(artboard)
 createTextStyles(artboard);
 
 exportStyles(artboard);

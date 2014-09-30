@@ -13,14 +13,14 @@ if (selection.count() == 1) {
 	var selection = selection[0];
 
 	// Paste in Place
-	inventory.utils.sendPasteInPlace();
+	com.getflourish.utils.sendPasteInPlace();
 
 	// Select the original layer
 	doc.currentPage().deselectAllLayers();
 	selection.setIsSelected(true);
 
 	// Remove
-	inventory.utils.sendDelete();
+	com.getflourish.utils.sendDelete();
 
 } else {
 	doc.showMessage("Please select a layer.");

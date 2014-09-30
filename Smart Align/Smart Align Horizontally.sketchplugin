@@ -16,6 +16,7 @@ if (selection.count() == 1) {
 
 	// in case the selection is the outermost layer of the group
 	if (selected.absoluteRect().x() < parent.absoluteRect().x() || selected.absoluteRect().x() > parent.absoluteRect().x() + parent.frame().width()) {
+
 		// Move selection
 		selected.frame().setX(0);
 
@@ -28,12 +29,12 @@ if (selection.count() == 1) {
 		parent.setIsSelected(true);
 
 		// center align
-		inventory.utils.sendAlignHorizontally();
+		com.getflourish.utils.sendAlignHorizontally();
 
 	// in case the selection is inside the group
 	} else {
 		// center selection within group
-		inventory.utils.sendAlignHorizontally();
+		com.getflourish.utils.sendAlignHorizontally();
 	}
 
 	// deselect parent
@@ -41,7 +42,7 @@ if (selection.count() == 1) {
 
 } else if (selection.count() == 2) {
 	// align layers
-	inventory.utils.sendAlignHorizontally();
+	com.getflourish.utils.sendAlignHorizontally();
 
 } else {
 	doc.showMessage("Please select a layer.");

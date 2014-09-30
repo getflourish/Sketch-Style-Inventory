@@ -22,16 +22,16 @@ if (selection.count() == 1) {
     selected = selection[0];
 
     // get color of selected layer
-    referenceColor = inventory.colors.getColorOf(selected);
+    referenceColor = com.getflourish.colors.getColorOf(selected);
 
     // loop through all layers of the page
     $("MSLayer", doc.currentPage().currentArtboard()).each(function () {
 
         // get color of layer
-        color = inventory.colors.getColorOf(this);
+        color = com.getflourish.colors.getColorOf(this);
 
         // compare color to reference color
-        if (inventory.colors.areEqual(color, referenceColor)) {
+        if (com.getflourish.colors.areEqual(color, referenceColor)) {
 
             // select layer if colors are equal
             this.setIsSelected(true);

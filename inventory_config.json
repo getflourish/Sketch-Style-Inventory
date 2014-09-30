@@ -1,6 +1,0 @@
-inventory.config = {
-    colorInventoryName: "Color Inventory",
-    pageName: "Style Sheet",
-    textStylePlaceholder: "The big brown fox jumps over the lazy dog.",
-    maxColorsPerRow: 5
-}

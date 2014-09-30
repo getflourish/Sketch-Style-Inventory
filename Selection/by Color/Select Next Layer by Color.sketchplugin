@@ -18,7 +18,7 @@ var selected = selection[0];
 if (selection.count() == 1) {
 
 	// the color of the selected element
-	var referenceColor = inventory.colors.getColorOf(selected);
+	var referenceColor = com.getflourish.colors.getColorOf(selected);
     var children = doc.currentPage().children();
 
 	// loop through all artboards of the current page
@@ -32,17 +32,17 @@ if (selection.count() == 1) {
 
 			// if the layer matches the selection,
 			// we have our starting point for the search
-			if (found == null && inventory.layers.areEqual(layer, selected)) {
+			if (found == null && com.getflourish.layers.areEqual(layer, selected)) {
 				found = j;
 
 			} else if (found != null && match == null) {
 
                 // if we moved past the selected layer in the list,
                 // compare the colors
-                var color = inventory.colors.getColorOf(layer);
+                var color = com.getflourish.colors.getColorOf(layer);
 
                 if (color != null) {
-                    if (inventory.colors.areEqual(color, referenceColor)) {
+                    if (com.getflourish.colors.areEqual(color, referenceColor)) {
                         match = layer;
                         break;
                     }
@@ -67,11 +67,11 @@ if (selection.count() == 1) {
                 if (match == null) {
 
                     // get the color of the layer
-                    var color = inventory.colors.getColorOf(layer);
+                    var color = com.getflourish.colors.getColorOf(layer);
 
                     // compare colors and if the match, return
                     if (color != null) {
-                        if (inventory.colors.areEqual(color, referenceColor)) {
+                        if (com.getflourish.colors.areEqual(color, referenceColor)) {
                             match = layer;
                             break;
                         }
@@ -92,7 +92,7 @@ if (selection.count() == 1) {
         match.setIsSelected(true);
 
         // center the view on the matched layer
-        inventory.view.centerTo(match);
+        com.getflourish.view.centerTo(match);
     }
 } else {
 	doc.showMessage("Please select one layer.");

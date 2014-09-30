@@ -28,7 +28,7 @@ if (selection.count() > 1) {
 }
 
 // Restore selection
-inventory.layers.select(_selection);
+com.getflourish.layers.select(_selection);
 
 function sortLayers (layers) {
 

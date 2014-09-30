@@ -9,25 +9,21 @@
 
 #import 'inventory.js'
 
-(function() {
+(function theFunction() {
 
     var artboards = null,
         colorArtboard = null,
+        color = null,
+        cname = null,
+        hexColor = null,
         hexColors = [],
         layers = null,
-        rgbColor = [],
+        rgbColors = [],
         rma = null,
         styleSheetPage = null;
 
-
-    // rgb color storage is needed for color sheet generation
-    rgbColors = [];
-
-    // hex color storage is needed for duplication checks
-    hexColors = [];
-
     // page that the artboard will be created on
-    // var styleSheetPage = inventory.common.getPageByName(inventory.config.pageName);
+    // var styleSheetPage = com.getflourish.common.getPageByName(com.getflourish.config.pageName);
     styleSheetPage = doc.currentPage();
 
     // the right most artboard
@@ -35,41 +31,56 @@
 
     // dirty hack that will prevent crashes
     // todo: find out why Sketch crashes when a existing artboard is selected
-    inventory.common.removeArtboardFromPage(styleSheetPage, inventory.config.colorInventoryName);
+    com.getflourish.common.removeArtboardFromPage(styleSheetPage, com.getflourish.config.colorInventoryName);
 
     // artboard that will hold all color swatches
-    colorArtboard = inventory.common.getArtboardByPageAndName(styleSheetPage, inventory.config.colorInventoryName);
+    colorArtboard = com.getflourish.common.getArtboardByPageAndName(styleSheetPage, com.getflourish.config.colorInventoryName);
 
-    // get artboards
-    artboards = doc.currentPage().artboards().objectEnumerator();
+    // get layers
+    layers = doc.currentPage().children().objectEnumerator();
 
-    // loop through all artboards
-    while (artboard = artboards.nextObject()) {
-
-        // get layers
-        layers = artboard.children().objectEnumerator();
-
-        // loop through all layers
-        while (layer = layers.nextObject()) {
-
-            // consider text and shapes
-            if(layer.isKindOfClass(MSShapeGroup) || layer.isKindOfClass(MSTextLayer)) {
-
+    // loop through all layers
+    while (l = layers.nextObject()) {
+        try {
+            cname = String(l.className());
+            if (cname == null) continue;
+        } catch (error) {
+            log("error receiving class name");
+        }
+        if (cname === "MSShapeGroup") {
+            try {
                 // the color of the layer
-                var color = inventory.colors.getColorOf(layer);
+                color = com.getflourish.colors.getColorOf(l);
+                if (color == null) {
+                    continue;
+                }
+                try {
+                    cname = String(color.className());
+                } catch (error) {
+                    log("could not receive class name");
+                    continue;
+                }
+                try {
+                    if (cname === "MSColor") {
+                        try {
 
-                if (color != undefined) {
-                    if (color.className() == "MSColor") {
-                        // need to compare hex values for comparison in include function
-                        var hex_color = "#" + color.hexValue();
+                            hexColor = color.hexValue();
+                            // get classname
+                            if(com.getflourish.common.isIncluded(hexColors, hexColor) == 0) {
+                                hexColors.push(hexColor);
+                                rgbColors.push(color);
+                            }
 
-                        // Check if the current color is a new one
-                        if(inventory.common.isIncluded(hexColors, hex_color) == 0) {
-                            hexColors.push(hex_color);
-                            rgbColors.push(color);
+                        } catch (error) {
+                            log("error getting hex code");
+                            continue;
                         }
                     }
+                } catch (error) {
+                    log("could not check if color is included");
                 }
+            } catch (error) {
+                log("oh noes");
             }
         }
     }
@@ -78,14 +89,14 @@
     // only create a color sheet when there are colors
 
     if (rgbColors.length > 0) {
-      inventory.colors.createColorSheet(colorArtboard, rgbColors);
+      com.getflourish.colors.createColorSheet(colorArtboard, rgbColors);
     }
 
     // Position the artboard next to the last artboard
     // The actual position that we want is the right edge of the
     // rightmost artboard plus a margin of 100px.
 
-    if(rma.name() != inventory.config.colorInventoryName) {
+    if(rma.name() != com.getflourish.config.colorInventoryName) {
         var left = rma.frame().width() + rma.frame().x() + 100;
         var top = rma.frame().y();
         colorArtboard.frame().setX(left);
@@ -97,22 +108,27 @@
         colorArtboard.frame().setY(top);
     }
 
-    bg = inventory.common.addCheckeredBackground(colorArtboard);
+    bg = com.getflourish.common.addCheckeredBackground(colorArtboard);
 
     // focus the view on the artboard
-    inventory.view.centerTo(colorArtboard);
+    com.getflourish.view.centerTo(colorArtboard);
     doc.currentPage().deselectAllLayers();
     colorArtboard.setIsSelected(true);
 
     // refresh
-    inventory.common.refreshPage();
+    com.getflourish.common.refreshPage();
 
     // reset variable
+    com = null;
     artboards = null;
     colorArtboard = null;
-    hexColors = null;
+    color = null;
+    cname = null;
+    hexColor = null;
+    hexColors = [];
     layers = null;
-    rgbColor = null;
+    rgbColors = [];
+    rma = null;
     styleSheetPage = null;
 
     /**
