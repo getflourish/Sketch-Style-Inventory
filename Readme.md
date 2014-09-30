@@ -228,12 +228,16 @@ Aligns the selected layer relative to its parent group.
 ### Space Horizontal
 Distributes the selected elements horizontally, with the same distante beetween them. If only one layer is selected, the layer will be moved by the spacing that has been input.
 
+![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Space.gif)
+
 ### Space Vertical
 Distributes the selected elements vertically, with the same distante beetween them. If only one layer is selected, the layer will be moved by the spacing that has been input.
 
 ## Smart Move
 
 Allows you to pull or push layers in relation to the selected layer.
+
+![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Smart%20Move.gif)
 
 ## Sorting
 
