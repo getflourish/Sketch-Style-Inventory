@@ -39,8 +39,22 @@
     // get layers
     layers = doc.currentPage().children().objectEnumerator();
 
+    var layerIsVisible = function(layer){
+      var target = layer;
+      while(target.parentGroup()){
+        if(!target.isVisible()){
+          return false;
+        }
+        target = target.parentGroup();
+      }
+      return layer.isVisible();
+    };
+
     // loop through all layers
     while (l = layers.nextObject()) {
+        if(!layerIsVisible(l)){
+            continue;
+        }
         try {
             cname = String(l.className());
             if (cname == null) continue;
