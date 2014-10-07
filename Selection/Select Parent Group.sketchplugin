@@ -2,13 +2,15 @@
 
 if (selection.count() > 0) {
 
-	// select parent group
-	selection[0].parentGroup().setIsSelected(true);
+	var parent = selection[0].parentGroup();
 
 	// deselect all previously selected layers
 	for (var i = 0; i < selection.count(); i++) {
 		selection[i].setIsSelected(false);
 	}
+
+	// select parent group
+	parent.setIsSelected(true);
 } else {
 	doc.showMessage("Please select a layer.");
 }

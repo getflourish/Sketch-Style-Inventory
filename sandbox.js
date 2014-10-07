@@ -1,193 +1,103 @@
-/*
-This is a port to JSTalk of <https://github.com/leighmcculloch/AppSandboxFileAccess>
+var environ = [[NSProcessInfo processInfo] environment],
+    in_sandbox= (nil != [environ objectForKey:@"APP_SANDBOX_CONTAINER_ID"])
 
-Here's the original license for AppSandboxFileAccess:
-
-## License
-
-Copyright (c) 2013, Leigh McCulloch All rights reserved.
-
-BSD-2-Clause License: http://opensource.org/licenses/BSD-2-Clause
-
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
-
-- Redistributions of source code must retain the above copyright notice,
-  this list of conditions and the following disclaimer.
-
-- Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
-var AppSandboxFileAccessPersist = {
-  keyForBookmarkDataForURL: function(url) {
-    log("AppSandboxFileAccessPersist.keyForBookmarkDataForURL("+url+")")
-    var urlStr = [url absoluteString];
-    log("> " + [NSString stringWithFormat:@"bd_%1$@", urlStr])
-    return [NSString stringWithFormat:@"bd_%1$@", urlStr];
-  },
-  bookmarkDataForURL: function(url) {
-    log("AppSandboxFileAccessPersist.bookmarkDataForURL('"+ url +"')")
-    var defaults = [NSUserDefaults standardUserDefaults];
-
-    // loop through the bookmarks one path at a time down the URL
-    var subUrl = url;
-    while ([subUrl path].length() > 1) { // give up when only '/' is left in the path
-      var key = AppSandboxFileAccessPersist.keyForBookmarkDataForURL(subUrl);
-      var bookmark = [defaults dataForKey:key];
-      if (bookmark) { // if a bookmark is found, return it
-        return bookmark;
-      }
-      subUrl = [subUrl URLByDeletingLastPathComponent];
-    }
-    // no bookmarks for the URL, or parent to the URL were found
-    return nil;
-  },
-  setBookmarkData: function(data, url) {
-    log("AppSandboxFileAccessPersist.setBookmarkData")
-    log("data: " + data)
-    log("URL: " + url)
-    var defaults = [NSUserDefaults standardUserDefaults];
-    var key = AppSandboxFileAccessPersist.keyForBookmarkDataForURL(url);
-    [defaults setObject:data forKey:key];
-  }
+if(in_sandbox){
+  print("We’re sandboxed: here be dragons")
 }
 
-var AppSandboxFileAccess = {
-  init: function(opts){
-    this.message = opts.message || "Please authorize Sketch to write to this folder. You will only need to do this once."
-    this.prompt = opts.prompt || "Authorize",
-    this.title = opts.title || "Sketch Authorization"
-    return this;
-  },
-  askPermissionForUrl: function(url) {
-    log("AppSandboxFileAccess.askPermissionForUrl("+url+")")
-    // this url will be the url allowed, it might be a parent url of the url passed in
-    var allowedUrl;
+AppSandbox = function(){ }
+AppSandbox.prototype.authorize = function(path, callback){
+  log("AppSandbox.authorize("+path+")")
+  var success = false
 
-    // create delegate that will limit which files in the open panel can be selected, to ensure only a folder
-    // or file giving permission to the file requested can be selected
-    // AppSandboxFileAccessOpenSavePanelDelegate *openPanelDelegate = [[AppSandboxFileAccessOpenSavePanelDelegate alloc] initWithFileURL:url];
+  if (in_sandbox) {
+    var url = [[[NSURL fileURLWithPath:path] URLByStandardizingPath] URLByResolvingSymlinksInPath],
+        allowedUrl = false
 
-    // check that the url exists, if it doesn't, find the parent path of the url that does exist and ask permission for that
-    var fileManager = [NSFileManager defaultManager];
-    var path = [url path];
-    while (path.length() > 1) { // give up when only '/' is left in the path or if we get to a path that exists
-      if ([fileManager fileExistsAtPath:path]) {
-        break;
-      }
-      path = [path stringByDeletingLastPathComponent];
-    }
-    log("Looks like we have a winner: " + path)
-    url = [NSURL fileURLWithPath:path];
+    // Key for bookmark data:
+    var bd_key = this.key_for_url(url)
 
-    // display the open panel
-    var openPanel = [NSOpenPanel openPanel];
-    [openPanel setMessage:this.message];
-    [openPanel setPrompt:this.prompt];
-    [openPanel setTitle:this.title];
-    // [openPanel setDelegate:openPanelDelegate];
-    [openPanel setCanCreateDirectories:false];
-    [openPanel setCanChooseFiles:true];
-    [openPanel setCanChooseDirectories:true];
-    [openPanel setAllowsMultipleSelection:false];
-    [openPanel setShowsHiddenFiles:false];
-    [openPanel setExtensionHidden:false];
-    [openPanel setDirectoryURL:url];
-    [[NSApplication sharedApplication] activateIgnoringOtherApps:true];
-    var openPanelButtonPressed = [openPanel runModal];
-    if (openPanelButtonPressed == NSFileHandlingPanelOKButton) {
-      allowedUrl = [openPanel URL];
-    }
-    return allowedUrl;
-  },
-  persistPermissionPath: function(path) {
-    this.persistPermissionURL([NSURL fileURLWithPath:path]);
-  },
-  persistPermissionURL: function(url) {
-    log("AppSandboxFileAccess.persistPermissionURL("+url+")")
-    // store the sandbox permissions
-    url = [[url URLByStandardizingPath] URLByResolvingSymlinksInPath]
-    var bookmarkData = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
-                           includingResourceValuesForKeys:nil
-                           relativeToURL:nil
-                           error:null];
-    if (bookmarkData) {
-      AppSandboxFileAccessPersist.setBookmarkData(bookmarkData, url);
-    }
-  },
-  accessFilePath_withBlock_persistPermission: function(path, block, persist) {
-    log("AppSandboxFileAccess.accessFilePath_withBlock_persistPermission")
-    log("path: " + path)
-    return AppSandboxFileAccess.accessFileURL_withBlock_persistPermission([NSURL fileURLWithPath:path], block, persist);
-  },
-  accessFileURL_withBlock_persistPermission: function(fileUrl, block, persist) {
-    log("AppSandboxFileAccess.accessFileURL_withBlock_persistPermission")
-    log("fileUrl: " + fileUrl)
-    log("block: " + block)
-    log("persist: " + persist)
-    var allowedUrl = false;
-    // standardize the file url and remove any symlinks so that the url we lookup in bookmark data would match a url given by the askPermissionForUrl method
-    var fileUrl = [[fileUrl URLByStandardizingPath] URLByResolvingSymlinksInPath];
-    // lookup bookmark data for this url, this will automatically load bookmark data for a parent path if we have it
-    var bookmarkData = AppSandboxFileAccessPersist.bookmarkDataForURL(fileUrl);
+    // this.clear_key(bd_key) // For debug only, this clears the key we're looking for :P
 
-    if (bookmarkData) {
-      log("Bookmark data found")
-      // resolve the bookmark data into an NSURL object that will allow us to use the file
-      var bookmarkDataIsStalePtr = MOPointer.alloc().init();
-      allowedUrl = [NSURL URLByResolvingBookmarkData:bookmarkData options:NSURLBookmarkResolutionWithSecurityScope|NSURLBookmarkResolutionWithoutUI relativeToURL:nil bookmarkDataIsStale:bookmarkDataIsStalePtr error:null];
-      // if the bookmark data is stale, we'll create new bookmark data further down
-      if (bookmarkDataIsStalePtr.value()) {
-        bookmarkData = nil;
-      }
+    // Bookmark
+    var bookmark = this.get_data_for_key(bd_key)
+    if(!bookmark){
+      log("– No bookmark found, let's create one")
+      var target = this.file_picker(url)
+      bookmark = [target bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
+                      includingResourceValuesForKeys:nil
+                      relativeToURL:nil
+                      error:{}]
+      // Store bookmark
+      this.set_data_for_key(bookmark,bd_key)
     } else {
-      log("No bookmark data found")
+      log("– Bookmark found")
+    }
+    log("  " + bookmark)
+
+    // Thanks to @joethephish for this pointer (pun totally intended)
+    var bookmarkDataIsStalePtr = MOPointer.alloc().init()
+    var allowedURL = [NSURL URLByResolvingBookmarkData:bookmark
+                            options:NSURLBookmarkResolutionWithSecurityScope
+                            relativeToURL:nil
+                            bookmarkDataIsStale:bookmarkDataIsStalePtr
+                            error:{}]
+
+    if(bookmarkDataIsStalePtr.value() != 0){
+      log("— Bookmark data is stale")
+      log(bookmarkDataIsStalePtr.value())
     }
 
-    // if allowed url is nil, we need to ask the user for permission
-    if (!allowedUrl) {
-      allowedUrl = AppSandboxFileAccess.askPermissionForUrl(fileUrl);
-      if (!allowedUrl) {
-        // if the user did not give permission, exit out here
-        return false;
-      }
+    if(allowedURL) {
+      success = true
     }
-    // if we have no bookmark data, we need to create it, this may be because our bookmark data was stale, or this is the first time being given permission
-    if (persist && !bookmarkData) {
-      AppSandboxFileAccess.persistPermissionURL(allowedUrl);
-    }
-    // execute the block with the file access permissions
-    try {
-      [allowedUrl startAccessingSecurityScopedResource];
-      block();
-    } finally {
-      [allowedUrl stopAccessingSecurityScopedResource];
-    }
-    return true;
+  } else {
+    success = true
   }
+
+  // [allowedUrl startAccessingSecurityScopedResource]
+  callback.call(this,success)
+  // [allowedUrl stopAccessingSecurityScopedResource]
+}
+AppSandbox.prototype.key_for_url = function(url){
+  return "bd_" + [url absoluteString]
+}
+AppSandbox.prototype.clear_key = function(key){
+  var def = [NSUserDefaults standardUserDefaults]
+  [def setObject:nil forKey:key]
+}
+AppSandbox.prototype.file_picker = function(url){
+  // Panel
+  var openPanel = [NSOpenPanel openPanel]
+
+  [openPanel setTitle:"Sketch Authorization"]
+  [openPanel setMessage:"Due to Apple's Sandboxing technology, Sketch needs your permission to write to this folder."];
+  [openPanel setPrompt:"Authorize"];
+
+  [openPanel setCanCreateDirectories:false]
+  [openPanel setCanChooseFiles:true]
+  [openPanel setCanChooseDirectories:true]
+  [openPanel setAllowsMultipleSelection:false]
+  [openPanel setShowsHiddenFiles:false]
+  [openPanel setExtensionHidden:false]
+
+  [openPanel setDirectoryURL:url]
+
+  var openPanelButtonPressed = [openPanel runModal]
+  if (openPanelButtonPressed == NSFileHandlingPanelOKButton) {
+    allowedUrl = [openPanel URL]
+  }
+  return allowedUrl
 }
 
-// Sandbox
-function in_sandbox(){
-  var environ = [[NSProcessInfo processInfo] environment];
-  return (nil != [environ objectForKey:@"APP_SANDBOX_CONTAINER_ID"]);
+AppSandbox.prototype.get_data_for_key = function(key){
+  var def = [NSUserDefaults standardUserDefaults]
+  return [def objectForKey:key]
 }
+AppSandbox.prototype.set_data_for_key = function(data,key){
+  var defaults = [NSUserDefaults standardUserDefaults],
+      default_values = [NSMutableDictionary dictionary]
 
-var sandboxAccess = AppSandboxFileAccess.init({
-  message: "Please authorize Sketch to write to this folder. You will only need to do this once per folder.",
-  prompt:  "Authorize",
-  title: "Sketch Authorization"
-})
+  [default_values setObject:data forKey:key]
+  [defaults registerDefaults:default_values]
+}

@@ -7,21 +7,29 @@
 
 // Make sure a layer is selected
 
-if (selection.count() == 1) {
+var selectedLayers = selection;
 
-	// Remember the selection
-	var selection = selection[0];
-
-	// Paste in Place
-	com.getflourish.utils.sendPasteInPlace();
-
-	// Select the original layer
+if (selectedLayers.count() > 0) {
 	doc.currentPage().deselectAllLayers();
-	selection.setIsSelected(true);
 
-	// Remove
-	com.getflourish.utils.sendDelete();
+	for (var i = 0; i < selectedLayers.count(); i++) {
+		// Remember the selected layer
+		var selectedLayer = selectedLayers[i];
+		selectedLayer.setIsSelected(true);
 
+		// Paste in Place
+		com.getflourish.utils.sendPasteInPlace();
+
+		// Select the original layer
+		doc.currentPage().deselectAllLayers();
+
+		// Select again
+		selectedLayer.setIsSelected(true);
+
+		// Remove
+		com.getflourish.utils.sendDelete();
+	}
+	com.getflourish.layers.select(selectedLayers);
 } else {
 	doc.showMessage("Please select a layer.");
 }

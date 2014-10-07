@@ -8,6 +8,7 @@
  */
 
 #import 'inventory.js'
+#import 'sketchSelect.js'
 
 (function theFunction() {
 
@@ -18,6 +19,7 @@
         hexColor = null,
         hexColors = [],
         layers = null,
+        palettes = [],
         rgbColors = [],
         rma = null,
         styleSheetPage = null;
@@ -31,7 +33,7 @@
 
     // dirty hack that will prevent crashes
     // todo: find out why Sketch crashes when a existing artboard is selected
-    com.getflourish.common.removeArtboardFromPage(styleSheetPage, com.getflourish.config.colorInventoryName);
+    //com.getflourish.common.removeArtboardFromPage(styleSheetPage, com.getflourish.config.colorInventoryName);
 
     // artboard that will hold all color swatches
     colorArtboard = com.getflourish.common.getArtboardByPageAndName(styleSheetPage, com.getflourish.config.colorInventoryName);
@@ -78,11 +80,14 @@
                     if (cname === "MSColor") {
                         try {
 
-                            hexColor = color.hexValue();
+                            hexColor = String(color.hexValue());
                             // get classname
                             if(com.getflourish.common.isIncluded(hexColors, hexColor) == 0) {
                                 hexColors.push(hexColor);
-                                rgbColors.push(color);
+                                rgbColors.push({
+                                    name: "Unnamed Color Swatch",
+                                    color: color
+                                });
                             }
 
                         } catch (error) {
@@ -99,11 +104,48 @@
         }
     }
 
+    var primaryColors = [];
+    // get defined colors, rename existing swatches
+    $("MSLayerGroup", colorArtboard).each(function () {
+
+        // check if there are swatches (groups of color swatches)
+
+        colorName = this.name();
+
+        // check if the color swatch has a defined name
+        if (this.name().indexOf("Unnamed") == -1) {
+
+            // loop through all child layers to find the color
+            var layers = this.layers().array();
+            for (var i = 0; i < layers.count(); i++) {
+
+                // get the current layer
+                var currentLayer = layers[i];
+                if (currentLayer.name().indexOf("Color Swatch") == 0) {
+                    hexColor = currentLayer.name().substr(14);
+
+                    var index = hexColors.indexOf("" + hexColor);
+
+                    // check if defined color is still part of the documents colors
+                    if (index != -1) {
+                        // rename swatch
+                        rgbColors[index].name = colorName;
+                        var c = rgbColors[index];
+                        rgbColors.splice(index, 1);
+                        primaryColors.push(c);
+                    }
+                }
+            }
+        }
+    });
 
     // only create a color sheet when there are colors
 
     if (rgbColors.length > 0) {
-      com.getflourish.colors.createColorSheet(colorArtboard, rgbColors);
+        palettes.push(rgbColors);
+        palettes.push(primaryColors);
+        // create colorsheet by passing palettes that contain multiple color objects (name, value)
+        com.getflourish.colors.createColorSheet(colorArtboard, palettes);
     }
 
     // Position the artboard next to the last artboard
@@ -183,4 +225,6 @@
     function sortLeft(a, b) {
         return a.left - b.left;
     }
+
+
 }());

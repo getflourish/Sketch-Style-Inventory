@@ -262,80 +262,59 @@ com.getflourish = (function() {
         }
         return false;
     },
-
-    // Draws a colour palette from a array of colors
-    // Based on alessndro_library.js
-    drawColourPalette: function(base_layer, colours_array) {
-
-      // todo: make this a proper color chip
-      var first_colour = colours_array[0];
-      var palette_layers = [base_layer];
-
-      var first_fill = base_layer.style().fills().firstObject();
-      first_fill.setColor(first_colour);
-
-      var hex_string = "#" + first_colour.hexValue();
-      base_layer.setName("Color Swatch " + hex_string);
-
-      for(var i = 1; i < colours_array.length; i++) {
-          var previous_layer = palette_layers[palette_layers.length -1];
-        var new_colour_layer = previous_layer.duplicate();
-        var new_colour = colours_array[i];
-        new_colour_layer.style().fills().firstObject().setColor(new_colour);
-
-        var frame = new_colour_layer.frame().width();
-        var current_x_pos = frame.x();
-        var new_x_position = current_x_pos + frame.width();
-        frame.setX(new_x_position + 10);
-        hex_string = "#" + new_colour.hexValue();
-        new_colour_layer.setName("Color Swatch " + hex_string);
-        palette_layers.push(new_colour_layer);
-      }
-    },
-    createColorSheet: function (artboard, colors_array) {
+    createColorSheet: function (artboard, palettes) {
       // create color chip for each color
       var left = 0;
       var top = 30;
       var margin = 30;
-      var margin_top = 70;
+      var margin_top = 88;
       var width = 0;
 
       my.common.removeAllLayersFromArtboard(artboard);
 
-      for (var i = 0; i < colors_array.length; i++) {
-        left += margin;
-        var colorChip = my.colors.addColorChip(artboard, colors_array[i]);
+      for (var i = 0; i < palettes.length; i++) {
+        var palette = palettes[i];
 
-        width = colorChip.frame().width();
-        // offset color chip
-        colorChip.frame().setX(left);
-        colorChip.frame().setY(top);
-        left += width;
+        for (var j = 0; j < palette.length; j++) {
+          left += margin;
+          var colorChip = my.colors.addColorChip(artboard, palette[j]);
 
-        // todo: crash happens below this line
+          width = colorChip.frame().width();
+          // offset color chip
+          colorChip.frame().setX(left);
+          colorChip.frame().setY(top);
+          left += width;
 
-        // after x color chips, star a new row
-        if ((i + 1) % my.config.maxColorsPerRow == 0) {
-          top += width + margin_top;
-          left = 0;
+          // after x color chips, star a new row
+          if ((j + 1) % my.config.maxColorsPerRow == 0) {
+            top += width + margin_top;
+            left = 0;
+          }
         }
+        // move next palette
+        top += 100;
       }
       my.common.resize(artboard, 680, top + margin_top + width);
     },
-    addColorChip: function (artboard, color) {
+    // todo: change method to accept a color object with name and color value
+    addColorChip: function (artboard, swatch) {
       var padding = 5;
 
       // get hex color
-      var hex_string = "#" + color.hexValue();
+      var hex_string = "#" + swatch.color.hexValue();
+      var color = swatch.color;
 
       // add layer group
       var group = artboard.addLayerOfType("group");
-      var group_name = "Color Swatch " + hex_string;
-      group.setName(group_name);
+      var group_name = "";
+      if(swatch.name == null) {
+        swatch.name = "Unnamed Color Swatch";
+      }
+      group.setName(swatch.name);
 
       // draw white label rectangle
       var white = [MSColor colorWithHex: "#FFFFFF" alpha: 1];
-      var labelBG = my.colors.addColorShape(group, white, 100, 140);
+      var labelBG = my.colors.addColorShape(group, white, 100, 160);
       labelBG.frame().setY(0);
       labelBG.setName("Background");
 
@@ -344,18 +323,26 @@ com.getflourish = (function() {
       var hex_string = "#" + color.hexValue();
       colorSquare.setName("Color Swatch " + hex_string);
 
+      // Name Label
+      var nameLabel = my.common.addTextLayer(group, swatch.name);
+      nameLabel.frame().setY(colorSquare.frame().height() + padding);
+      nameLabel.frame().setX(4);
+      nameLabel.setName("Swatch Name");
+      // make it bold
+      // nameLabel.
+
       // Hex Label
-      var label = my.common.addTextLayer(group, hex_string);
-      label.frame().setY(colorSquare.frame().height() + padding);
-      label.frame().setX(4);
-      label.setName("Hex Label");
+      var hexLabel = my.common.addTextLayer(group, hex_string);
+      hexLabel.frame().setY(nameLabel.frame().y() + 14 + padding);
+      hexLabel.frame().setX(4);
+      hexLabel.setName("Hex Label");
 
       // RGB Label
       var rgb = String(Math.ceil(color.red() * 255)) + ", " + String(Math.ceil(color.green() * 255)) + ", " + String(Math.ceil(color.blue() * 255)) + ", " + String(color.alpha());
-      newLabel = my.common.addTextLayer(group, rgb);
-      newLabel.frame().setY(label.frame().y() + 14 + padding);
-      newLabel.frame().setX(4);
-      newLabel.setName("RGB Label");
+      var rgbLabel = my.common.addTextLayer(group, rgb);
+      rgbLabel.frame().setY(hexLabel.frame().y() + 14 + padding);
+      rgbLabel.frame().setX(4);
+      rgbLabel.setName("RGB Label");
 
       // Shadow
       var shadow = labelBG.style().shadows().addNewStylePart();
