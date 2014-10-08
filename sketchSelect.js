@@ -5,7 +5,18 @@
  * Florian Schulz, 2014
  */
 
-var classNames = ["MSArtboardGroup",  "MSDocument", "MSLayer", "MSLayerGroup", "MSOvalShape", "MSPage", "MSRectangleShape", "MSShapeGroup", "MSShapePathLayer", "MSTextLayer"];
+var classNames = [
+    "MSArtboardGroup",
+    "MSDocument",
+    "MSLayer",
+    "MSLayerGroup",
+    "MSOvalShape",
+    "MSPage",
+    "MSRectangleShape",
+    "MSShapeGroup",
+    "MSShapePathLayer",
+    "MSTextLayer"
+];
 
 function $(selector, context) {
     var elements = null;

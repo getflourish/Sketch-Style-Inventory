@@ -18,11 +18,16 @@
         cname = null,
         hexColor = null,
         hexColors = [],
+        index = 0,
         layers = null,
         palettes = [],
+        paletteNames = [],
+        pIndex,
+        pName,
         rgbColors = [],
         rma = null,
-        styleSheetPage = null;
+        styleSheetPage = null,
+        undefinedColors = [];
 
     // page that the artboard will be created on
     // var styleSheetPage = com.getflourish.common.getPageByName(com.getflourish.config.pageName);
@@ -82,12 +87,16 @@
 
                             hexColor = String(color.hexValue());
                             // get classname
-                            if(com.getflourish.common.isIncluded(hexColors, hexColor) == 0) {
+                            index = hexColors.indexOf(hexColor);
+                            if(index == -1) {
                                 hexColors.push(hexColor);
                                 rgbColors.push({
-                                    name: "Unnamed Color Swatch",
-                                    color: color
+                                    name: "Untitled Color Swatch",
+                                    color: color,
+                                    occurences: 1
                                 });
+                            } else {
+                                rgbColors[index].occurences++;
                             }
 
                         } catch (error) {
@@ -113,7 +122,7 @@
         colorName = this.name();
 
         // check if the color swatch has a defined name
-        if (this.name().indexOf("Unnamed") == -1) {
+        if (colorName.indexOf("Untitled") == -1) {
 
             // loop through all child layers to find the color
             var layers = this.layers().array();
@@ -125,14 +134,49 @@
                     hexColor = currentLayer.name().substr(14);
 
                     var index = hexColors.indexOf("" + hexColor);
+                    var c = rgbColors[index];
+
+                    // see wether the color name contains palette information
+                    pIndex = colorName.indexOf(">");
+                    if (pIndex != -1) {
+                        pName = colorName.substr(0, pIndex);
+                        log(pName)
+                        // add new palette
+                        if (paletteNames.indexOf(pName) == -1) {
+                            paletteNames.push(pName);
+
+                            // push the palette
+                            palettes.push({
+                                name: pName,
+                                swatches: []
+                            });
+
+                            // push the swatch to the newly created palette
+                            rgbColors[index].name = colorName;
+                            palettes[paletteNames.indexOf(pName)].swatches.push(c);
+                            rgbColors.splice(index, 1);
+                            hexColors.splice(index, 1);
+                        } else {
+                            // push the swatch to existing palette
+                            rgbColors[index].name = colorName;
+                            palettes[paletteNames.indexOf(pName)].swatches.push(c);
+                            rgbColors.splice(index, 1);
+                            hexColors.splice(index, 1);
+                        }
+                    } else {
+                        rgbColors[index].name = colorName;
+                        primaryColors.push(c);
+                        rgbColors.splice(index, 1);
+                        hexColors.splice(index, 1);
+                    }
 
                     // check if defined color is still part of the documents colors
                     if (index != -1) {
-                        // rename swatch
-                        rgbColors[index].name = colorName;
-                        var c = rgbColors[index];
-                        rgbColors.splice(index, 1);
-                        primaryColors.push(c);
+                        // rename existing swatch
+                        // rgbColors[index].name = colorName;
+                        // primaryColors.push(c);
+                        // rgbColors.splice(index, 1);
+                        // hexColors.splice(index, 1);
                     }
                 }
             }
@@ -142,8 +186,14 @@
     // only create a color sheet when there are colors
 
     if (rgbColors.length > 0) {
-        palettes.push(rgbColors);
-        palettes.push(primaryColors);
+        palettes.push({
+            name: "Defined Colors",
+            swatches: primaryColors
+        });
+        palettes.push({
+            name: "Undefined Colors",
+            swatches: rgbColors
+        });
         // create colorsheet by passing palettes that contain multiple color objects (name, value)
         com.getflourish.colors.createColorSheet(colorArtboard, palettes);
     }
@@ -164,8 +214,6 @@
         colorArtboard.frame().setY(top);
     }
 
-    bg = com.getflourish.common.addCheckeredBackground(colorArtboard);
-
     // focus the view on the artboard
     com.getflourish.view.centerTo(colorArtboard);
     doc.currentPage().deselectAllLayers();
@@ -173,6 +221,29 @@
 
     // refresh
     com.getflourish.common.refreshPage();
+
+    // Reverse Layer Order
+    var layers = colorArtboard.layers().array();
+    var layersMeta = [];
+
+        for (var i = 0; i < layers.count(); i++) {
+            var layer = layers[i];
+
+            layersMeta.push({
+                "name": layer.name(),
+                "layer": layer
+            });
+
+        }
+
+    // Add background
+    bg = com.getflourish.common.addCheckeredBackground(colorArtboard);
+    bg.setIsSelected(false);    
+    com.getflourish.layers.reverseLayerOrder(layersMeta);
+    // collapse artboards
+    com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
+
+    colorArtboard.setIsSelected(true);
 
     // reset variable
     com = null;
@@ -225,6 +296,4 @@
     function sortLeft(a, b) {
         return a.left - b.left;
     }
-
-
 }());

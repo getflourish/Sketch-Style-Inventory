@@ -1,0 +1,24 @@
+#import 'sandbox.js'
+
+var document_path = [[doc fileURL] path].split([doc displayName])[0];
+
+	var path = document_path + "colors.json";
+
+new AppSandbox().authorize(path, function () {
+	doc.showMessage("yay");
+})
+log(path)
+
+function save_file_from_string (filename, the_string) {
+        var path = [@"" stringByAppendingString:filename],
+          str = [@"" stringByAppendingString:the_string];
+log(path)
+log(str)
+
+          str.dataUsingEncoding_(NSUTF8StringEncoding).writeToFile_atomically_(path, true)
+log("yes")
+    }
+
+var string = "foo";
+
+save_file_from_string(path, string);

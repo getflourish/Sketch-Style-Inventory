@@ -1,12 +1,23 @@
-for (var i = 0; i < selection.count(); i++) {
-	var layer = selection.objectAtIndex(i);
-	centerView(layer);
-	var name = [doc askForUserInput:"Color name: (e.g. white)" initialValue:""]
+
+var selected = selection;
+doc.currentPage().deselectAllLayers();
+for (var i = 0; i < selected.count(); i++) {
+	var layer = selected.objectAtIndex(selected.count()-1-i);
+	layer.setIsSelected(true);
+	
+	// centerView(layer);
+
+	var name = [doc askForUserInput:"Color name: (e.g. Primary > Blue)" initialValue:""]
 	if(name != "") {
-		layer.setName("$" + name);
+		layer.setName(name);
+		var children = layer.children();
+		for (var j = 0; j < children.count(); j++) {
+			if(children[j].name() == "Swatch Name") children[j].setStringValue(name);
+		}
 	} else {
 		break;
 	}
+	layer.setIsSelected(false);
 }
 
 function centerView(layer) {
