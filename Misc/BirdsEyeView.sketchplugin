@@ -1,0 +1,17 @@
+// (cmd 9)
+
+// Zooms the document out to show all artboards
+
+#import 'sketchSelect.js'
+#import 'inventory.js'
+
+com.getflourish.utils.sendAction('centerLayersInCanvas:')
+
+coscript.setShouldKeepAround(true)
+
+function onInterval (int) {
+
+com.getflourish.utils.sendAction('centerSelectionInVisibleArea:')
+}
+
+coscript.scheduleWithInterval_jsFunction(0.5, onInterval);
