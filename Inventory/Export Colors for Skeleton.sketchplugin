@@ -3,13 +3,11 @@
 #import 'sketchSelect.js'
 
 var data = {
-	primary: {
-
-	}
 };
 var colorName = null;
 var colorSheet = com.getflourish.common.getArtboardByPageAndName(doc.currentPage(), com.getflourish.config.colorInventoryName);
 var hexColor = null;
+var pName;
 
 // Path and file access
 var document_path = [[doc fileURL] path].split([doc displayName])[0];
@@ -30,9 +28,10 @@ $("MSLayerGroup", colorSheet).each(function () {
 	// check if there are swatches (groups of color swatches)
 
 	colorName = this.name();
+	pName = "Defined";
 
 	// check if the color swatch has a defined name
-	if (this.name().indexOf("Unnamed") == -1) {
+	if (this.name().indexOf("Untitled") == -1) {
 
 		// loop through all child layers to find the color
 		var layers = this.layers().array();
@@ -46,7 +45,14 @@ $("MSLayerGroup", colorSheet).each(function () {
 				// remember color and name
 				// todo: format string for use in SCSS?
 				colorName = colorName;
-				data.primary[colorName] = hexColor;
+
+				// check for palette in name
+				if (colorName.indexOf(">") != -1) {
+					pName = colorName.substr(0, colorName.indexOf(">") - 1);
+					colorName = colorName.substr(colorName.indexOf(">") + 2);
+				}
+				if (data[pName] == null) data[pName] = {};
+				data[pName][colorName] = hexColor;
 			}
 		}
 	}

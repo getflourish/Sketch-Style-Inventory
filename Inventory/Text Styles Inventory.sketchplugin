@@ -83,7 +83,7 @@ function exportStyles(artboard) {
 analyseTextStyles();
 
 // for large files, sketch crashes after adding the style sheet page (a second time)
-var styleSheetPage = com.getflourish.common.getPageByName(com.getflourish.config.pageName);
+var styleSheetPage = doc.currentPage();
 var artboard = com.getflourish.common.getArtboardByPageAndName(styleSheetPage, "Typography");
 com.getflourish.common.removeAllLayersFromArtboard(artboard)
 createTextStyles(artboard);

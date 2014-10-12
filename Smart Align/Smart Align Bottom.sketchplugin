@@ -1,0 +1,6 @@
+// Aligns layers to their parent group’s bottom edge (cmd alt ↓)
+
+for (var i = 0; i < selection.count(); i++) {
+	var layer = selection[i];
+	layer.absoluteRect().setY(layer.parentGroup().absoluteRect().y() + layer.parentGroup().absoluteRect().height() - layer.frame().height());
+}

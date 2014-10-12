@@ -1,0 +1,6 @@
+// Aligns layers to their parent group’s right edge (cmd alt →)
+
+for (var i = 0; i < selection.count(); i++) {
+	var layer = selection[i];
+	layer.absoluteRect().setX(layer.parentGroup().absoluteRect().x() + layer.parentGroup().absoluteRect().width() - layer.frame().width());
+}
