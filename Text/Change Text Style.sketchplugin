@@ -1,0 +1,65 @@
+// Selects all text layers that have the same text style as the reference text layer
+
+// init
+
+
+#import 'inventory.js'
+
+var layerCount = -1;
+var pageCount = 0;
+var lastFoundOnPage = -1;
+var selectedLayers = [];
+var selectedLayersNames = [];
+var selectedLayersMeta = [];
+
+// We can only search for similar text layers when a reference layer is selected
+
+var definedTextStyles = [];
+var uniqueTextStyles = [];
+var definedTextStyleNames = [];
+
+
+var textLayer = selection[0];
+
+function analyseTextStyles () {
+	var styles = [[[doc documentData] layerTextStyles] objects]
+
+	for (var i = 0; i < styles.count(); i++) {
+		var style = styles.objectAtIndex(i);
+		var textStyle = style.style().textStyle();
+
+	    definedTextStyles.push({
+	    	"style": style,
+	    	"textStyle": textStyle,
+	    	"name": style.name()
+	    });
+
+	    definedTextStyleNames.push(style.name());
+	}
+	var choice = createSelect('Text Style', definedTextStyleNames, 0)
+	var index = choice[1];
+
+	definedTextStyles[index].style.instances().push(textLayer.style().textStyle());
+
+}
+
+analyseTextStyles();
+
+function createSelect(msg, items, selectedItemIndex){
+  selectedItemIndex = selectedItemIndex || 0
+
+  var accessory = [[NSComboBox alloc] initWithFrame:NSMakeRect(0,0,200,25)]
+  [accessory addItemsWithObjectValues:items]
+  [accessory selectItemAtIndex:selectedItemIndex]
+
+  var alert = [[NSAlert alloc] init]
+  [alert setMessageText:msg]
+  [alert addButtonWithTitle:'OK']
+  [alert addButtonWithTitle:'Cancel']
+  [alert setAccessoryView:accessory]
+
+  var responseCode = [alert runModal]
+  var sel = [accessory indexOfSelectedItem]
+
+  return [responseCode, sel]
+}

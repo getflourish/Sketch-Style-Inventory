@@ -1,0 +1,24 @@
+
+#import 'inventory.js'
+
+ // storage
+var persistent = [[NSThread mainThread] threadDictionary];
+
+// offset
+var offset;
+
+if (persistent["com.getflourish.increments"] == null) {
+    var value = parseFloat([doc askForUserInput:"Increments:" initialValue:10]);
+    persistent["com.getflourish.increments"] = value;
+}
+
+offset = persistent["com.getflourish.increments"];
+
+ if (selection.count() == 1) {
+
+ 	var layer = selection[0];
+	left = layer.frame().left() + offset;
+	layer.frame().setLeft(left);
+
+	com.getflourish.common.showMarginsOf(layer);
+}
