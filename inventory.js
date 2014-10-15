@@ -164,6 +164,17 @@ com.getflourish = (function() {
     isIncluded: function(arr, obj) {
       return (arr.indexOf(obj) != -1);
     },
+    showMarginsOf: function (layer) {
+      // calculates margins and displays them
+      var parent = layer.parentGroup();
+      var ml = layer.absoluteRect().x() - parent.absoluteRect().x();
+      var mt = layer.absoluteRect().y() - parent.absoluteRect().y();
+      var mr = parent.frame().width() - ml - layer.frame().width();
+      var mb = parent.absoluteRect().y() + parent.frame().height() - layer.absoluteRect().y() - layer.frame().height();
+
+      var margin = "x: " + ml + ", y: " + mt + " / right: " + mr + ", bottom: " + mb;
+      doc.showMessage(margin);
+    },
     refreshPage: function() {
       var c = doc.currentPage();
       doc.setCurrentPage(0);

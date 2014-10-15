@@ -10,16 +10,22 @@ if ([sel className] == "MSArtboardGroup") {
 
 	[page deselectAllLayers]
 
+	var bottom;
 	var loop = [artboards objectEnumerator]
 	while (artboard = loop.nextObject()) {
-	  [artboard select:true byExpandingSelection:true]
+		bottom = sel.frame().y() + sel.frame().height();
+		if (artboard.frame().y() >= sel.frame().y() && artboard.frame().y() < bottom) {
+			[artboard select:true byExpandingSelection:true]
+		}
 	}
 
 	// collapse artboards
 	com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
-	
-	
 } else {
 	[[doc currentPage] deselectAllLayers];
 	[[[doc currentPage] currentArtboard] select:true byExpandingSelection:true]
+}
+
+if (selection.count() > 1 && [sel className] == "MSArtboardGroup") {
+	com.getflourish.layers.select(doc.currentPage().artboards());
 }
