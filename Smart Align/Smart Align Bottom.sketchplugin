@@ -1,6 +1,30 @@
 // Aligns layers to their parent group’s bottom edge (cmd alt ↓)
 
-for (var i = 0; i < selection.count(); i++) {
-	var layer = selection[i];
-	layer.absoluteRect().setY(layer.parentGroup().absoluteRect().y() + layer.parentGroup().absoluteRect().height() - layer.frame().height());
+#import 'inventory.js'
+
+if (selection.count() == 1) {
+
+	// remember layer
+	var layer = selection[0];
+
+	// get the layers height
+	var height = layer.frame().height();
+
+	// get layers bottom coordinate
+	var bottom = layer.absoluteRect().y() + height;
+
+	// get the parents left position
+	var edge = layer.parentGroup().absoluteRect().y() + layer.parentGroup().absoluteRect().height();
+
+	// align layer with parent
+	if (bottom != edge) {
+		layer.absoluteRect().setY(edge - height);
+	} else {
+		com.getflourish.utils.sendAlignBottom();
+	}
+
+	// display relative position info
+	com.getflourish.common.showMarginsOf(layer);
+} else {
+	com.getflourish.utils.sendAlignBottom();
 }
