@@ -1,4 +1,4 @@
-// This plugin selects all layers of a layer group (control command g)
+// This plugin selects all layers of a layer group
 
 if (selection.count() == 1) {
     if (selection[0].className() == "MSLayerGroup") {
