@@ -38,7 +38,7 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 * Duplicate Artboard `shift` + `⌘` + `D`
 * Fit Artboard
 * Fit Artboard Height `ctrl` + `shift` + `A`
-* Remove Artboard `⌘` + `⌫`
+* Remove Artboard `shift` + `⌘` + `⌫`
 * Sort Artboards
 
 #### Inventory
@@ -65,12 +65,17 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 #### Smart Align
 * Smart Align Horizontally `⌘` + `⌥` + `,`
 * Smart Align Vertically `⌘` + `⌥` + `.`
+* Smart Align Bottom `⌘` + `⌥` + `↓`
+* Smart Align Left `⌘` + `⌥` + `←`
+* Smart Align Top `⌘` + `⌥` + `↑`
+* Smart Align Right `⌘` + `⌥` + `→`
 * Distribute Horizontally `control` + `⌘` + `⌥` + `,`
 * Distribute Vertically `control` + `⌘` + `⌥` + `.`
 * Space Horizontal
 * Space Vertical
 
 #### Smart Move
+* Delete and Pull Up `⌘`+ `⌫`
 * Pull Left `shift` + `⌘` + `⌥` + `←`
 * Pull Up `shift` + `⌘` + `⌥` + `↑`
 * Push Down `shift` + `⌘` + `⌥` + `↓`
@@ -155,6 +160,37 @@ Plugin that allows you to set the line height of a text layer as a multiple of t
 
 ## Misc
 
+### Birds Eye View
+
+Zooms out to show all artboards and centers on the currently selected layer.
+
+**Shortcut:** `⌘` + `9`
+
+### Fill Width
+
+Make the selection as wide as the parent group or the width of the artboard.
+
+**Shortcut:** `⌘` + `E`
+
+![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Fill%20Width.png)
+
+
+### Goto Artboard
+
+Shows a list of artboards.
+
+**Shortcut:** `⌥` + `⌘` + `P`
+
+![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Goto%20Artboard.png)
+
+### Goto Page
+
+Shows a list of pages.
+
+**Shortcut:** `⌘` + `P`
+
+![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Goto%20Page.png)
+
 ### Replace Layer
 
 Replaces the selected layer with the content in the clipboard. Basically this plugin does paste in place while removing the original selection.
@@ -162,6 +198,7 @@ Replaces the selected layer with the content in the clipboard. Basically this pl
 **Shortcut:** `⌥` + `cmd` + `R`
 
 ![Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Replace%20Layer.gif)
+
 
 ## Selection
 
@@ -243,6 +280,13 @@ Distributes the selected elements horizontally, with the same distante beetween 
 Distributes the selected elements vertically, with the same distante beetween them. If only one layer is selected, the layer will be moved by the spacing that has been input.
 
 ## Smart Move
+
+### Delete Pull
+Deletes a layer and pulls all other layer up.
+
+![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Delete%20Pull.gif)
+
+### Push & Pull
 
 `experimental` Allows you to pull or push layers in relation to the selected layer.
 

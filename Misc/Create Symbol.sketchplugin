@@ -1,5 +1,0 @@
-// (control cmd s)
-
-#import 'inventory.js'
-
-com.getflourish.utils.sendAction("createSymbolAction:");
