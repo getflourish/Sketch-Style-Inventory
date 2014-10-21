@@ -8,6 +8,14 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 
 ## Change Log
 
+**October 21, 2014**
+* Added "Goto Page"
+* Added "Goto Artboard"
+* Added "Increase/Decrease Font Size"
+* Added "Group and Rename"
+* Updated "Smart Align" to toggle between relative and absolute alignment
+* Added "Birds Eye View"
+
 **September 30, 2014**
 
 * Added "Remove Artboard"
