@@ -172,7 +172,7 @@ Make the selection as wide as the parent group or the width of the artboard.
 
 **Shortcut:** `⌘` + `E`
 
-![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Fill%20Width.png)
+![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Fill%20Width.gif)
 
 
 ### Goto Artboard
