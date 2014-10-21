@@ -28,4 +28,7 @@ if ([sel className] == "MSArtboardGroup") {
 
 if (selection.count() > 1 && [sel className] == "MSArtboardGroup") {
 	com.getflourish.layers.select(doc.currentPage().artboards());
+
+	// collapse artboards
+	com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
 }
