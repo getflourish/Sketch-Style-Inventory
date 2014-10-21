@@ -1,0 +1,22 @@
+// (control command g)
+
+#import 'inventory.js'
+
+// get the selected layers
+var selected = selection[0];
+
+// group the layers
+com.getflourish.utils.sendAction("group:");
+
+// parent
+var parent = selected.parentGroup();
+
+// deselect all layers
+doc.currentPage().deselectAllLayers();
+
+// rename
+var name = [doc askForUserInput:"Group name:" initialValue:"Group"];
+parent.setName(name);
+
+
+
