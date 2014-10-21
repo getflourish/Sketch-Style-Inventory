@@ -329,7 +329,7 @@ To do: export opacity, remove attributes that have the default value
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Sketch%20CSS.png)
 
 ### Generate/Color Inventory
-Generates an artboard with all colors that are used on the current page.
+Generates an artboard with all colors that are used on the current page. You can rename the layer group of a color swatch to make it a "defined" color. The next time the color inventory is generated, the plugin will take care of it. You can also group colors by naming them like "Primary > Blue".
 
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Colors.png)
 
