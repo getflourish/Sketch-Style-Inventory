@@ -1,0 +1,21 @@
+// (shift cmd m)
+
+var steps = 2;
+
+if (selection.count() == 1) {
+	if (selection[0].className() == "MSTextLayer") {
+
+		// get the layer
+		var layer = selection[0];
+
+		// get the font size
+		var fontSize = layer.fontSize();
+
+		// decrease font size
+		layer.setFontSize(fontSize - steps);
+
+		// hack to force refresh in the style panel
+		layer.setIsSelected(false);
+		layer.setIsSelected(true);
+	}
+}

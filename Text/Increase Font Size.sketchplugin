@@ -1,0 +1,23 @@
+// (shift cmd ,)
+
+var steps = 2;
+var sizes = [9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 28, 30, 32, 34, 36, 38, 40, 44, 48, 60, 72];
+
+
+if (selection.count() == 1) {
+	if (selection[0].className() == "MSTextLayer") {
+
+		// get the layer
+		var layer = selection[0];
+
+		// get the font size
+		var fontSize = layer.fontSize();
+
+		// increase font size
+		layer.setFontSize(fontSize + steps);
+
+		// hack to force refresh in the style panel
+		layer.setIsSelected(false);
+		layer.setIsSelected(true);
+	}
+}
