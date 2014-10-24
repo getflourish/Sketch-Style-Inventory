@@ -123,7 +123,7 @@ This improves the built in behavior of artboard duplication in Sketch. If the se
 
 This improves the built in behavior of artboard removal in Sketch. If the selected artboard is in the middle of other artboards, all artboards on the right side will be shifted to the left after the artboard has been removed. Requires any layer of an artboard to be selected.
 
-**Shortcut:** `⌘` + `⌫` (Backspace)
+**Shortcut:** `shift` + `⌘` + `⌫`
 
 ![Remove Artboard Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Remove%20Artboard.gif)
 
