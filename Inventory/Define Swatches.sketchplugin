@@ -1,18 +1,24 @@
+// (cmd control option r)
+#import 'inventory.js'
 
 var selected = selection;
 doc.currentPage().deselectAllLayers();
 for (var i = 0; i < selected.count(); i++) {
-	var layer = selected.objectAtIndex(selected.count()-1-i);
+	var layer = selected.objectAtIndex(i);
 	layer.setIsSelected(true);
-	
-	// centerView(layer);
+	centerView(layer);
 
 	var name = [doc askForUserInput:"Color name: (e.g. Primary > Blue)" initialValue:""]
 	if(name != "") {
 		layer.setName(name);
 		var children = layer.children();
 		for (var j = 0; j < children.count(); j++) {
-			if(children[j].name() == "Swatch Name") children[j].setStringValue(name);
+			if(children[j].name() == "Swatch Name") {
+				var label = children[j];
+				label.setStringValue(name);
+				label.adjustFrameToFit();
+      			label.setTextAlignment(0);
+      		}
 		}
 	} else {
 		break;
@@ -20,8 +26,13 @@ for (var i = 0; i < selected.count(); i++) {
 	layer.setIsSelected(false);
 }
 
+centerView(doc.currentPage().currentArtboard());
+
+com.getflourish.colorInventory.generate();
+
 function centerView(layer) {
 	var selected_object = layer,
     	view = [doc currentView]
-	[view centerRect:[selected_object absoluteRect]]
+	[view zoomToFitRect:[selected_object absoluteRect]]
+
 }

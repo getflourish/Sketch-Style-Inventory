@@ -1,0 +1,20 @@
+// Shows a dialog with all actions available from Color Inventory (control alt cmd i)
+
+#import 'inventory.js'
+
+// remember current artboard
+var selectedArtboard = doc.currentPage().currentArtboard();
+var x = selectedArtboard.frame().x();
+
+// ask for base unit
+var baseunit = com.getflourish.css.getBaseUnit();
+
+// generate and get the inventories 
+var ca = com.getflourish.colorInventory.generate();
+var ta = com.getflourish.textStyleInventory.generate();
+
+var shiftWidth = ca.frame().width() + ta.frame().width() + 200;
+
+
+com.getflourish.colorInventory.shiftArtboardsFromArtboardBy(selectedArtboard, shiftWidth);
+ca.frame().setX(selectedArtboard.frame().x(x));

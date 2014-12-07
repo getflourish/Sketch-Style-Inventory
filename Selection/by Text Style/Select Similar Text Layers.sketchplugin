@@ -1,3 +1,5 @@
+// (shift command control t)
+
 /**
  * This plugin selects all similar text layers on the page.
  *
@@ -6,82 +8,28 @@
 
 #import 'inventory.js'
 
-// init
-(function() {
-	var selectedLayerCount = 0,
-	  lastFoundOnPage = -1,
-      selected = null,
-	  selectedLayers = [],
-	  i = 0,
-	  reference = null,
-	  pages,
-	  page,
-	  layers,
-	  layer;
+// We can only search for similar text layers when a reference layer is selected
 
-	// We can only search for similar text layers when a reference layer is selected
+var scope = doc.currentPage().children();
 
-	if (selection.count() === 1) {
+if (selection.count() === 1) {
 
-        // the selected layer
-        selected = selection[0];
+    // the selected layer
+    var selected = selection[0];
 
-        // Only proceed if a text layer is selected
-        if (selected.isKindOfClass(MSTextLayer)) {
-            doc.showMessage("Looking for similar text layers…");
+    // Only proceed if a text layer is selected
+    if (selected.isKindOfClass(MSTextLayer)) {
+        doc.showMessage("Looking for similar text layers…");
 
-            // Remember the reference text style
-            reference = selection[0].style().textStyle().attributes();
+        var textStyle = selected.style().textStyle();
+        var results = com.getflourish.layers.selectLayersByTextStyle(textStyle, scope);
 
-            // Loop through pages
-            artboards = doc.currentPage().artboards().objectEnumerator();
+        // Show how many layers have been selected
+        doc.showMessage(results.count() + " text layers selected");
 
-            while (artboard = artboards.nextObject()) {
-                i++;
-
-                // Loop through all children of the page
-                layers = artboard.children().objectEnumerator();
-
-                while (layer = layers.nextObject()) {
-
-                    // Check if the layer is a text layer
-                    if (layer.isKindOfClass(MSTextLayer)) {
-
-                        if (layer.style().textStyle().attributes() === reference) {
-                            layer.setIsSelected(true);
-                            selectedLayerCount++;
-
-                            if (i !== lastFoundOnPage) {
-                                lastFoundOnPage = i;
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            // Show how many layers have been selected
-            doc.showMessage(selectedLayerCount + " text layers selected");
-        } else {
-            doc.showMessage("Please select a text layer.");
-        }
-	} else {
-	   doc.showMessage("Please select a text layer.");
-	}
-
-	pageCount = null;
-	layerCount = null;
-	textLayerCount = null;
-	selectedLayerCount = null;
-	lastFoundOnPage = null;
-	selectedLayers = null;
-	i = null;
-	reference = null;
-	pages = null;
-	page = null;
-	layers = null;
-	layer = null;
-
-	com = null;
-
-}());
+    } else {
+        doc.showMessage("Please select a text layer.");
+    }
+} else {
+   doc.showMessage("Please select a text layer.");
+}

@@ -1,5 +1,0 @@
-// Distributes layers (control option cmd ,)
-
-#import 'inventory.js'
-
-com.getflourish.utils.sendDistributeHorizontally();

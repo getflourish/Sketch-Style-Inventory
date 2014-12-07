@@ -1,3 +1,5 @@
+#import 'sandbox.js'
+
 // Namespaced library of functions common across multiple plugins
 var com = com || {};
 
@@ -36,19 +38,20 @@ com.getflourish = (function() {
   my.common = {
     // Adds an artboard to the given page
     addArtboard: function(page, name) {
-      artboard = MSArtboardGroup.new();
+      var artboard = MSArtboardGroup.new();
       frame = artboard.frame();
-      frame.width = 400;
-      frame.height = 400;
-      frame.constrainProportions = false;
-      page.addLayer(artboard);
+      frame.setWidth(400);
+      frame.setHeight(400);
+      frame.setConstrainProportions(false);
+      page.addLayers([artboard]);
       artboard.setName(name);
       return artboard;
     },
     addCheckeredBackground: function(artboard) {
-      var layer = artboard.addLayerOfType("rectangle");
-      layer.frame().setWidth(artboard.frame().width())
-      layer.frame().setHeight(artboard.frame().height())
+      log(artboard)
+      var layer = artboard.addLayerOfType("rectangle").embedInShapeGroup();
+      layer.frame().setWidth(artboard.frame().width());
+      layer.frame().setHeight(artboard.frame().height());
       layer.setName("Background");
 
           var image = NSImage.alloc().initWithContentsOfFile(my.config.background_image);
@@ -56,26 +59,27 @@ com.getflourish = (function() {
           var fill = layer.style().fills().addNewStylePart();
           if (fill) {
               fill.setFillType(4);
-              fill.setPatternImage(image);
+              var coll = layer.style().fills().firstObject().documentData().images();
+              [fill setPatternImage:image collection:coll]
               fill.setPatternFillType(0);
               fill.setPatternTileScale(1);
           }
           doc.currentPage().deselectAllLayers();
-          layer.setIsSelected(true);
-          my.utils.sendToBack();
+          // layer.setIsSelected(true);
+          // my.utils.sendToBack();
           layer.setIsLocked(true);
 
       return layer;
     },
     addSolidBackground: function (artboard, hex_string) {
-      var layer = artboard.addLayerOfType("rectangle");
+      var layer = artboard.addLayerOfType("rectangle").embedInShapeGroup();
       layer.frame().setWidth(artboard.frame().width());
       layer.frame().setHeight(artboard.frame().height());
       layer.style().fills().addNewStylePart();
       layer.style().fill().setFillType(0);
       layer.setName("Background");
 
-      color = [MSColor colorWithHex: hex_string alpha: 1];
+      color = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha(hex_string, 1));
 
       layer.style().fill().setColor(color)
 
@@ -110,6 +114,71 @@ com.getflourish = (function() {
         textLayer.setFontSize(44);
         textLayer.setFontPostscriptName("HelveticaNeue-Thin");
         return textLayer;
+    },
+    createSelect: function (msg, items, selectedItemIndex){
+      selectedItemIndex = selectedItemIndex || 0
+
+      var accessory = [[NSComboBox alloc] initWithFrame:NSMakeRect(0,0,200,25)]
+      [accessory addItemsWithObjectValues:items]
+      [accessory selectItemAtIndex:selectedItemIndex]
+
+      var alert = [[NSAlert alloc] init]
+      [alert setMessageText:msg]
+      [alert addButtonWithTitle:'OK']
+      [alert addButtonWithTitle:'Cancel']
+      [alert setAccessoryView:accessory]
+
+      var responseCode = [alert runModal]
+      var sel = [accessory indexOfSelectedItem]
+
+      return [responseCode, sel]
+    },
+    filePicker: function (url, fileTypes){
+      // Panel
+      var openPanel = [NSOpenPanel openPanel]
+
+      [openPanel setTitle:"Import Colors"]
+      [openPanel setMessage:"Select a JSON file containing color information."];
+      [openPanel setPrompt:"Import"];
+
+      [openPanel setCanCreateDirectories:false]
+      [openPanel setCanChooseFiles:true]
+      [openPanel setCanChooseDirectories:false]
+      [openPanel setAllowsMultipleSelection:false]
+      [openPanel setShowsHiddenFiles:false]
+      [openPanel setExtensionHidden:false]
+      [openPanel setAllowedFileTypes:fileTypes]
+
+      // [openPanel setDirectoryURL:url]
+
+      var openPanelButtonPressed = [openPanel runModal]
+      if (openPanelButtonPressed == NSFileHandlingPanelOKButton) {
+        allowedUrl = [openPanel URL]
+      }
+      return allowedUrl
+    },
+    fileSaver: function (){
+      // Panel
+      var openPanel = [NSOpenPanel openPanel]
+
+      [openPanel setTitle:"Export colors"]
+      [openPanel setMessage:"Choose a location…"];
+      [openPanel setPrompt:"Export"];
+
+      [openPanel setCanCreateDirectories:true]
+      [openPanel setCanChooseFiles:false]
+      [openPanel setCanChooseDirectories:true]
+      [openPanel setAllowsMultipleSelection:false]
+      [openPanel setShowsHiddenFiles:false]
+      [openPanel setExtensionHidden:false]
+
+      // [openPanel setDirectoryURL:url]
+
+      var openPanelButtonPressed = [openPanel runModal]
+      if (openPanelButtonPressed == NSFileHandlingPanelOKButton) {
+        allowedUrl = [openPanel URL]
+      }
+      return allowedUrl
     },
     // Returns the page if it exists or creates a new page
     getPageByName: function(name) {
@@ -206,17 +275,539 @@ com.getflourish = (function() {
       frame.setHeight(height);
     },
     // Saves a string to a file
+    // save_file_from_string: function (filename, the_string) {
+    //     var path = [@"" stringByAppendingString:filename],
+    //       str = [@"" stringByAppendingString:the_string];
+//
+    //     if (in_sandbox()) {
+    //       sandboxAccess.accessFilePath_withBlock_persistPermission(filename, function(){
+    //         [str writeToFile:path atomically:true encoding:NSUTF8StringEncoding error:null];
+    //       }, true)
+    //     } else {
+    //       [str writeToFile:path atomically:true encoding:NSUTF8StringEncoding error:null];
+    //     }
+    // },
     save_file_from_string: function (filename, the_string) {
-        var path = [@"" stringByAppendingString:filename],
-          str = [@"" stringByAppendingString:the_string];
+      var path = [@"" stringByAppendingString:filename],
+        str = [@"" stringByAppendingString:the_string];
+        str.dataUsingEncoding_(NSUTF8StringEncoding).writeToFile_atomically_(path, true)
+    }
+  }
 
-        if (in_sandbox()) {
-          sandboxAccess.accessFilePath_withBlock_persistPermission(filename, function(){
-            [str writeToFile:path atomically:true encoding:NSUTF8StringEncoding error:null];
-          }, true)
+  my.colorInventory = {
+    generate: function () {
+      var currentlySelectedArtboard = doc.currentPage().currentArtboard();
+      if (currentlySelectedArtboard == null) {
+        doc.showMessage("Please select an artboard. The Inventory will be placed next to it.");
+      }
+      // start tracking the time
+      var startTime = new Date();
+
+      // page that the artboard will be created on
+      var styleSheetPage = doc.currentPage();
+
+      // the right most artboard
+      var rma = com.getflourish.layers.getRightmostArtboard();
+
+      // get hex colors from document
+      var hexColors = com.getflourish.colorInventory.getDocumentColors();
+
+      if (hexColors.length != 0) {
+
+        // feedback
+        doc.showMessage("Analyzing Colors…");
+
+        // setup predicate
+        var predicate = NSPredicate.predicateWithFormat("name == %@ AND className == %@", com.getflourish.config.colorInventoryName, "MSArtboardGroup");
+
+        // get the color artboard
+        var colorArtboard = styleSheetPage.children().filteredArrayUsingPredicate(predicate);
+        if (colorArtboard.count() == 0) {
+          colorArtboard = com.getflourish.common.addArtboard(styleSheetPage, com.getflourish.config.colorInventoryName);
         } else {
-          [str writeToFile:path atomically:true encoding:NSUTF8StringEncoding error:null];
+          colorArtboard = colorArtboard[0];
         }
+
+        // get hex colors from color artboard
+        var colorArtboardColors = com.getflourish.utils.arrayFromImmutableArray(com.getflourish.colorInventory.getColorArtboardColors(colorArtboard));
+
+        // get defined colors
+        var queryResult = com.getflourish.colorInventory.getDefinedColors(colorArtboard);
+
+        log("palettes")
+        // todo: optimize
+        var palettes = com.getflourish.colorInventory.getPalettesFromMergingColors(queryResult, hexColors);
+
+        log("received palettes")
+        // clear the artboard before adding swatches
+        colorArtboard.removeAllLayers();
+
+        // Add background
+        var bg = com.getflourish.common.addCheckeredBackground(colorArtboard);
+
+        coscript.setShouldKeepAround(true)
+        coscript.scheduleWithInterval_jsFunction(0.01, function() {
+          var execTime = (new Date() - startTime) / 1000;
+          doc.showMessage("Painting Swatches… " + execTime + " s");
+
+          // create colorsheet by passing palettes that contain multiple color objects (name, value)
+          com.getflourish.colors.createColorSheet(colorArtboard, palettes);
+
+          // position artboard
+          com.getflourish.colorInventory.positionArtboard(colorArtboard, currentlySelectedArtboard);
+
+          // finish it up
+          com.getflourish.colorInventory.finish(colorArtboard);
+
+          // resize background
+          bg.frame().setWidth(colorArtboard.frame().width())
+          bg.frame().setHeight(colorArtboard.frame().height())
+
+          // zoom
+          com.getflourish.view.zoomTo(colorArtboard)
+
+          // Feedback
+          var execTime = (new Date() - startTime) / 1000;
+          doc.showMessage("Generated Color Inventory in " + execTime + " s");
+
+          return colorArtboard;
+        });
+
+      } else {
+        doc.showMessage("No colors found :(")
+      }
+    },
+    getColorArtboardColors: function(colorArtboard) {
+
+      // get all layers of the current page
+      var layers = colorArtboard.children();
+
+      // analyse the colors
+      var rawHexColors = [layers valueForKeyPath:"@distinctUnionOfObjects.style.fill.color.hexValue"];
+      return rawHexColors;
+    },
+    getColorURL: function() {
+      var url = [doc askForUserInput:"Paste URL from Coolors or Hailpixel…" initialValue:"http://coolors.co/e0e086-acbe14-2c1f19-327a76-bce2d7"]
+      return url;
+    },
+      getColorsFromCoolorsString: function(string) {
+        var pos = string.lastIndexOf("/") + 1;
+        var colorString = string.substring(pos);
+        var colors = colorString.split("-");
+        var swatches = [];
+        for (var i = 0; i < colors.length; i++) {
+          var color = colors[i];
+          swatches.push({
+            name: "Imported Color",
+            color: color
+          })
+        }
+        return swatches;
+      },
+      getColorsFromHailString: function(string) {
+        var pos = string.lastIndexOf("/#") + 1;
+        var colorString = string.substring(pos);
+        var colors = colorString.split(",");
+        var swatches = [];
+        for (var i = 0; i < colors.length; i++) {
+          var color = colors[i];
+          if(color != ",") {
+            swatches.push({
+              name: "Imported Color",
+              color: color
+            })
+          }
+        }
+        return swatches;
+      },
+      getColorsFromURL: function(url) {
+        if (url.indexOf("http://color.hailpixel.com/") == 0) {
+          return com.getflourish.colorInventory.getColorsFromHailString(url);
+        } else if (url.indexOf("http://coolors.co/") == 0) {
+          return com.getflourish.colorInventory.getColorsFromCoolorsString(url);
+        }
+        return null;
+      },
+      getDefinedColors: function (artboard) {
+          // get defined colors, rename existing swatches
+          var predicate = NSPredicate.predicateWithFormat("NOT (name BEGINSWITH %@) && className == %@", "Untitled", "MSLayerGroup");
+          var queryResult = artboard.children().filteredArrayUsingPredicate(predicate);
+          return queryResult;
+      },
+    getDocumentColors: function() {
+      var borderColors = com.getflourish.colorInventory.getDocumentBorderColors();
+      var gradients = com.getflourish.colorInventory.getDocumentGradients();
+      var imageFills = com.getflourish.colorInventory.getDocumentImageFills();
+      var solidFillColors = com.getflourish.colorInventory.getDocumentSolidFillColors();
+      var textColors = com.getflourish.colorInventory.getDocumentTextColors();
+
+      // concat
+      // todo: concat and display by type
+          var allColors = solidFillColors.concat();
+          return allColors;
+      },
+      getDocumentBorderColors: function() {
+          return com.getflourish.colorInventory.getDestinctProperties("style.border.color");
+      },
+      getDocumentGradients: function() {
+          return com.getflourish.colorInventory.getDestinctProperties("style.fill.gradient");
+      },
+      getDocumentImageFills: function () {
+        return com.getflourish.colorInventory.getDestinctProperties("style.fill.image");
+      },
+      getDocumentSolidFillColors: function () {
+        return com.getflourish.colorInventory.getDestinctProperties("style.fill.color.hexValue");
+      },
+      getDocumentTextColors: function () {
+        return com.getflourish.colorInventory.getDestinctProperties("textColor.hexValue");
+      },
+      getDestinctProperties: function (keyPath) {
+        // get all layers of the current page, except the ones used on the color artboard
+        var layers = doc.currentPage().children();
+        var predicate = NSPredicate.predicateWithFormat("NOT(parentArtboard.name == %@)", com.getflourish.config.colorInventoryName);
+        var result = layers.filteredArrayUsingPredicate(predicate);
+
+        // analyse the colors
+        var keyPath = "@distinctUnionOfObjects." + keyPath;
+        var objects = [result valueForKeyPath:keyPath];
+        var properties = com.getflourish.utils.arrayFromImmutableArray(objects);
+
+        return properties;
+      },
+    export: function (filename) {
+      var data = {};
+      var colorName = null;
+      var colorSheet = com.getflourish.common.getArtboardByPageAndName(doc.currentPage(), com.getflourish.config.colorInventoryName);
+      var hexColor = null;
+      var pName;
+
+      // Path and file access
+      var document_path = [[doc fileURL] path].split([doc displayName])[0];
+      var path = document_path + filename;
+
+      var fileTypes = [];
+      var fileURL = com.getflourish.common.fileSaver();
+      path = fileURL.path();
+
+      // Authorize Sketch to save a file
+      new AppSandbox().authorize(path, function () {});
+
+      path = path + "/" + filename;
+
+      $("MSLayerGroup", colorSheet).each(function () {
+
+        // check if there are swatches (groups of color swatches)
+
+        colorName = this.name();
+        pName = "Defined";
+
+        // check if the color swatch has a defined name
+        if (this.name().indexOf("Untitled") == -1) {
+
+          // loop through all child layers to find the color
+          var layers = this.layers().array();
+          for (var i = 0; i < layers.count(); i++) {
+
+            // get the current layer
+            var currentLayer = layers[i];
+            if (currentLayer.name().indexOf("Color Swatch") == 0) {
+              hexColor = currentLayer.name().substr(13);
+
+              // remember color and name
+              // todo: format string for use in SCSS?
+              colorName = colorName;
+
+              // check for palette in name
+              if (colorName.indexOf(">") != -1) {
+                pName = colorName.substr(0, colorName.indexOf(">") - 1);
+                colorName = colorName.substr(colorName.indexOf(">") + 2);
+              }
+              if (data[pName] == null) data[pName] = {};
+              data[pName][colorName] = hexColor;
+            }
+          }
+        }
+      });
+
+      if (output == "{}") {
+        doc.showMessage("Nothing to export. You need to define swatches.")
+      } else {
+        var output = JSON.stringify(data, undefined, 2);
+        com.getflourish.common.save_file_from_string(path, output);
+        doc.showMessage("Exported to " + path);
+      }
+    },
+    import: function () {
+      // Path and file access
+      var document_path = "";
+      var path = "";
+
+      try {
+        document_path = [[doc fileURL] path].split([doc displayName])[0];
+        path = document_path + "colors.json";
+      } catch (error) {
+        doc.showMessage("Please save your file before importing.")
+      }
+
+      // Authorize Sketch to save a file
+
+      new AppSandbox().authorize(path, function () {})
+
+      var fileTypes = ["json"];
+      var fileURL = com.getflourish.common.filePicker(document_path, fileTypes);
+      var str = JSON.parse(NSString.stringWithContentsOfFile(fileURL));
+
+      var importedPalettes = [];
+      var newSwatches = [];
+
+      var color;
+      var newSwatch;
+
+      if (str != null) {
+        for (var key in str) {
+          if (str.hasOwnProperty(key)) {
+            var palette = str[key];
+            var swatches = [];
+            for (var swatch in palette) {
+              color = palette[swatch].replace("#", "");
+              newSwatch = {
+                name: swatch,
+                color: color
+              }
+              newSwatches.push(newSwatch);
+            }
+            var newPalette = {
+              name: key,
+              swatches: newSwatches
+            }
+            importedPalettes.push(newPalette);
+          }
+        }
+      }
+
+      if (importedPalettes.length > 0) {
+
+        // create a new artboard
+        var artboard = com.getflourish.common.addArtboard(doc.currentPage(), "Imported Colors");
+
+        // generate color sheet
+        com.getflourish.colors.createColorSheet(artboard, importedPalettes);
+
+        // finish
+        com.getflourish.colorInventory.finish(artboard);
+      } else {
+        doc.showMessage("Nothing to import.");
+      }
+    },
+    importFromURL: function() {
+      // get coolors url from user input
+      var url = com.getflourish.colorInventory.getColorURL();
+
+      // get colors from url
+      var swatches = com.getflourish.colorInventory.getColorsFromURL(url);
+
+      // add them to palettes
+      var palettes = [];
+
+      palettes.push({
+        name: "Imported",
+        swatches: swatches
+      })
+
+      // create a new artboard
+      var artboard = com.getflourish.common.getArtboardByPageAndName(doc.currentPage(), "Imported Colors");
+      artboard.removeAllLayers();
+      var bg = com.getflourish.common.addCheckeredBackground(artboard);
+
+      // generate color sheet
+      com.getflourish.colors.createColorSheet(artboard, palettes);
+
+      // position artboard
+      com.getflourish.colorInventory.positionArtboard(artboard, artboard);
+
+      // finish
+      com.getflourish.colorInventory.finish(artboard);
+
+      // resize background
+      bg.frame().setWidth(artboard.frame().width())
+      bg.frame().setHeight(artboard.frame().height())
+    },
+    getPalettesFromMergingColors: function(queryResult, hexColors) {
+
+      var documentColors = [];
+      var primaryColors = [];
+      var palettes = [];
+      var paletteNames = [];
+
+        for (var i = 0; i < queryResult.count(); i++) {
+
+            var group = queryResult[i];
+
+            // check if there are swatches (groups of color swatches)
+
+            colorName = group.name();
+
+            // check if the color swatch has a defined name
+
+            predicate2 = NSPredicate.predicateWithFormat("name BEGINSWITH %@", "Color Swatch");
+            querySwatches = group.children().filteredArrayUsingPredicate(predicate2);
+            // do something with the color swatch
+            if (querySwatches.count() == 1) {
+                // get color
+                c = querySwatches[0].style().fill().color().hexValue();
+
+                index = hexColors.indexOf(c);
+                primaryIndex = primaryColors.indexOf(c);
+
+                // see wether the color name contains palette information
+                pIndex = colorName.indexOf(">");
+                if (pIndex != -1) {
+
+                    // has palette name
+                    pName = colorName.substr(0, pIndex);
+
+                    // add new palette
+                    if (paletteNames.indexOf(pName) == -1) {
+                        paletteNames.push(pName);
+
+                        // push the palette
+                        palettes.push({
+                            name: pName,
+                            swatches: []
+                        });
+                    }
+                    var foo = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color.hexValue isEqualForSync:%@) && NOT(parentArtboard.name == %@)", c, com.getflourish.config.colorInventoryName);
+                    var bar = doc.currentPage().children().filteredArrayUsingPredicate(foo);
+
+                    palettes[paletteNames.indexOf(pName)].swatches.push({
+                        name: colorName,
+                        color: c,
+                        occurences: bar.count()
+                    });
+                    hexColors.splice(index, 1);
+                } else {
+                    // not part of a palette
+                    var foo = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color.hexValue isEqualForSync:%@) && NOT(parentArtboard.name == %@)", c, com.getflourish.config.colorInventoryName);
+                    var bar = doc.currentPage().children().filteredArrayUsingPredicate(foo);
+                    primaryColors.push({
+                        name: colorName,
+                        color: c,
+                        occurences: bar.count()
+                    });
+                    hexColors.splice(index, 1);
+                }
+                // check if defined color is still part of the documents colors
+                if (index == -1) {
+                    hexColors.splice(index, 1);
+                    primaryColors.splice(primaryIndex, 1);
+                }
+            }
+        };
+
+        for (var i = 0; i < hexColors.length; i++) {
+            predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color.hexValue isEqualForSync:%@) && NOT(parentArtboard.name == %@)", hexColors[i], com.getflourish.config.colorInventoryName);
+            queryResult = doc.currentPage().children().filteredArrayUsingPredicate(predicate);
+
+            documentColors.push({
+                name: "Untitled Color Swatch",
+                color: hexColors[i],
+                occurences: queryResult.count()
+            });
+        }
+
+        documentColors.sort(function(a, b) {
+            return b.occurences - a.occurences;
+        });
+
+        palettes.push({
+            name: "Defined Colors",
+            swatches: primaryColors
+        });
+        palettes.push({
+            name: "Undefined Colors",
+            swatches: documentColors
+        });
+
+      // experimental border colors
+      // var borderColors = com.getflourish.colorInventory.getDocumentBorderColors();
+      // log(borderColors)
+      // var borderSwatches = [];
+      // for (var i = 0; i < borderColors.length; i++) {
+      //  borderSwatches.push({
+      //    name: "Untitled Color Swatch",
+      //    color: borderColors[i].hexValue()
+      //  })
+      // }
+        // palettes.push({
+        //     name: "Border Colors",
+        //     swatches: borderSwatches
+        // });
+
+        return palettes;
+
+    },
+    positionArtboard: function(what, where) {
+          // Position the artboard next to the last artboard
+          // The actual position that we want is the right edge of the
+          // rightmost artboard plus a margin of 100px.
+
+          // the right most artboard
+          var rma = com.getflourish.layers.getRightmostArtboard();
+          // var rma = where;
+
+          if(rma.name() != what.name()) {
+            // var shift = what.frame().width();
+            // com.getflourish.colorInventory.shiftArtboardsFromArtboardBy(where, shift);
+              var left = rma.frame().width() + rma.frame().x() + 100;
+              var top = rma.frame().y();
+              what.frame().setX(left);
+              what.frame().setY(top);
+          } else {
+              var left = rma.frame().x();
+              var top = rma.frame().y();
+              what.frame().setX(left);
+              what.frame().setY(top);
+          }
+      },
+      shiftArtboardsFromArtboardBy: function(artboard, shift) {
+        // Make sure an artboard is selected
+        var selectedArtboard = artboard;
+        doc.currentPage().deselectAllLayers();
+        selectedArtboard.setIsSelected(true);
+        var width = selectedArtboard.frame().width();
+
+        artboards = doc.currentPage().artboards();
+
+        // Move all artboards that are next to the selected one
+        for (var i = 0; i < artboards.count(); i++) {
+          // only move artboards on the same y position
+          if (artboards[i] != selectedArtboard) {
+            if (artboards[i].frame().y() == selectedArtboard.frame().y() && artboards[i].frame().x() > selectedArtboard.frame().x()) {
+              var newX = artboards[i].frame().x() + shift + 100;
+              artboards[i].frame().setX(newX);
+            }
+          }
+
+        }
+      },
+    finish: function(artboard) {
+
+      // deselect all layers
+      doc.currentPage().deselectAllLayers();
+
+      // select current artboard
+      artboard.setIsSelected(true);
+
+      // refresh
+      // todo: this is costly
+      com.getflourish.common.refreshPage();
+
+      // collapse artboards
+      com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
+      artboard.setIsSelected(true);
+
+      // focus the view on the artboard
+      com.getflourish.view.centerTo(artboard);
     }
   }
 
@@ -296,8 +887,6 @@ com.getflourish = (function() {
       var margin_top = 125;
       var width = 0;
 
-      my.common.removeAllLayersFromArtboard(artboard);
-
       for (var i = 0; i < palettes.length; i++) {
         var palette = palettes[i];
 
@@ -307,16 +896,57 @@ com.getflourish = (function() {
           title.frame().setY(top)
           title.frame().setX(margin);
           top += 80;
+
+
+        // var colorChip = my.colors.addColorChip(artboard, palette.swatches[0]);
+
+        // colorChip.frame().setX(left);
+        // colorChip.frame().setY(top);
+          var colorChip;
+
+          for (var j = 0; j < palette.swatches.length; j++) {
+            // colorChip.duplicate()
+            left += margin;
+            colorChip = my.colors.addColorChip(artboard, palette.swatches[j]);
+
+            width = colorChip.frame().width();
+            // offset color chip
+            colorChip.frame().setX(left);
+            colorChip.frame().setY(top);
+            left += width;
+
+            // after x color chips, star a new row
+            if ((j + 1) % my.config.maxColorsPerRow == 0) {
+              top += width + margin_top;
+              left = 0;
+            }
+          }
+          // move next palette
+          if (left != 0) {
+            left = 0;
+            top += colorChip.frame().height() + 1.2 * margin_top;
+          }
         }
+      }
+      my.common.resize(artboard, 790, top);
+    },
+    update: function () {
+      var scope = doc.currentPage().children();
+      var result = com.getflourish.layers.selectLayersByName("Untitled Color Swatch", scope);
+      var swatches = result.objectEnumerator();
+      var left = 0;
+      var top = 0;
+      var margin = 0;
+      var width = 0;
 
-        for (var j = 0; j < palette.swatches.length; j++) {
+      while (swatch = swatches.nextObject()) {
           left += margin;
-          var colorChip = my.colors.addColorChip(artboard, palette.swatches[j]);
+          swatch = my.colors.addColorChip(artboard, palette.swatches[j]);
 
-          width = colorChip.frame().width();
+          width = swatch.frame().width();
           // offset color chip
-          colorChip.frame().setX(left);
-          colorChip.frame().setY(top);
+          swatch.frame().setX(left);
+          swatch.frame().setY(top);
           left += width;
 
           // after x color chips, star a new row
@@ -324,22 +954,16 @@ com.getflourish = (function() {
             top += width + margin_top;
             left = 0;
           }
-        }
-        // move next palette
-        if (left != 0) {
-          left = 0;
-          top += colorChip.frame().height() + 1.2 * margin_top;
-        }
       }
-      my.common.resize(artboard, 790, top + margin_top + width);
+      my.common.resize(artboard, 790, top);
     },
     // todo: change method to accept a color object with name and color value
     addColorChip: function (artboard, swatch) {
       var padding = 8;
 
       // get hex color
-      var hex_string = "#" + swatch.color.hexValue();
-      var color = swatch.color;
+      var hex_string = "#" + swatch.color;
+      var color = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha(hex_string, 1.0));
       var colorName = "";
 
       // add layer group
@@ -358,13 +982,13 @@ com.getflourish = (function() {
       group.setName(swatch.name);
 
       // draw white label rectangle
-      var white = [MSColor colorWithHex: "#FFFFFF" alpha: 0];
+      var white = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha("#FFFFFF", 0));
       var labelBG = my.colors.addColorShape(group, white, 120, 195);
       labelBG.frame().setY(0);
       labelBG.setName("Background");
       labelBG.setIsSelected(true);
 
-      white = [MSColor colorWithHex: "#FFFFFF" alpha: 1];
+      white = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha("#FFFFFF", 1));
       var bottomBG = my.colors.addColorShape(group, white, 120, 75);
       bottomBG.frame().setY(120);
       bottomBG.setName("Background-Bottom");
@@ -372,7 +996,6 @@ com.getflourish = (function() {
 
       // draw square color
       var colorSquare = my.colors.addColorShape(group, color, 120, 120);
-      var hex_string = "#" + color.hexValue();
       colorSquare.setName("Color Swatch " + hex_string);
       colorSquare.setIsSelected(true);
 
@@ -384,7 +1007,7 @@ com.getflourish = (function() {
 
       // Name Label
       if (swatch.occurences == null) swatch.occurences = 0;
-      
+
       var countLabel = my.common.addTextLayerEmphasis(group, "Test");
       countLabel.frame().setY(8);
       countLabel.frame().setX(85);
@@ -397,7 +1020,7 @@ com.getflourish = (function() {
       // Shadow
       var textShadow = countLabel.style().shadows().addNewStylePart();
 
-      var black = [MSColor colorWithHex: "#000" alpha:0.5];
+      var black = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha("#000000", 0.5));
       textShadow.setOffsetX(0);
       textShadow.setOffsetY(1);
       textShadow.setBlurRadius(2);
@@ -415,32 +1038,43 @@ com.getflourish = (function() {
       var rgb = String(Math.ceil(color.red() * 255)) + ", " + String(Math.ceil(color.green() * 255)) + ", " + String(Math.ceil(color.blue() * 255)) + ", " + String(color.alpha().toFixed(2));
       var rgbLabel = my.common.addTextLayer(group, rgb);
       rgbLabel.frame().setY(hexLabel.frame().y() + 14 + padding);
-      rgbLabel. adjustFrameToFit();
+      rgbLabel.adjustFrameToFit();
       rgbLabel.frame().setX(8);
       rgbLabel.setName("RGB Label");
 
       // Shadow
       var shadow = labelBG.style().shadows().addNewStylePart();
 
-      black = [MSColor colorWithHex: "#000" alpha:0.2];
+      black = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha("#000000", 0.2));
       shadow.setOffsetX(0);
       shadow.setOffsetY(2);
       shadow.setBlurRadius(3);
       shadow.setSpread(0);
 
-      shadow.setColor(black)
+      shadow.setColor(black);
 
 
       return group;
     },
     addColorShape: function (artboard, color, width, height) {
       // add layer
-      var layer = artboard.addLayerOfType("rectangle");
+      var layer = artboard.addLayerOfType("rectangle").embedInShapeGroup();
       layer.frame().setWidth(width);
       layer.frame().setHeight(height);
       layer.style().fills().addNewStylePart();
       layer.style().fill().setFillType(0);
       layer.style().fill().setColor(color);
+
+      return layer;
+    },
+    addGradientShape: function (artboard, gradient, width, height) {
+      // add layer
+      var layer = artboard.addLayerOfType("rectangle").embedInShapeGroup();
+      layer.frame().setWidth(width);
+      layer.frame().setHeight(height);
+      layer.style().fills().addNewStylePart();
+      layer.style().fill().setFillType(1);
+      layer.style().fill().setGradient(gradient);
 
       return layer;
     },
@@ -465,7 +1099,7 @@ com.getflourish = (function() {
                         color = fill.color();
                     }
                 } catch (error) {
-                    log(error);
+                    // log(error);
                 }
             break;
                 case "MSOvalShape":
@@ -497,6 +1131,30 @@ com.getflourish = (function() {
             }
         return color;
     },
+    getNameForColor: function (hexColor) {
+      var predicate = NSPredicate.predicateWithFormat("name == %@", "Color Swatch #" + hexColor);
+
+      // get the color artboard
+      var result = doc.currentPage().children().filteredArrayUsingPredicate(predicate);
+
+      if (result.count() > 0 && result[0].parentGroup().name() != "Untitled Color Swatch") {
+        return result[0].parentGroup().name();
+      } else {
+        return "#" + hexColor;
+      }
+    },
+    hasColorInventory: function () {
+      // setup predicate
+      var predicate = NSPredicate.predicateWithFormat("name == %@", com.getflourish.config.colorInventoryName);
+
+      // get the color artboard
+      var result = doc.currentPage().artboards().filteredArrayUsingPredicate(predicate);
+      if (result.count() != 0) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     getTextColorOf: function (layer) {
       var color = null;
 
@@ -513,6 +1171,22 @@ com.getflourish = (function() {
         }
       }
       return color;
+    },
+    // Convert Hexadecimal value to RGB
+    // http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+    hexToRgb: function (hex) {
+      // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+      var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+      hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        return r + r + g + g + b + b
+      })
+
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null
     }
   }
 
@@ -560,52 +1234,60 @@ com.getflourish = (function() {
   }
 
   my.utils = {
-      sendAction: function (commandToPerform) {
-          try {
-              [NSApp sendAction:commandToPerform to:nil from:doc];
-          } catch(e) {
-              my.log(e)
-          }
-      },
-      sendToBack: function () {
-          my.utils.sendAction('moveToBack:');
-      },
-      sendBackward: function () {
-          my.utils.sendAction('moveBackward:');
-      },
-      sendDelete: function () {
-          my.utils.sendAction('delete:');
-      },
-      sendAlignBottom: function () {
-          my.utils.sendAction('alignLayersBottom:');
-      },
-      sendAlignLeft: function () {
-          my.utils.sendAction('alignLayersLeft:');
-      },
-      sendAlignHorizontally: function () {
-          my.utils.sendAction('alignLayersCenter:');
-      },
-      sendAlignVertically: function () {
-          my.utils.sendAction('alignLayersMiddle:');
-      },
-      sendAlignRight: function () {
-          my.utils.sendAction('alignLayersRight:');
-      },
-      sendAlignTop: function () {
-          my.utils.sendAction('alignLayersTop:');
-      },
-      sendDistributeVertically: function () {
-          my.utils.sendAction('distributeVertically:');
-      },
-      sendDistributeHorizontally: function () {
-          my.utils.sendAction('distributeHorizontally:');
-      },
-      sendForward: function () {
-          my.utils.sendAction('moveForward:');
-      },
-      sendPasteInPlace: function () {
-          my.utils.sendAction('pasteInPlace:');
-      },
+    sendAction: function (commandToPerform) {
+        try {
+            [NSApp sendAction:commandToPerform to:nil from:doc];
+        } catch(e) {
+            my.log(e)
+        }
+    },
+    sendToBack: function () {
+        my.utils.sendAction('moveToBack:');
+    },
+    sendBackward: function () {
+        my.utils.sendAction('moveBackward:');
+    },
+    sendDelete: function () {
+        my.utils.sendAction('delete:');
+    },
+    sendAlignBottom: function () {
+        my.utils.sendAction('alignLayersBottom:');
+    },
+    sendAlignLeft: function () {
+        my.utils.sendAction('alignLayersLeft:');
+    },
+    sendAlignHorizontally: function () {
+        my.utils.sendAction('alignLayersCenter:');
+    },
+    sendAlignVertically: function () {
+        my.utils.sendAction('alignLayersMiddle:');
+    },
+    sendAlignRight: function () {
+        my.utils.sendAction('alignLayersRight:');
+    },
+    sendAlignTop: function () {
+        my.utils.sendAction('alignLayersTop:');
+    },
+    sendDistributeVertically: function () {
+        my.utils.sendAction('distributeVertically:');
+    },
+    sendDistributeHorizontally: function () {
+        my.utils.sendAction('distributeHorizontally:');
+    },
+    sendForward: function () {
+        my.utils.sendAction('moveForward:');
+    },
+    sendPasteInPlace: function () {
+        my.utils.sendAction('pasteInPlace:');
+    },
+    arrayFromImmutableArray: function(nsarray) {
+      var output = [];
+      // convert immutable NSArray to mutable array
+      for (var i = 0; i < nsarray.count(); i++) {
+          output.push(nsarray[i]);
+      }
+      return output;
+    }
   }
 
   my.css = {
@@ -614,32 +1296,116 @@ com.getflourish = (function() {
     **/
 
     createRuleSetStr: function (layer) {
+
+      var baseunit = com.getflourish.css.getBaseUnit();
+
       var str = '';
-      var selector = '.' + layer.name().toLowerCase().replace(/ /gi, '-');
+
+      // get the layer name
+      var name = layer.name().toLowerCase();
+
+      // replace special characters by a dash
+      var regex = new RegExp("[/:(). ]", "g");
+      name = name.replace(regex, "-");
+
+      // construct the css selector
+      var selector = '.' + name;
+
+      // get the css attributes from sketch, yay!
       var attrs = layer.CSSAttributes();
 
       str += selector + ' {';
 
       for (var i = 0; i < attrs.count(); i += 1) {
+        // raw css declaration provided by Sketch
         var declaration = attrs.objectAtIndex(i);
 
-          if (declaration.indexOf('/*') < 0) {
-            str += '\n\t' + declaration;
-          }
+        // formatted declaration
+        // for example font-size and line height will be expressed in relative units instead of pixels
+        var property = declaration.substring(0, declaration.indexOf(":"));
+        var value = declaration.substring(declaration.indexOf(":") + 1, declaration.indexOf("px"));
+
+        switch (property) {
+          case "font-size":
+            if (com.getflourish.css.formatOptions.useRelativeFontSize) {
+              value = value / baseunit;
+              declaration = property + ": " + value + "rem;";
+            }
+          break;
+          case "line-height":
+            if (com.getflourish.css.formatOptions.useRelativeLineHeight) {
+              value = com.getflourish.css.getRelativeLineHeight(layer);
+              declaration = property + ": " + value + "em;";
+            }
+          break;
+          // case "color":
+          //   if (com.getflourish.css.formatOptions.useSassColorVariables) {
+          //     var value = declaration.substring(declaration.indexOf("#"), declaration.indexOf(";"));
+          //     value = com.getflourish.colors.getNameForColor(value)
+          //     declaration = property + ": " + value + ";";
+          //     log(declaration)
+          //   }
+          // break;
+          default:
+          break;
+        }
+
+        if (declaration.indexOf('/*') < 0) {
+          str += '\n\t' + declaration;
+        }
       }
       str += '\n}';
       return str;
+    },
+    formatOptions: {
+      useRelativeFontSize: true,
+      useRelativeLineHeight: true,
+      useSassColorVariables: true,
+      splitFontFamily: true
+    },
+    getBaseUnit: function () {
+      // access the base unit for formatting purposes
+      var persistent = [[NSThread mainThread] threadDictionary];
+
+      if (persistent["com.getflourish.baseunit"] == null) {
+        var value = parseFloat([doc askForUserInput:"Base unit:" initialValue:16]);
+        persistent["com.getflourish.baseunit"] = value;
+      }
+
+      var baseunit = persistent["com.getflourish.baseunit"];
+      return baseunit;
+    },
+    getRelativeFontSize: function (textLayer, baseunit) {
+
+      var relativeFontSize = null;
+
+      if (layer.className() == "MSTextLayer") {
+        var fontSize = layer.fontSize();
+        relativeFontSize = fontSize / baseunit;
+      }
+      return relativeFontSize;
+    },
+    getRelativeLineHeight: function (textLayer) {
+
+      var relativeLineHeight = null;
+
+      if (textLayer.className() == "MSTextLayer") {
+          var fontSize = textLayer.fontSize();
+          var lineSpacing = textLayer.lineSpacing();
+          relativeLineHeight = lineSpacing / fontSize;
+      }
+      return relativeLineHeight;
     },
 
     generateStyleSheet: function (layers) {
       var stylesheet = '';
       var stylesheet = "/* Text Styles from Sketch */";
 
-      for (var i = 0; i < layers.count(); i += 1) {
+      for (var i = 0; i < layers.count(); i ++) {
         var layer = layers.objectAtIndex(i);
 
           // only get CSS for text layers
-          if([layer isKindOfClass:MSTextLayer]) {
+          if([layer isKindOfClass:MSTextLayer] && layer.name() != "Text Styles") {
             stylesheet += '\n\n' + my.css.createRuleSetStr(layer);
           }
       }
@@ -648,8 +1414,46 @@ com.getflourish = (function() {
   }
 
   my.layers = {
+      alignLayersHorizontally: function (layers) {
+        if (layers.count() == 1) {
+          var layer = layers[0];
+          var parent = layer.parentGroup();
+          var midX = parent.absoluteRect().midX();
+          var targetX = Math.ceil(midX - layer.frame().width() / 2);
+          layer.absoluteRect().setX(targetX);
+        } else if (layers.count() > 1) {
+          for (var i = 0; i < layers.count(); i++) {
+
+          }
+        }
+      },
+      alignLayersVertically: function (layers) {
+        if (layers.count() == 1) {
+          var layer = layers[0];
+          var parent = layer.parentGroup();
+          var midY = parent.absoluteRect().midY();
+          var targetY = Math.ceil(midY - layer.frame().height() / 2);
+          layer.absoluteRect().setY(targetY);
+        } else if (layers.count() > 1) {
+          for (var i = 0; i < layers.count(); i++) {
+
+          }
+        }
+      },
       areEqual: function (layer1, layer2) {
           return layer1.objectID() === layer2.objectID();
+      },
+      /**
+       * Returns the x position of the rightmost artboard
+       * @return {artboard} artboard
+       */
+      getRightmostArtboard: function() {
+        var scope = doc.currentPage().artboards();
+        var maxX = [scope valueForKeyPath:"@max.frame.maxX"];
+        var predicate = NSPredicate.predicateWithFormat("frame.maxX == %@", maxX);
+        var artboard = scope.filteredArrayUsingPredicate(predicate);
+
+        return artboard[0];
       },
       select: function (layers) {
           // deselect first
@@ -659,6 +1463,158 @@ com.getflourish = (function() {
           for (var i = 0; i < layers.count(); i++) {
               layers[i].setIsSelected(true);
           }
+      },
+      selectLayersByColor: function(referenceLayer, scope) {
+        var color = null,
+        results = 0,
+        referenceColor = null,
+        selected = null;
+
+        // deselect
+        doc.documentData().deselectAllLayers();
+
+        // get color of selected layer
+        color = com.getflourish.colors.getColorOf(referenceLayer);
+
+        var ftype = 0;
+
+        try {
+            ftype = color.fillType();
+        } catch (error) {
+        }
+
+        // init predicate
+        var predicate = null;
+
+        // use appropriate predicate depending on the selected layer class
+
+        switch (String(referenceLayer.className())) {
+            case "MSTextLayer":
+                predicate = NSPredicate.predicateWithFormat("textColor.hexValue == %@ && textColor.alpha == %@", color.hexValue(), color.alpha());
+            break;
+            case "MSOvalShape":
+            case "MSShapeGroup":
+            case "MSShapePathLayer":
+            case "MSRectangleShape":
+                // check if color is solid
+                if (ftype != 0) {
+                    predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill isEqualForSync:%@)", color);
+                } else {
+                    predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.fillType == 0) && style.fill.color.hexValue == %@ && style.fill.color.alpha == %@", color.hexValue(), color.alpha());
+                }
+            break;
+            default:
+
+            break;
+        }
+
+        // query page layers
+        var queryResult = scope.filteredArrayUsingPredicate(predicate);
+
+        // select all results
+        doc.currentPage().selectLayers(queryResult);
+
+        return queryResult;
+      },
+      selectLayersByBorderColor: function(referenceLayer, scope) {
+        var color = null,
+        results = 0,
+        referenceColor = null,
+        selected = null;
+
+        // deselect
+        doc.documentData().deselectAllLayers();
+
+        // get color of selected layer
+        color = com.getflourish.colors.getColorOf(referenceLayer);
+
+        var predicate = NSPredicate.predicateWithFormat("(style.border != NULL) && style.border.color.hexValue == %@", color.hexValue());
+
+        // query page layers
+        var queryResult = scope.filteredArrayUsingPredicate(predicate);
+
+        // select all results
+        doc.currentPage().selectLayers(queryResult);
+
+        return queryResult;
+      },
+      selectLayersByName: function (referenceName, scope) {
+
+        // deselect
+        doc.documentData().deselectAllLayers();
+
+        // init predicate
+        var predicate = null;
+
+        // define base name
+        var baseName = referenceName;
+
+        // Get the last part of the layer name and check if it is an appended number
+        var end = referenceName.lastIndexOf(" ");
+        if (end != -1) {
+            var endString = referenceName.substring(end);
+            // Check if the last part is a number
+            var numberRegex = new RegExp("[0-9]");
+            if (endString.match(numberRegex) != null) {
+                // Found a number, so the search string needs to be trimmed
+                baseName = referenceName.substring(0, end);
+            }
+        }
+
+        // setup predicate
+        var predicate = NSPredicate.predicateWithFormat("name beginswith[c] %@", baseName);
+
+        // query page layers
+        var result = scope.filteredArrayUsingPredicate(predicate);
+
+        // select all results
+        doc.currentPage().selectLayers(result);
+
+        return result;
+      },
+      selectLayersBySize: function (width, height, scope) {
+
+        // deselect
+        doc.documentData().deselectAllLayers();
+
+        // init predicate
+        var predicate = null;
+
+        // setup predicate
+        var predicate = NSPredicate.predicateWithFormat("frame.width == %@ AND frame.height == %@", width, height);
+
+        // query page layers
+        var result = scope.filteredArrayUsingPredicate(predicate);
+
+        // select all results
+        doc.currentPage().selectLayers(result);
+
+        return result;
+      },
+      selectLayersByTextStyle: function (textStyle, scope) {
+        var predicate = NSPredicate.predicateWithFormat("(style.textStyle != NULL) && (style.textStyle isEqualForSync:%@)",textStyle);
+
+        // query page layers
+        var queryResult = scope.filteredArrayUsingPredicate(predicate);
+
+        // select all results
+        doc.currentPage().selectLayers(queryResult);
+
+        return queryResult;
+      },
+      selectParentGroup: function (layer) {
+
+        // Selects the parent group of a layer (option cmd g)
+
+        // get parent
+        var parent = layer.parentGroup();
+
+        // deselect all layers
+        doc.currentPage().deselectAllLayers();
+
+        // select parent group
+        parent.setIsSelected(true);
+
       },
       sortIndices: function (array) {
           // Orders the array in the layer list
@@ -726,6 +1682,166 @@ com.getflourish = (function() {
              my.layers.swapIndex(first, next);
           }
       }
+  }
+
+  my.textStyleInventory = {
+
+    generate: function () {
+
+      var definedTextStyles = com.getflourish.textStyleInventory.analyseTextStyles();
+
+      // for large files, sketch crashes after adding the style sheet page (a second time)
+      var styleSheetPage = doc.currentPage();
+      var artboard = com.getflourish.common.getArtboardByPageAndName(styleSheetPage, "Text Styles Inventory");
+      artboard.removeAllLayers();
+
+      var bg = com.getflourish.common.addCheckeredBackground(artboard);
+      com.getflourish.textStyleInventory.createTextStyles(artboard, definedTextStyles);
+
+      // refresh inspector
+      doc.reloadInspector();
+
+      // resize background
+      bg.frame().setWidth(artboard.frame().width())
+      bg.frame().setHeight(artboard.frame().height())
+
+      com.getflourish.textStyleInventory.exportStyles(artboard);
+
+      return artboard;
+
+    },
+
+    analyseTextStyles: function() {
+      var definedTextStyles = [];
+      var styles = doc.documentData().layerTextStyles().objects();
+
+      for (var i = 0; i < styles.count(); i++) {
+        var style = styles.objectAtIndex(i);
+        var attributes = style.style().textStyle().attributes();
+        var textStyle = style
+        if (!com.getflourish.common.isIncluded(definedTextStyles, textStyle)) {
+            definedTextStyles.push({
+              "attributes": attributes,
+              "textStyle": style,
+              "name": style.name()
+            });
+          }
+      }
+      // sort by font size
+      definedTextStyles.sort(com.getflourish.textStyleInventory.compareTextStyleFontSize);
+      return definedTextStyles;
+    },
+
+    compareTextStyleFontSize: function (b, a) {
+      if (a.attributes.NSFont.fontDescriptor().objectForKey(NSFontSizeAttribute) < b.attributes.NSFont.fontDescriptor().objectForKey(NSFontSizeAttribute))
+        return -1;
+      if (a.attributes.NSFont.fontDescriptor().objectForKey(NSFontSizeAttribute) > b.attributes.NSFont.fontDescriptor().objectForKey(NSFontSizeAttribute))
+        return 1;
+      return 0;
+    },
+    createTextStyles: function (artboard, definedTextStyles) {
+
+      var has = com.getflourish.colors.hasColorInventory();
+      var top = 30;
+      var margin = 20;
+      var maxWidth = 0;
+
+      // add a title if palette has colors
+      if(definedTextStyles.length > 0) {
+        var title = com.getflourish.common.addTextLayerTitle(artboard, "Text Styles");
+        title.frame().setY(top)
+        title.frame().setX(margin);
+        top += 120;
+      }
+
+      for (var i = 0; i < definedTextStyles.length; i++) {
+
+        var $grey = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha("#000000", 0.5));
+
+        var definedTextStyle = definedTextStyles[i];
+        var textLayer = artboard.addLayerOfType("text");
+
+        var fontString = String(definedTextStyle.attributes.NSFont);
+        var font = fontString.substring(1, fontString.indexOf("pt."));
+        var label = "" + font + "pt";
+
+
+        // Text layer holding the style name
+        var styleName = definedTextStyle.name;
+        var styleNameLayer = artboard.addLayerOfType("text");
+
+        textLayer.setTextAlignment(0);
+        textLayer.setStringValue(styleName);
+        textLayer.adjustFrameToFit();
+        textLayer.setTextAlignment(0);
+
+        textLayer.setStyle(definedTextStyle.textStyle.newInstance());
+        textLayer.setTextAlignment(0);
+        textLayer.setName(definedTextStyle.name);
+        var theWidth = textLayer.frame().width();
+
+        var hexColor = textLayer.textColor().hexValue();
+        var colorName = "#" + hexColor;
+        if (has) colorName = com.getflourish.colors.getNameForColor(hexColor);
+
+        var label = textLayer.fontPostscriptName() + "\n" + textLayer.fontSize() + "pt, " + colorName;
+        styleNameLayer.setStringValue(label);
+        styleNameLayer.setName(definedTextStyle.name);
+        styleNameLayer.setTextColor($grey);
+        styleNameLayer.setLineSpacing(18);
+
+        if (theWidth > maxWidth) maxWidth = theWidth;
+        textLayer.frame().setX(margin + 150);
+        textLayer.frame().setY(top);
+
+        // position the style name layer
+        styleNameLayer.frame().setX(margin);
+        styleNameLayer.frame().setY(top);
+
+        top += textLayer.frame().height();
+        top += styleNameLayer.frame().height();
+      }
+
+      // centerView(textLayer)
+
+      // Resize artboard and background to match the newly created text layers
+      var bounds = MSLayerGroup.groupBoundsForLayers(artboard.layers().array());
+      var scope = artboard.children();
+      var predicate = NSPredicate.predicateWithFormat("className == %@", "MSTextLayer");
+      var result = scope.filteredArrayUsingPredicate(predicate);
+
+        var maxWidth = [result valueForKeyPath:"@max.frame.width"];
+
+      artboard.frame().setWidth(maxWidth + 150 + 2 * margin);
+      artboard.frame().setHeight(bounds.height());
+
+      com.getflourish.colorInventory.positionArtboard(artboard, artboard);
+
+      // Zoom the view to make the entire artboard visible
+      com.getflourish.view.zoomTo(artboard)
+
+    },
+    exportStyles: function (artboard) {
+
+      // Document path
+      if (doc.fileURL() != null) {
+
+        var styleSheetString = com.getflourish.css.generateStyleSheet(artboard.children());
+
+        var view = [doc currentView];
+        view.refresh();
+
+        var document_path = [[doc fileURL] path].split([doc displayName])[0];
+
+        var path = document_path + "/typography.css"
+
+        new AppSandbox().authorize(path, function () {});
+
+        com.getflourish.common.save_file_from_string(path, styleSheetString);
+      } else {
+        doc.showMessage("Export failed. Please save your file first.")
+      }
+    }
   }
 
   return my;

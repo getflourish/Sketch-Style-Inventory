@@ -1,43 +1,16 @@
 // Selects all layers with the same layer name on the current artboard (control cmd n)
 
-var index = -1;
-var found = -1;
-var layerCount = 0;
+#import 'inventory.js'
 
-var referenceName = selection[0].name();
-var baseName = referenceName;
+if (selection.count() == 1) {
 
-// Get the last part of the layer name and check if it is an appended number
-var end = referenceName.lastIndexOf(" ");
-if (end != -1) {
-    var endString = referenceName.substr(end, referenceName.length());
-    // Check if the last part is a number
-    var numberRegex = new RegExp("[0-9]");
-    if (endString.match(numberRegex) != null) {
-        // Found a number, so the search string needs to be trimmed
-        baseName = referenceName.substr(0, end);
-    }
+    var layer = selection[0];
+    var referenceName = layer.name();
+    var scope = doc.currentPage().currentArtboard().children();
+    var result = com.getflourish.layers.selectLayersByName(referenceName, scope);
+
+    doc.showMessage(result.count() + " layers of " + scope.count() + " selected. " + referenceName);
+
+} else {
+    doc.showMessage("Please select a reference layer.");
 }
-
-var regex = new RegExp(baseName + " [0-9]", "ig");
-
-var artboard = doc.currentPage().currentArtboard();
-
-var layers = artboard.children().objectEnumerator();
-
-while (layer = layers.nextObject()) {
-
-    // Remember name
-    var name = layer.name();
-
-    // Select layer if name contains reference name at the beginning (includes "layer 1", "layer 2", …)
-
-    if (name == baseName || name.match(regex) != null) {
-        // select layer and break
-        [layer select:true byExpandingSelection:true];
-        layerCount++;
-    }
-    index++;
-}
-
-doc.showMessage(layerCount + " layers with name '" + baseName + "' selected.");

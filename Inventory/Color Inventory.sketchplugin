@@ -1,299 +1,73 @@
-// (control alt cmd c)
-
-/**
- * This plugin generates an artboard containing color swatches
- * of all used fill and text colors of the current page.
- *
- * Florian Schulz Copyright 2014, MIT License
- */
+// Shows a dialog with all actions available from Color Inventory (control alt cmd c)
 
 #import 'inventory.js'
-#import 'sketchSelect.js'
 
-(function theFunction() {
+var action = chooseAction();
+action.run(action.params);
 
-    var artboards = null,
-        colorArtboard = null,
-        color = null,
-        cname = null,
-        hexColor = null,
-        hexColors = [],
-        index = 0,
-        layers = null,
-        palettes = [],
-        paletteNames = [],
-        pIndex,
-        pName,
-        rgbColors = [],
-        rma = null,
-        styleSheetPage = null,
-        undefinedColors = [];
+function chooseAction() {
 
-    // page that the artboard will be created on
-    // var styleSheetPage = com.getflourish.common.getPageByName(com.getflourish.config.pageName);
-    styleSheetPage = doc.currentPage();
+	var actions = [];
 
-    // the right most artboard
-    rma = getRightmostArtboard();
+	if (hasColorInventory()) {
+		actions.push({
+			name: "Update",
+			run: com.getflourish.colorInventory.generate
+		},
+		{
+			name: "Export",
+			run: com.getflourish.colorInventory.export,
+			params: "colors.json"
+		});
+	} else {
+		actions.push({
+			name: "Generate",
+			run: com.getflourish.colorInventory.generate
+		});
+	}
 
-    // dirty hack that will prevent crashes
-    // todo: find out why Sketch crashes when a existing artboard is selected
-    //com.getflourish.common.removeArtboardFromPage(styleSheetPage, com.getflourish.config.colorInventoryName);
+	actions.push(
+		{
+			name: "Import from URL…",
+			run: com.getflourish.colorInventory.importFromURL
+		},
+		{
+			name: "Import from File…",
+			run: com.getflourish.colorInventory.import
+		}
+	);
 
-    // artboard that will hold all color swatches
-    colorArtboard = com.getflourish.common.getArtboardByPageAndName(styleSheetPage, com.getflourish.config.colorInventoryName);
+	// populate options
+	var options = [];
 
-    // get layers
-    layers = doc.currentPage().children().objectEnumerator();
+	for  (var i = 0; i < actions.length; i++) {
+		options.push(actions[i].name)
+	}
 
-    var layerIsVisible = function(layer){
-      var target = layer;
-      while(target.parentGroup()){
-        if(!target.isVisible()){
-          return false;
-        }
-        target = target.parentGroup();
-      }
-      return layer.isVisible();
-    };
+	// create the dialog with drop down
+	var choice = com.getflourish.common.createSelect('Color Inventory', options, 0)
 
-    // loop through all layers
-    while (l = layers.nextObject()) {
-        if(!layerIsVisible(l)){
-            continue;
-        }
-        try {
-            cname = String(l.className());
-            if (cname == null) continue;
-        } catch (error) {
-            log("error receiving class name");
-        }
-        if (cname === "MSShapeGroup") {
-            try {
-                // the color of the layer
-                color = com.getflourish.colors.getColorOf(l);
-                if (color == null) {
-                    continue;
-                }
-                try {
-                    cname = String(color.className());
-                } catch (error) {
-                    log("could not receive class name");
-                    continue;
-                }
-                try {
-                    if (cname === "MSColor") {
-                        try {
+	// get the choice
+	var index = choice[1];
 
-                            hexColor = String(color.hexValue());
-                            // get classname
-                            index = hexColors.indexOf(hexColor);
-                            if(index == -1) {
-                                hexColors.push(hexColor);
-                                rgbColors.push({
-                                    name: "Untitled Color Swatch",
-                                    color: color,
-                                    occurences: 1
-                                });
-                            } else {
-                                rgbColors[index].occurences++;
-                            }
+	// return the action
+	var action = actions[index];
+	return action;
+}
 
-                        } catch (error) {
-                            log("error getting hex code");
-                            continue;
-                        }
-                    }
-                } catch (error) {
-                    log("could not check if color is included");
-                }
-            } catch (error) {
-                log("oh noes");
-            }
-        }
-    }
+function exportColors () {
+	com.getflourish.colorInventory.export("colors.json");
+}
 
-    var primaryColors = [];
-    // get defined colors, rename existing swatches
-    $("MSLayerGroup", colorArtboard).each(function () {
+function hasColorInventory () {
+	// setup predicate
+	var predicate = NSPredicate.predicateWithFormat("name == %@", com.getflourish.config.colorInventoryName);
 
-        // check if there are swatches (groups of color swatches)
-
-        colorName = this.name();
-
-        // check if the color swatch has a defined name
-        if (colorName.indexOf("Untitled") == -1) {
-
-            // loop through all child layers to find the color
-            var layers = this.layers().array();
-            for (var i = 0; i < layers.count(); i++) {
-
-                // get the current layer
-                var currentLayer = layers[i];
-                if (currentLayer.name().indexOf("Color Swatch") == 0) {
-                    hexColor = currentLayer.name().substr(14);
-
-                    var index = hexColors.indexOf("" + hexColor);
-                    var c = rgbColors[index];
-
-                    // see wether the color name contains palette information
-                    pIndex = colorName.indexOf(">");
-                    if (pIndex != -1) {
-                        pName = colorName.substr(0, pIndex);
-                        log(pName)
-                        // add new palette
-                        if (paletteNames.indexOf(pName) == -1) {
-                            paletteNames.push(pName);
-
-                            // push the palette
-                            palettes.push({
-                                name: pName,
-                                swatches: []
-                            });
-
-                            // push the swatch to the newly created palette
-                            rgbColors[index].name = colorName;
-                            palettes[paletteNames.indexOf(pName)].swatches.push(c);
-                            rgbColors.splice(index, 1);
-                            hexColors.splice(index, 1);
-                        } else {
-                            // push the swatch to existing palette
-                            rgbColors[index].name = colorName;
-                            palettes[paletteNames.indexOf(pName)].swatches.push(c);
-                            rgbColors.splice(index, 1);
-                            hexColors.splice(index, 1);
-                        }
-                    } else {
-                        rgbColors[index].name = colorName;
-                        primaryColors.push(c);
-                        rgbColors.splice(index, 1);
-                        hexColors.splice(index, 1);
-                    }
-
-                    // check if defined color is still part of the documents colors
-                    if (index != -1) {
-                        // rename existing swatch
-                        // rgbColors[index].name = colorName;
-                        // primaryColors.push(c);
-                        // rgbColors.splice(index, 1);
-                        // hexColors.splice(index, 1);
-                    }
-                }
-            }
-        }
-    });
-
-    // only create a color sheet when there are colors
-
-    if (rgbColors.length > 0) {
-        palettes.push({
-            name: "Defined Colors",
-            swatches: primaryColors
-        });
-        palettes.push({
-            name: "Undefined Colors",
-            swatches: rgbColors
-        });
-        // create colorsheet by passing palettes that contain multiple color objects (name, value)
-        com.getflourish.colors.createColorSheet(colorArtboard, palettes);
-    }
-
-    // Position the artboard next to the last artboard
-    // The actual position that we want is the right edge of the
-    // rightmost artboard plus a margin of 100px.
-
-    if(rma.name() != com.getflourish.config.colorInventoryName) {
-        var left = rma.frame().width() + rma.frame().x() + 100;
-        var top = rma.frame().y();
-        colorArtboard.frame().setX(left);
-        colorArtboard.frame().setY(top);
-    } else {
-        var left = rma.frame().x();
-        var top = rma.frame().y();
-        colorArtboard.frame().setX(left);
-        colorArtboard.frame().setY(top);
-    }
-
-    // focus the view on the artboard
-    com.getflourish.view.centerTo(colorArtboard);
-    doc.currentPage().deselectAllLayers();
-    colorArtboard.setIsSelected(true);
-
-    // refresh
-    com.getflourish.common.refreshPage();
-
-    // Reverse Layer Order
-    var layers = colorArtboard.layers().array();
-    var layersMeta = [];
-
-        for (var i = 0; i < layers.count(); i++) {
-            var layer = layers[i];
-
-            layersMeta.push({
-                "name": layer.name(),
-                "layer": layer
-            });
-
-        }
-
-    // Add background
-    bg = com.getflourish.common.addCheckeredBackground(colorArtboard);
-    bg.setIsSelected(false);    
-    com.getflourish.layers.reverseLayerOrder(layersMeta);
-    // collapse artboards
-    com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
-
-    colorArtboard.setIsSelected(true);
-
-    // reset variable
-    com = null;
-    artboards = null;
-    colorArtboard = null;
-    color = null;
-    cname = null;
-    hexColor = null;
-    hexColors = [];
-    layers = null;
-    rgbColors = [];
-    rma = null;
-    styleSheetPage = null;
-
-    /**
-     * Returns the x position of the leftmost artboard
-     * @return {artboard} artboard
-     */
-    function getRightmostArtboard() {
-      var meta = [];
-
-      // Loop through all artboards of the current page
-      for (var i = 0; i < doc.currentPage().artboards().count(); i++) {
-
-        // remember the artboard
-        var artboard = doc.currentPage().artboards().objectAtIndex(i);
-
-        // the left position of the artboard
-        var left = artboard.frame().x();
-
-        // save properties of the artboard
-        meta.push({
-          artboard: artboard,
-          left: left
-        });
-      }
-      // Sort the artboards by their left position
-      meta.sort(sortLeft);
-
-      // Return the rightmost artboard
-      var artboard = meta[meta.length-1].artboard;
-      return artboard;
-    }
-
-    /**
-     * Used to sort the left positions of two given layers
-     * @param  {layer} a
-     * @param  {layer} b
-     */
-    function sortLeft(a, b) {
-        return a.left - b.left;
-    }
-})();
+	// get the color artboard
+	var result = doc.currentPage().artboards().filteredArrayUsingPredicate(predicate);
+	if (result.count() != 0) {
+		return true;
+	} else {
+		return false;
+	}
+}

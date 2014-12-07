@@ -9,40 +9,13 @@
 
 #import 'inventory.js'
 
-(function theFunction() {
-    var color = null,
-    results = 0,
-    referenceColor = null,
-    selected = null;
+if (selection.count() == 1) {
+    var referenceLayer = selection[0];
+    var scope = doc.currentPage().children();
+    var result = com.getflourish.layers.selectLayersByColor(referenceLayer, scope);
 
-    if (selection.count() == 1) {
-
-        // get the selected layer
-        selected = selection[0];
-
-        // get color of selected layer
-        referenceColor = com.getflourish.colors.getColorOf(selected);
-
-        // loop through all layers of the page
-        var layers = doc.currentPage().children().objectEnumerator();
-
-        while (layer = layers.nextObject()) {
-          // get color of layer
-            try {
-                color = com.getflourish.colors.getColorOf(layer);
-
-                if (com.getflourish.colors.areEqual(color, referenceColor)) {
-                    // select layer if colors are equal
-                    layer.setIsSelected(true);
-                    results++;
-                }
-            } catch (error) {
-                log("error comparing colors");
-            }
-        }
-
-        doc.showMessage(results + " layers of " + doc.currentPage().children().count() + " selected. " + referenceColor);
-    } else {
-        doc.showMessage("Please select a reference layer.");
-    }
-}());
+    // display message
+    doc.showMessage(result.count() + " layers of " + scope.count() + " selected.");
+} else {
+    doc.showMessage("Please select a reference layer.");
+}

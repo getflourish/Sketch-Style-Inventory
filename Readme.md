@@ -38,7 +38,7 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 * Duplicate Artboard `shift` + `⌘` + `D`
 * Fit Artboard
 * Fit Artboard Height `ctrl` + `shift` + `A`
-* Remove Artboard `shift` + `⌘` + `⌫`
+* Remove Artboard `⌘` + `⌫`
 * Sort Artboards
 
 #### Inventory
@@ -65,17 +65,12 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 #### Smart Align
 * Smart Align Horizontally `⌘` + `⌥` + `,`
 * Smart Align Vertically `⌘` + `⌥` + `.`
-* Smart Align Bottom `⌘` + `⌥` + `↓`
-* Smart Align Left `⌘` + `⌥` + `←`
-* Smart Align Top `⌘` + `⌥` + `↑`
-* Smart Align Right `⌘` + `⌥` + `→`
 * Distribute Horizontally `control` + `⌘` + `⌥` + `,`
 * Distribute Vertically `control` + `⌘` + `⌥` + `.`
 * Space Horizontal
 * Space Vertical
 
 #### Smart Move
-* Delete and Pull Up `⌘`+ `⌫`
 * Pull Left `shift` + `⌘` + `⌥` + `←`
 * Pull Up `shift` + `⌘` + `⌥` + `↑`
 * Push Down `shift` + `⌘` + `⌥` + `↓`
@@ -123,7 +118,7 @@ This improves the built in behavior of artboard duplication in Sketch. If the se
 
 This improves the built in behavior of artboard removal in Sketch. If the selected artboard is in the middle of other artboards, all artboards on the right side will be shifted to the left after the artboard has been removed. Requires any layer of an artboard to be selected.
 
-**Shortcut:** `shift` + `⌘` + `⌫`
+**Shortcut:** `⌘` + `⌫` (Backspace)
 
 ![Remove Artboard Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Remove%20Artboard.gif)
 
@@ -160,37 +155,6 @@ Plugin that allows you to set the line height of a text layer as a multiple of t
 
 ## Misc
 
-### Birds Eye View
-
-Zooms out to show all artboards and centers on the currently selected layer.
-
-**Shortcut:** `⌘` + `9`
-
-### Fill Width
-
-Make the selection as wide as the parent group or the width of the artboard.
-
-**Shortcut:** `⌘` + `E`
-
-![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Fill%20Width.gif)
-
-
-### Goto Artboard
-
-Shows a list of artboards.
-
-**Shortcut:** `⌥` + `⌘` + `P`
-
-![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Goto%20Artboard.png)
-
-### Goto Page
-
-Shows a list of pages.
-
-**Shortcut:** `⌘` + `P`
-
-![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Goto%20Page.png)
-
 ### Replace Layer
 
 Replaces the selected layer with the content in the clipboard. Basically this plugin does paste in place while removing the original selection.
@@ -198,7 +162,6 @@ Replaces the selected layer with the content in the clipboard. Basically this pl
 **Shortcut:** `⌥` + `cmd` + `R`
 
 ![Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Replace%20Layer.gif)
-
 
 ## Selection
 
@@ -281,13 +244,6 @@ Distributes the selected elements vertically, with the same distante beetween th
 
 ## Smart Move
 
-### Delete Pull
-Deletes a layer and pulls all other layer up.
-
-![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Delete%20Pull.gif)
-
-### Push & Pull
-
 `experimental` Allows you to pull or push layers in relation to the selected layer.
 
 * Pull Left `shift` + `⌘` + `⌥` + `←`
@@ -329,7 +285,7 @@ To do: export opacity, remove attributes that have the default value
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Sketch%20CSS.png)
 
 ### Generate/Color Inventory
-Generates an artboard with all colors that are used on the current page. You can rename the layer group of a color swatch to make it a "defined" color. The next time the color inventory is generated, the plugin will take care of it. You can also group colors by naming them like "Primary > Blue".
+Generates an artboard with all colors that are used on the current page.
 
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Colors.png)
 

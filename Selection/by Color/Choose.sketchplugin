@@ -1,0 +1,37 @@
+//
+
+ /**
+ * This plugin selects all same-colored layers based on the selected layer.
+ * Scope: current artboard
+ *
+ * Florian Schulz Copyright 2014, MIT License
+ */
+
+#import 'inventory.js'
+
+if (selection.count() == 1) {
+    var referenceLayer = selection[0];
+    var scope = doc.currentPage().children();
+
+    var result = com.getflourish.utils.arrayFromImmutableArray(com.getflourish.layers.selectLayersByColor(referenceLayer, scope));
+
+	doc.currentPage().deselectAllLayers();
+    // populate options
+	var options = [];
+
+	for(var i = 0; i < result.length; i++) {
+		options.push(result[i].name())
+	}
+
+
+	// create the dialog with drop down
+	var choice = com.getflourish.common.createSelect('Color Inventory', options, 0)
+
+	// get the choice
+	var index = choice[1];
+	result[index].setIsSelected(true);
+
+	com.getflourish.view.centerTo(result[index]);
+} else {
+    doc.showMessage("Please select a reference layer.");
+}

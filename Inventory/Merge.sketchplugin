@@ -1,0 +1,79 @@
+// (cmd control option m)
+#import 'inventory.js'
+
+var selected = selection;
+
+// verify that only one defined swatch has been selected
+
+if (selection.count() > 0 && doc.currentPage().currentArtboard().name() == com.getflourish.config.colorInventoryName) {
+
+	// get the defined color that we will use to recolor all other layers
+	var predicate = NSPredicate.predicateWithFormat("NOT(name == %@)", "Untitled Color Swatch");
+	var results = selection.filteredArrayUsingPredicate(predicate);
+
+	if (results.count() == 1) {
+
+		// find the color layer
+		var findTheColorSwatch = NSPredicate.predicateWithFormat("name BEGINSWITH %@", "Color Swatch");
+		var colorLayer = results[0].children().filteredArrayUsingPredicate(findTheColorSwatch);
+		var color = colorLayer[0].style().fill().color();
+
+		var predicate2 = NSPredicate.predicateWithFormat("name == %@", "Untitled Color Swatch");
+		var undefinedColors = selection.filteredArrayUsingPredicate(predicate2);
+		var mergedArray = [];
+
+		for (var i = 0; i < undefinedColors.count(); i++) {
+			var predicate3 = NSPredicate.predicateWithFormat("name BEGINSWITH %@", "Color Swatch");
+			var colorLayer = undefinedColors[i].children().filteredArrayUsingPredicate(predicate3);
+
+			var scope = doc.currentPage().children();
+			doc.currentPage().deselectAllLayers();
+			var result = com.getflourish.layers.selectLayersByColor(colorLayer[0], scope);
+
+			// var batchRequest = [NSBatchUpdateRequest batchUpdateRequestWithEntityName:[result]]
+			// batchRequest.propertiesToUpdate = {"name": "lol"};
+			// var res = self.managedObjectContext.executeRequest(batchRequest);
+			//
+			// loop through all layers of current page and execute the function
+			var layers = result.objectEnumerator();
+
+			while (layer = layers.nextObject()) {
+			    layer.style().fill().setColor(color);
+			}
+
+			// merge borders
+			result = com.getflourish.layers.selectLayersByBorderColor(colorLayer[0], scope);
+			layers = result.objectEnumerator();
+
+			while (layer = layers.nextObject()) {
+			    layer.style().border().setColor(color);
+			}
+			doc.currentPage().currentArtboard().removeLayer(undefinedColors[i]);
+		}
+		doc.currentPage().deselectAllLayers();
+
+		doc.showMessage("Merged " + undefinedColors.count() + " colors to #" + colorLayer[0].name());
+
+		coscript.setShouldKeepAround(true)
+		coscript.scheduleWithInterval_jsFunction(0.01, onInterval);
+
+	} else {
+		doc.showMessage("Please select one defined Swatch");
+
+	}
+}
+
+function onInterval (int) {
+	com.getflourish.colorInventory.generate();
+}
+
+function changeColorOfLayerTo(layer, color) {
+	layer.style.fill
+}
+
+function centerView(layer) {
+	var selected_object = layer,
+    	view = [doc currentView]
+	[view zoomToFitRect:[selected_object absoluteRect]]
+
+}
