@@ -192,30 +192,30 @@ com.getflourish = (function() {
       var page = my.common.addPage(name);
       return page;
     },
-      dump: function (obj) {
-          log("#####################################################################################")
-          log("## Dumping object " + obj )
-          log("## obj class is: " + [obj className])
-          log("#####################################################################################")
-          log("obj.properties:")
-          log([obj class].mocha().properties())
-          log("obj.propertiesWithAncestors:")
-          log([obj class].mocha().propertiesWithAncestors())
-          log("obj.classMethods:")
-          log([obj class].mocha().classMethods())
-          log("obj.classMethodsWithAncestors:")
-          log([obj class].mocha().classMethodsWithAncestors())
-          log("obj.instanceMethods:")
-          log([obj class].mocha().instanceMethods())
-          log("obj.instanceMethodsWithAncestors:")
-          log([obj class].mocha().instanceMethodsWithAncestors())
-          log("obj.protocols:")
-          log([obj class].mocha().protocols())
-          log("obj.protocolsWithAncestors:")
-          log([obj class].mocha().protocolsWithAncestors())
-          log("obj.treeAsDictionary():")
-          log(obj.treeAsDictionary())
-      },
+    dump: function (obj) {
+        log("#####################################################################################")
+        log("## Dumping object " + obj )
+        log("## obj class is: " + [obj className])
+        log("#####################################################################################")
+        log("obj.properties:")
+        log([obj class].mocha().properties())
+        log("obj.propertiesWithAncestors:")
+        log([obj class].mocha().propertiesWithAncestors())
+        log("obj.classMethods:")
+        log([obj class].mocha().classMethods())
+        log("obj.classMethodsWithAncestors:")
+        log([obj class].mocha().classMethodsWithAncestors())
+        log("obj.instanceMethods:")
+        log([obj class].mocha().instanceMethods())
+        log("obj.instanceMethodsWithAncestors:")
+        log([obj class].mocha().instanceMethodsWithAncestors())
+        log("obj.protocols:")
+        log([obj class].mocha().protocols())
+        log("obj.protocolsWithAncestors:")
+        log([obj class].mocha().protocolsWithAncestors())
+        log("obj.treeAsDictionary():")
+        log(obj.treeAsDictionary())
+    },
     // Returns an artboard from a given page
     getArtboardByPageAndName: function(page, name) {
           var theArtboard = null;
@@ -232,6 +232,21 @@ com.getflourish = (function() {
     },
     isIncluded: function(arr, obj) {
       return (arr.indexOf(obj) != -1);
+    },
+    getDirectoryFromBrowserForFilename: function (filename) {
+      // Path and file access
+      var document_path = [[doc fileURL] path].split([doc displayName])[0];
+      var path = document_path + filename;
+
+      var fileTypes = [];
+      var fileURL = com.getflourish.common.fileSaver();
+      path = fileURL.path();
+
+      // Authorize Sketch to save a file
+      new AppSandbox().authorize(path, function () {});
+
+      return path;
+
     },
     showMarginsOf: function (layer) {
       // calculates margins and displays them
@@ -1401,11 +1416,12 @@ com.getflourish = (function() {
       var stylesheet = '';
       var stylesheet = "/* Text Styles from Sketch */";
 
-      for (var i = 0; i < layers.count(); i ++) {
+      for (var i = 0; i < layers.count(); i++) {
+
         var layer = layers.objectAtIndex(i);
 
           // only get CSS for text layers
-          if([layer isKindOfClass:MSTextLayer] && layer.name() != "Text Styles") {
+          if([layer isKindOfClass:MSTextLayer] && layer.style().sharedObjectID() != null) {
             stylesheet += '\n\n' + my.css.createRuleSetStr(layer);
           }
       }
@@ -1686,7 +1702,7 @@ com.getflourish = (function() {
 
   my.textStyleInventory = {
 
-    generate: function () {
+    generate: function (path) {
 
       var definedTextStyles = com.getflourish.textStyleInventory.analyseTextStyles();
 
@@ -1705,7 +1721,7 @@ com.getflourish = (function() {
       bg.frame().setWidth(artboard.frame().width())
       bg.frame().setHeight(artboard.frame().height())
 
-      com.getflourish.textStyleInventory.exportStyles(artboard);
+      com.getflourish.textStyleInventory.exportStyles(artboard, path);
 
       return artboard;
 
@@ -1821,7 +1837,10 @@ com.getflourish = (function() {
       com.getflourish.view.zoomTo(artboard)
 
     },
-    exportStyles: function (artboard) {
+    exportStyles: function (artboard, path) {
+
+      // ask for base unit
+      var baseunit = com.getflourish.css.getBaseUnit();
 
       // Document path
       if (doc.fileURL() != null) {
@@ -1830,12 +1849,6 @@ com.getflourish = (function() {
 
         var view = [doc currentView];
         view.refresh();
-
-        var document_path = [[doc fileURL] path].split([doc displayName])[0];
-
-        var path = document_path + "/typography.css"
-
-        new AppSandbox().authorize(path, function () {});
 
         com.getflourish.common.save_file_from_string(path, styleSheetString);
       } else {

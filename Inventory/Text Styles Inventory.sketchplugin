@@ -2,4 +2,16 @@
 
 #import 'inventory.js'
 
-com.getflourish.textStyleInventory.generate();
+// file name of the exported file
+var filename = "typography.css"
+
+// let the user choose the export location
+var fileURL = com.getflourish.common.fileSaver();
+path = fileURL.path();
+
+// get authorization to write to the export folder
+new AppSandbox().authorize(path, function () {
+
+	// generate the text styles and save them
+	com.getflourish.textStyleInventory.generate(path + "/" + filename)
+});
