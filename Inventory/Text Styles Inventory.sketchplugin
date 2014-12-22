@@ -2,6 +2,9 @@
 
 #import 'inventory.js'
 
+// use "rem" for font sizes
+com.getflourish.css.formatOptions.useRelativeFontSize = false;
+
 // file name of the exported file
 var filename = "typography.css"
 

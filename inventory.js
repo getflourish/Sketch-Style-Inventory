@@ -1155,7 +1155,7 @@ com.getflourish = (function() {
       if (result.count() > 0 && result[0].parentGroup().name() != "Untitled Color Swatch") {
         return result[0].parentGroup().name();
       } else {
-        return "#" + hexColor;
+        return null;
       }
     },
     hasColorInventory: function () {
@@ -1762,14 +1762,6 @@ com.getflourish = (function() {
       var margin = 20;
       var maxWidth = 0;
 
-      // add a title if palette has colors
-      if(definedTextStyles.length > 0) {
-        var title = com.getflourish.common.addTextLayerTitle(artboard, "Text Styles");
-        title.frame().setY(top)
-        title.frame().setX(margin);
-        top += 120;
-      }
-
       for (var i = 0; i < definedTextStyles.length; i++) {
 
         var $grey = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha("#000000", 0.5));
@@ -1796,9 +1788,16 @@ com.getflourish = (function() {
         textLayer.setName(definedTextStyle.name);
         var theWidth = textLayer.frame().width();
 
-        var hexColor = textLayer.textColor().hexValue();
-        var colorName = "#" + hexColor;
+        var color = textLayer.textColor();
+        var hexColor = color.hexValue();
+        var rgb = String(Math.ceil(color.red() * 255)) + ", " + String(Math.ceil(color.green() * 255)) + ", " + String(Math.ceil(color.blue() * 255)) + ", " + String(color.alpha().toFixed(2));
+
+        var alpha = String(color.alpha().toFixed(2) * 100);
         if (has) colorName = com.getflourish.colors.getNameForColor(hexColor);
+        if (colorName == null) {
+          colorName = "#" + hexColor;
+          if (alpha != 100) colorName += " @" + alpha + "%"
+        }
 
         var label = textLayer.fontPostscriptName() + "\n" + textLayer.fontSize() + "pt, " + colorName;
         styleNameLayer.setStringValue(label);

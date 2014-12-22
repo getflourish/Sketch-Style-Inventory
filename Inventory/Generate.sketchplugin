@@ -9,12 +9,24 @@ var x = selectedArtboard.frame().x();
 // ask for base unit
 var baseunit = com.getflourish.css.getBaseUnit();
 
-// generate and get the inventories 
-var ca = com.getflourish.colorInventory.generate();
-var ta = com.getflourish.textStyleInventory.generate();
+// file name of the exported file
+var filename = "typography.css"
 
-var shiftWidth = ca.frame().width() + ta.frame().width() + 200;
+// let the user choose the export location
+var fileURL = com.getflourish.common.fileSaver();
+path = fileURL.path();
 
+// get authorization to write to the export folder
+new AppSandbox().authorize(path, function () {
 
-com.getflourish.colorInventory.shiftArtboardsFromArtboardBy(selectedArtboard, shiftWidth);
-ca.frame().setX(selectedArtboard.frame().x(x));
+	// generate and get the inventories 
+	var ca = com.getflourish.colorInventory.generate();
+
+	// generate the text styles and save them
+	com.getflourish.textStyleInventory.generate(path + "/" + filename)
+
+	var shiftWidth = ca.frame().width() + ta.frame().width() + 200;
+
+	com.getflourish.colorInventory.shiftArtboardsFromArtboardBy(selectedArtboard, shiftWidth);
+	ca.frame().setX(selectedArtboard.frame().x(x));
+});
