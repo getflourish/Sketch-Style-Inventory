@@ -4,10 +4,11 @@
 
 // remember current artboard
 var selectedArtboard = doc.currentPage().currentArtboard();
-var x = selectedArtboard.frame().x();
 
-// ask for base unit
-var baseunit = com.getflourish.css.getBaseUnit();
+// get right most artboard if no artboard is selected
+if (selectedArtboard == null) selectedArtboard = com.getflourish.layers.getRightmostArtboard();
+
+var x = selectedArtboard.frame().x();
 
 // file name of the exported file
 var filename = "typography.css"
@@ -25,8 +26,8 @@ new AppSandbox().authorize(path, function () {
 	// generate the text styles and save them
 	com.getflourish.textStyleInventory.generate(path + "/" + filename)
 
-	var shiftWidth = ca.frame().width() + ta.frame().width() + 200;
-
-	com.getflourish.colorInventory.shiftArtboardsFromArtboardBy(selectedArtboard, shiftWidth);
-	ca.frame().setX(selectedArtboard.frame().x(x));
+	// var shiftWidth = ca.frame().width() + ta.frame().width() + 200;
+// 
+	// com.getflourish.colorInventory.shiftArtboardsFromArtboardBy(selectedArtboard, shiftWidth);
+	// ca.frame().setX(selectedArtboard.frame().x(x));
 });

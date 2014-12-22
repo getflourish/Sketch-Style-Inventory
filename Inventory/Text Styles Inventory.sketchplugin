@@ -16,5 +16,7 @@ path = fileURL.path();
 new AppSandbox().authorize(path, function () {
 
 	// generate the text styles and save them
-	com.getflourish.textStyleInventory.generate(path + "/" + filename)
+	com.getflourish.textStyleInventory.generate(path + "/" + filename);
+
+	doc.showMessage("Text Styles exported to " + path);
 });
