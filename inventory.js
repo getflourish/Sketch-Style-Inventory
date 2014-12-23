@@ -161,8 +161,8 @@ com.getflourish = (function() {
       // Panel
       var openPanel = [NSOpenPanel openPanel]
 
-      [openPanel setTitle:"Export colors"]
-      [openPanel setMessage:"Choose a location…"];
+      [openPanel setTitle:"Choose a location…"]
+      [openPanel setMessage:"Select the export location…"];
       [openPanel setPrompt:"Export"];
 
       [openPanel setCanCreateDirectories:true]
@@ -467,8 +467,9 @@ com.getflourish = (function() {
 
       // concat
       // todo: concat and display by type
-          var allColors = solidFillColors.concat(textColors);
-          return allColors;
+      var allColors = solidFillColors.concat(textColors).unique();
+      log(allColors)
+      return allColors;
     },
     getDocumentBorderColors: function() {
         return com.getflourish.colorInventory.getDestinctProperties("style.border.color");
@@ -480,10 +481,10 @@ com.getflourish = (function() {
       return com.getflourish.colorInventory.getDestinctProperties("style.fill.image");
     },
     getDocumentSolidFillColors: function () {
-      return com.getflourish.colorInventory.getDestinctProperties("style.fill.color.hexValue");
+      return com.getflourish.colorInventory.getDestinctProperties("style.fill.color");
     },
     getDocumentTextColors: function () {
-      return com.getflourish.colorInventory.getDestinctProperties("textColor.hexValue");
+      return com.getflourish.colorInventory.getDestinctProperties("textColor");
     },
     getDestinctProperties: function (keyPath) {
       // get all layers of the current page, except the ones used on the color artboard
@@ -525,7 +526,6 @@ com.getflourish = (function() {
           var group = queryResult[j];
           colorName = group.name();
           pName = "Defined";
-
 
           // loop through all child layers to find the color
           var layers = group.layers().array();
@@ -641,7 +641,7 @@ com.getflourish = (function() {
       bg.frame().setWidth(artboard.frame().width())
       bg.frame().setHeight(artboard.frame().height())
     },
-    getPalettesFromMergingColors: function(queryResult, hexColors) {
+    getPalettesFromMergingColors: function(queryResult, definedColors) {
 
       var documentColors = [];
       var primaryColors = [];
@@ -663,9 +663,9 @@ com.getflourish = (function() {
             // do something with the color swatch
             if (querySwatches.count() == 1) {
                 // get color
-                c = querySwatches[0].style().fill().color().hexValue();
+                c = querySwatches[0].style().fill().color();
 
-                index = hexColors.indexOf(c);
+                index = definedColors.indexOf(c);
                 primaryIndex = primaryColors.indexOf(c);
 
                 // see wether the color name contains palette information
@@ -693,7 +693,7 @@ com.getflourish = (function() {
                         color: c,
                         occurences: bar.count()
                     });
-                    hexColors.splice(index, 1);
+                    definedColors.splice(index, 1);
                 } else {
                     // not part of a palette
                     var foo = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color.hexValue isEqualForSync:%@) && NOT(parentArtboard.name == %@)", c, com.getflourish.config.colorInventoryName);
@@ -703,24 +703,24 @@ com.getflourish = (function() {
                         color: c,
                         occurences: bar.count()
                     });
-                    hexColors.splice(index, 1);
+                    definedColors.splice(index, 1);
                 }
                 // check if defined color is still part of the documents colors
                 if (index == -1) {
                     // do not remove the color from the defined swatches
-                    // hexColors.splice(index, 1);
+                    // definedColors.splice(index, 1);
                     // primaryColors.splice(primaryIndex, 1);
                 }
             }
         };
 
-        for (var i = 0; i < hexColors.length; i++) {
-            predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color.hexValue isEqualForSync:%@) && NOT(parentArtboard.name == %@)", hexColors[i], com.getflourish.config.colorInventoryName);
+        for (var i = 0; i < definedColors.length; i++) {
+            predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color.hexValue isEqualForSync:%@) && NOT(parentArtboard.name == %@)", definedColors[i], com.getflourish.config.colorInventoryName);
             queryResult = doc.currentPage().children().filteredArrayUsingPredicate(predicate);
 
             documentColors.push({
                 name: "Untitled Color Swatch",
-                color: hexColors[i],
+                color: definedColors[i],
                 occurences: queryResult.count()
             });
         }
@@ -902,7 +902,7 @@ com.getflourish = (function() {
         var palette = palettes[i];
 
         // add a title if palette has colors
-        if(palette.swatches.length > 0) {
+        if (palette.swatches.length > 0) {
           var title = com.getflourish.common.addTextLayerTitle(artboard, palette.name);
           title.frame().setY(top)
           title.frame().setX(margin);
@@ -973,8 +973,8 @@ com.getflourish = (function() {
       var padding = 8;
 
       // get hex color
-      var hex_string = "#" + swatch.color;
-      var color = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha(hex_string, 1.0));
+      var hex_string = "#" + swatch.color.hexValue();
+      var color = swatch.color;
       var colorName = "";
 
       // add layer group
@@ -1046,7 +1046,7 @@ com.getflourish = (function() {
       hexLabel.setName("Hex Label");
 
       // RGB Label
-      var rgb = String(Math.ceil(color.red() * 255)) + ", " + String(Math.ceil(color.green() * 255)) + ", " + String(Math.ceil(color.blue() * 255)) + ", " + String(color.alpha().toFixed(2));
+      var rgb = String(Math.ceil(color.red().toFixed(2) * 255)) + ", " + String(Math.ceil(color.green().toFixed(2) * 255)) + ", " + String(Math.ceil(color.blue().toFixed(2) * 255)) + ", " + String(color.alpha().toFixed(2));
       var rgbLabel = my.common.addTextLayer(group, rgb);
       rgbLabel.frame().setY(hexLabel.frame().y() + 14 + padding);
       rgbLabel.adjustFrameToFit();
@@ -1774,6 +1774,7 @@ com.getflourish = (function() {
         var font = fontString.substring(1, fontString.indexOf("pt."));
         var label = "" + font + "pt";
 
+        colorName = null;
 
         // Text layer holding the style name
         var styleName = definedTextStyle.name;
@@ -1790,15 +1791,19 @@ com.getflourish = (function() {
         var theWidth = textLayer.frame().width();
 
         var color = textLayer.textColor();
+
         var hexColor = color.hexValue();
         var rgb = String(Math.ceil(color.red() * 255)) + ", " + String(Math.ceil(color.green() * 255)) + ", " + String(Math.ceil(color.blue() * 255)) + ", " + String(color.alpha().toFixed(2));
 
         var alpha = String(color.alpha().toFixed(2) * 100);
-        if (has) colorName = com.getflourish.colors.getNameForColor(hexColor);
+        if (has == true) colorName = com.getflourish.colors.getNameForColor(hexColor);
+        
         if (colorName == null) {
           colorName = "#" + hexColor;
           if (alpha != 100) colorName += " @" + alpha + "%"
         }
+
+      log(colorName)
 
         var label = textLayer.fontPostscriptName() + "\n" + textLayer.fontSize() + "pt, " + colorName;
         styleNameLayer.setStringValue(label);
@@ -1859,3 +1864,15 @@ com.getflourish = (function() {
 
   return my;
 }());
+
+Array.prototype.unique = function() {
+    var a = this.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i].hexValue() === a[j].hexValue())
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+};
