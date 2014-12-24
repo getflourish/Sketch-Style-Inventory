@@ -1,4 +1,5 @@
 #import 'sandbox.js'
+#import 'persistence.js'
 
 // Namespaced library of functions common across multiple plugins
 var com = com || {};
@@ -132,6 +133,194 @@ com.getflourish = (function() {
       var sel = [accessory indexOfSelectedItem]
 
       return [responseCode, sel]
+    },
+    createWebView: function (url) {
+      // WebView tests (shift alt ctrl y)
+
+      /**
+       * The first script call creates the panel with the saved HTML page.
+       * The following script calls execute the JavaScript calls in the webView.
+       */
+
+      // Add a hint to whomever is instantiating us,
+      // that we'd like to stick around for a while.
+      coscript.shouldKeepAround = true;
+
+      // Include additionl frameworks.
+      framework('WebKit');
+      framework('AppKit');
+
+      // Define a WebViewLoad delegate function - should be converted to an ObjC class.
+      // See https://github.com/logancollins/Mocha
+      var WebViewLoadDelegate = function () {};
+
+      // Add the initiating delegate (callback) function.
+      WebViewLoadDelegate.prototype.webView_didClearWindowObject_forFrame = function (sender, scriptObject, frame) {
+        var jswrapper = 'try {[[js]]} catch (e) {e.toString();}',
+          jscode = 'document.body.innerHTML;',
+          js = jswrapper.replace('[[js]]', jscode);
+
+        var result = scriptObject.evaluateWebScript(js);
+        log(result);
+      };
+
+      // Add the delegate (callback) function which is called when the page has loaded.
+      WebViewLoadDelegate.prototype.webView_didFinishLoadForFrame = function (sender, frame) {
+        var jswrapper = 'try {[[js]]} catch (e) {e.toString();}',
+          jscode = 'document.body.innerHTML;',
+          js = jswrapper.replace('[[js]]', jscode);
+
+        var scriptObject = sender.windowScriptObject();
+
+        var result = scriptObject.evaluateWebScript(js);
+        log(result);
+      };
+
+      // Prepare the function that will be used as an object added to the
+      // scriptObject. The object should be visible with it's methods and properties
+      // from the page JavaScript and should be usable to call Sketch script
+      // functions from the page JavaScript.
+      var runThis = function runThis () {
+        var that = function () {};
+
+        // Property visible to JavaScript.
+        that.fixed = "Property named fixed";
+        // Method visible to JavaScript.
+        that.log = function () {
+          log('Called from JavaScript via the Sketch script RunThis object.');
+          return true;
+        };
+        // Method returns whether a selector should be hidden
+        // from the scripting environment. If "false" is returned none is hidden.
+        that.isSelectorExcludedFromWebScript = function (selector) {
+          log('selector');
+          log(selector);
+          return false;
+        };
+        // Method returns whether a key should be hidden
+        // from the scripting environment. If "false" is returned none is hidden.
+        that.isKeyExcludedFromWebScript = function (key) {
+          log('key');
+          log(key);
+          return false;
+        };
+
+        return that;
+      };
+
+      // Set the url to the saved webpage
+      // Split the scriptpath into an array, remove last item which is
+      // the script name, create a string from the array again and wrap the
+      // path with 'file://' and the html file name.
+      var URL = '';
+      var path = url.split('/');
+
+      path.pop();
+      path = path.join('/') + '/';
+      URL = encodeURI('file://' + url + "styles.html");
+      log(URL)
+
+      /**
+       * Prepare the panel, show it and save it into the persistent store.
+       */
+      var setupWebViewPanel = function () {
+        // Prepare the panel:
+        // Set the panel size and
+        // initialize the webview and load the URL
+        var frame = NSMakeRect(0, 0, 320, 480);
+        var webView = WebView.alloc().initWithFrame(frame);
+        var webViewFrame = webView.mainFrame();
+
+        // The FrameLoadDelegate offers the webView_didFinishLoadForFrame
+        // method which is called when the web page is loaded.
+        // !!! The methods never fire because:
+        // - it is implemented wrong?
+        // - the delegate's method never is called because the script ends before the
+        //   page is loaded?
+        var loadDelegate = new WebViewLoadDelegate();
+        webView.setFrameLoadDelegate(loadDelegate);
+
+        webViewFrame.loadRequest(NSURLRequest.requestWithURL(NSURL.URLWithString(URL)));
+
+        // Set up the panel window
+        var mask = NSTitledWindowMask + NSClosableWindowMask + NSMiniaturizableWindowMask + NSUtilityWindowMask;
+        var panel = NSPanel.alloc().initWithContentRect_styleMask_backing_defer(frame, mask, NSBackingStoreBuffered, true);
+
+        // Add the webView to the prepared panel
+        panel.contentView().addSubview(webView);
+
+        // Show the panel
+        panel.makeKeyAndOrderFront(panel);
+
+        // persist the panel and the webView.
+        persist.set('panel', panel);
+        persist.set('webView', webView);
+      };
+
+      var update = function (){
+        var webView = persist.get('webView').mainFrame().loadRequest(NSURLRequest.requestWithURL(NSURL.URLWithString(URL)));
+      }
+
+      var doScript = function () {
+        var jswrapper = 'try {[[js]]} catch (e) {e.toString();}',
+          jscode = '',
+          js = jswrapper.replace('[[js]]', jscode);
+
+        // var result = webView.stringByEvaluatingJavaScriptFromString(js);
+
+        // Get the windowScriptObject as the scripting connector
+        var scriptObject = webView.windowScriptObject();
+
+        // Add the RunThis object with the key 'callThis'. The callThis
+        // object should be accessible by the page JavaScript.
+        // !!! The object is seen by the page JavaScript but the methods/porperties
+        // are not present.
+        var runThisFunc = runThis();
+        scriptObject.setValue_forKey(runThisFunc, 'callThis');
+
+        // Add a text line.
+        jscode = 'de.unodo.writeTest("From the Sketch script ' + new Date() + '");';
+        js = jswrapper.replace('[[js]]', jscode);
+        var result = scriptObject.evaluateWebScript(js);
+        log(result);
+
+        // Call the callback function to check if the 'callThis' class is visible
+        // in the page for JavaScript.
+        jscode = 'de.unodo.callBack();';
+        js = jswrapper.replace('[[js]]', jscode);
+        var result = scriptObject.evaluateWebScript(js);
+        log(result);
+
+        // Get the form data.
+        jscode = 'de.unodo.getFormData();';
+        js = jswrapper.replace('[[js]]', jscode);
+        var result = scriptObject.evaluateWebScript(js);
+        log('Formfield "Name" value: ' + result);
+      };
+
+      var panel = persist.get('panel');
+      var webView = persist.get('webView');
+
+      // If the panel does not exisit (null is returned from persist.get),
+      // set the panel up and show it.
+      // Else make the panel the front window and run the JavaScript functions.
+      if (panel === null) {
+        log('setupWebViewPanel');
+        setupWebViewPanel();
+      } else {
+        // Show the panel
+        update();
+        panel.makeKeyAndOrderFront(panel);
+
+        // var loadDelegate = new WebViewLoadDelegate;
+        // webView.setFrameLoadDelegate(loadDelegate);
+
+        // Run the scripts
+        // doScript();
+      }
+
+      log('done');
+
     },
     filePicker: function (url, fileTypes){
       // Panel
@@ -468,7 +657,6 @@ com.getflourish = (function() {
       // concat
       // todo: concat and display by type
       var allColors = solidFillColors.concat(textColors).unique();
-      log(allColors)
       return allColors;
     },
     getDocumentBorderColors: function() {
@@ -550,7 +738,6 @@ com.getflourish = (function() {
             }
           }
         }
-        log(data)
 
         var output = JSON.stringify(data, undefined, 2);
 
@@ -580,7 +767,6 @@ com.getflourish = (function() {
 
       if (str != null) {
         for (var key in str) {
-          log(str[key])
           if (str.hasOwnProperty(key)) {
             var palette = str[key];
             var swatches = [];
@@ -1312,15 +1498,7 @@ com.getflourish = (function() {
 
       var str = '';
 
-      // get the layer name
-      var name = layer.name().toLowerCase();
-
-      // replace special characters by a dash
-      var regex = new RegExp("[/:(). ]", "g");
-      name = name.replace(regex, "-");
-
-      // construct the css selector
-      var selector = '.' + name;
+      var selector = "." + com.getflourish.css.getClassName(layer);
 
       // get the css attributes from sketch, yay!
       var attrs = layer.CSSAttributes();
@@ -1386,6 +1564,19 @@ com.getflourish = (function() {
       var baseunit = persistent["com.getflourish.baseunit"];
       return baseunit;
     },
+    getClassName: function(layer) {
+      // get the layer name
+      var name = layer.name().toLowerCase();
+
+      // replace special characters by a dash
+      var regex = new RegExp("[/:(). ]", "g");
+      name = name.replace(regex, "-");
+
+      // construct the css selector
+      var selector = name;
+
+      return selector;
+    },
     getRelativeFontSize: function (textLayer, baseunit) {
 
       var relativeFontSize = null;
@@ -1403,7 +1594,7 @@ com.getflourish = (function() {
       if (textLayer.className() == "MSTextLayer") {
           var fontSize = textLayer.fontSize();
           var lineSpacing = textLayer.lineSpacing();
-          relativeLineHeight = lineSpacing / fontSize;
+          relativeLineHeight = (lineSpacing / fontSize).toFixed(2);
       }
       return relativeLineHeight;
     },
@@ -1422,6 +1613,66 @@ com.getflourish = (function() {
           }
       }
       return stylesheet;
+    },
+    generateMarkup: function (layers) {
+      var markup = '<!DOCTYPE html>';
+      markup += '\n';
+      markup += '<html lang="en">';
+      markup += '\n';
+      markup += '<head>';
+      markup += '\n\t';
+      markup += '<meta charset="UTF-8">';
+      markup += '\n\t';
+      markup += '<title>Style Inventory</title>';
+      markup += '\n\t';
+      markup += '<link rel="stylesheet" href="typography.css">';
+      markup += '\n\t';
+      markup += '<style type="text/css">';
+      markup += '\n\t\t';
+      markup += 'body {background-color: #fff;background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.01) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0,0.01) 75%, rgba(0, 0, 0,0.01)), linear-gradient(45deg, rgba(0, 0, 0,0.01) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0,0.01) 75%, rgba(0, 0, 0, 0.01));background-size: 30px 30px;background-position: 0 0, 15px 15px; font-family: "Helvetica Neue"; line-height: 1.3em;font-size: 16px;}';
+      markup += '\n\t\t';
+      markup += '.code {font-family: monospace; font-size: 0.6em; color: #999; line-height: 1.3em; margin: 0}';
+      markup += 'h1 {margin-bottom: 5px;cursor: pointer; font-weight: normal}';
+      markup += '.small {font-size: 0.8em}';
+    
+      // markup += 'header {position: fixed; top: 0px; overflow: scroll; height: 200px;background: white}';
+      markup += '\n\t';
+      markup += '</style>';
+      markup += '\n';
+      markup += '</head>';
+
+      markup += '\n';
+      markup += '<body>';
+      markup += '\n\t';
+      markup += '<span class="small">' + new Date() + '</span>';
+      markup += '\n\t';
+      // markup += '<header><p id="lorem">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Temporibus fugit voluptatem aliquam dolore ipsa, ut sapiente? Sunt unde eius cumque quia eos. Rem inventore possimus error sapiente atque, id, nisi!</p></header>';
+      for (var i = 0; i < layers.count(); i++) {
+
+        var layer = layers.objectAtIndex(i);
+
+          // only get CSS for text layers
+          if([layer isKindOfClass:MSTextLayer] && layer.style().sharedObjectID() != null) {
+            // markup += "<td>" + my.css.createRuleSetStr(layer) + "</td>";
+            markup += '\n\t' + my.css.createMarkupStr(layer);
+            markup += '\n\t';
+            markup += '<span class="code">\n\t\t' + my.css.createRuleSetStr(layer) + '\n\t</span>';
+            markup += '\n';
+          }
+      }
+      markup += '\n';
+      // markup += '<script type="text/javascript">';
+      // markup += 'var lorem = document.getElementById("lorem");var allElements = document.querySelectorAll("*");for (var i = 0; i < allElements.length; i++) {var element = allElements[i];element.onclick=function(element) {lorem.className = element.target.className;}}';
+      // markup += '</script>';
+      markup += '</body>';
+      markup += '\n';
+      markup += '</html>';
+      return markup;
+    },
+    createMarkupStr: function (layer) {
+      var selector = com.getflourish.css.getClassName(layer);
+      var html = "\<h1 class=\"" + selector +"\">" + layer.name() + "</h1>";
+      return html;
     }
   }
 
@@ -1712,7 +1963,7 @@ com.getflourish = (function() {
       artboard.removeAllLayers();
 
       var bg = com.getflourish.common.addCheckeredBackground(artboard);
-      com.getflourish.textStyleInventory.createTextStyles(artboard, definedTextStyles);
+      com.getflourish.textStyleInventory.createTextStylesVirtual(artboard, definedTextStyles);
 
       // refresh inspector
       doc.reloadInspector();
@@ -1722,6 +1973,8 @@ com.getflourish = (function() {
       bg.frame().setHeight(artboard.frame().height())
 
       com.getflourish.textStyleInventory.exportStyles(artboard, path);
+
+      doc.currentPage().removeLayer(artboard);
 
       return artboard;
 
@@ -1754,6 +2007,18 @@ com.getflourish = (function() {
       if (a.attributes.NSFont.fontDescriptor().objectForKey(NSFontSizeAttribute) > b.attributes.NSFont.fontDescriptor().objectForKey(NSFontSizeAttribute))
         return 1;
       return 0;
+    },
+    createTextStylesVirtual: function (artboard, definedTextStyles) {
+
+
+      for (var i = 0; i < definedTextStyles.length; i++) {
+
+        var definedTextStyle = definedTextStyles[i];
+        var textLayer = artboard.addLayerOfType("text");
+
+        textLayer.setStyle(definedTextStyle.textStyle.newInstance());
+        textLayer.setName(definedTextStyle.name);
+      }
     },
     createTextStyles: function (artboard, definedTextStyles) {
 
@@ -1850,12 +2115,20 @@ com.getflourish = (function() {
       // Document path
       if (doc.fileURL() != null) {
 
+        // generate css
         var styleSheetString = com.getflourish.css.generateStyleSheet(artboard.children());
+        var markup = com.getflourish.css.generateMarkup(artboard.children());
 
+        // save css
+        com.getflourish.common.save_file_from_string(path + "typography.css", styleSheetString);
+        com.getflourish.common.save_file_from_string(path + "styles.html", markup);
+
+        // refresh view
         var view = [doc currentView];
         view.refresh();
 
-        com.getflourish.common.save_file_from_string(path, styleSheetString);
+        // create web view and show the generated html
+        com.getflourish.common.createWebView(path);
       } else {
         doc.showMessage("Export failed. Please save your file first.")
       }
