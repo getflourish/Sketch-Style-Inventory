@@ -6,6 +6,11 @@
 
 Design requires free, sometimes chaotic exploration. But design also means organisation and structure. Sketch can be good in both aspects, but moving from exploration to structured layouts with text styles and unified colors is hard. Either you start clean files from scratch, or you use what you have and try to tidy it up. The Style Inventory is meant to help you with that. It gives you an overview of all your used styles and helps you to merge styles of similar layers into one.
 
+## Change Log
+
+**December 7, 2014**
+* Moved all unreleated plugins to a new repository called [Sketch Mate](https://github.com/getflourish/Sketch-Mate). It will take a few days to update the documentation for the new plugins.
+
 ## Plugin Directory
 
 #### Inventory
@@ -16,10 +21,8 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 #### Selection
 * by Color/Select Layers by Color `shift` + `ctrl` + `⌘` + `C`
 * by Color/Select Layers by Color on Artboard `ctrl` + `⌘` + `C`
-
 * by Name/Select Layers by Name `shift` + `ctrl` + `⌘` + `N`
 * by Name/Select Layers by Name on Artboard `ctrl` + `⌘` + `N`
-
 * by Text Style/Select Similar Text Layers `shift` + `ctrl` + `⌘` + `T`
 * by Text Style/Select Similar Text Layers on Artboard `⌘` + `control` + `T`
 
@@ -97,8 +100,3 @@ Generates an artboard with all text styles that are used in the document.
 
 ### Rename/Rename selected layers
 `experimental` A simple wizard that will guide you through your styles that are missing variable names. This will be used to to provide more information for SASS and JSON export.
-
-## Change Log
-
-**December 7, 2014**
-* Moved all unreleated plugins to a new repository called [Sketch Mate](https://github.com/getflourish/Sketch-Mate). It will take a few days to update the documentation for the new plugins.
