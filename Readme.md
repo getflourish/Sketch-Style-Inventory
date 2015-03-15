@@ -78,25 +78,15 @@ Based on a selected layer, all layers that match the name of the reference layer
 ## Style Inventory
 Generate a visual style sheet with all colors and text styles that you are using. This will help you to get an overview of your used styles so you can merge styles that are very close together. This will also export a CSS file with text styles.
 
-### Export/Text Styles to CSS
+### Generate/Text Style Inventory
+Generates an artboard with all text styles that are used in the document.
+![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Sketch%20CSS.gif)
 
-This plugin generates an overview of all your text styles and exports it as CSS. [Watch the demo](https://vimeo.com/102635978 "Demo")
-This is more proof of concept and only the foundation of a set of helpful plugins that will follow soon.
-
-To do: export opacity, remove attributes that have the default value
-
-[![Demo on Vimeo](https://dl.dropboxusercontent.com/u/974773/_keepalive/Sketch%20CSS%20Vimeo.png)](https://vimeo.com/102635978)
-
-![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Sketch%20CSS.png)
 
 ### Generate/Color Inventory
 Generates an artboard with all colors that are used on the current page.
 
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Colors.png)
-
-### Generate/Text Style Inventory
-Generates an artboard with all text styles that are used in the document.
-![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Sketch%20CSS.gif)
 
 ### Rename/Rename selected layers
 `experimental` A simple wizard that will guide you through your styles that are missing variable names. This will be used to to provide more information for SASS and JSON export.
