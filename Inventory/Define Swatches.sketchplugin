@@ -2,11 +2,15 @@
 #import 'inventory.js'
 
 var selected = selection;
+
+// 3.3
+var doc = context.document;
+
 doc.currentPage().deselectAllLayers();
 for (var i = 0; i < selected.count(); i++) {
 	var layer = selected.objectAtIndex(i);
 	layer.setIsSelected(true);
-	centerView(layer);
+	com.getflourish.view.centerTo(layer);
 
 	var name = [doc askForUserInput:"Color name: (e.g. Primary > Blue)" initialValue:""]
 	if(name != "") {
@@ -26,13 +30,6 @@ for (var i = 0; i < selected.count(); i++) {
 	layer.setIsSelected(false);
 }
 
-centerView(doc.currentPage().currentArtboard());
+com.getflourish.view.centerTo(doc.currentPage().currentArtboard());
 
 com.getflourish.colorInventory.generate();
-
-function centerView(layer) {
-	var selected_object = layer,
-    	view = [doc currentView]
-	[view zoomToFitRect:[selected_object absoluteRect]]
-
-}

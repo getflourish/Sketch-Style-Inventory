@@ -12,6 +12,9 @@ var com = com || {};
 com.getflourish = (function () {
     var my = {};
 
+    // for 3.3
+    var doc = context.document;
+
     my.execute = function (block) {
         try {
             block();
@@ -47,8 +50,8 @@ com.getflourish = (function () {
         },
         addCheckeredBackground: function (artboard) {
             log(artboard)
-            var layer = artboard.addLayerOfType("rectangle")
-                .embedInShapeGroup();
+            var layer = my.common.addRectangleLayer(artboard)
+
             layer.frame()
                 .setWidth(artboard.frame()
                     .width());
@@ -83,8 +86,7 @@ com.getflourish = (function () {
             return layer;
         },
         addSolidBackground: function (artboard, hex_string) {
-            var layer = artboard.addLayerOfType("rectangle")
-                .embedInShapeGroup();
+            var layer = my.common.addRectangleLayer(artboard)
             layer.frame()
                 .setWidth(artboard.frame()
                     .width());
@@ -99,7 +101,7 @@ com.getflourish = (function () {
                 .setFillType(0);
             layer.setName("Background");
 
-            color = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha(hex_string, 1));
+            var color = MSColor.colorWithSVGString(hex_string);
 
             layer.style()
                 .fill()
@@ -115,6 +117,14 @@ com.getflourish = (function () {
             doc.setCurrentPage(page);
             // my.common.refreshPage();
             return page;
+        },
+        addRectangleLayer: function (target) {
+            var shape = MSRectangleShape.alloc().init();
+            var shapeGroup = [MSShapeGroup shapeWithPath:shape];
+            target.addLayers([shapeGroup]);
+
+            var bla = target.addLayerOfType("rectangle");
+            return bla;
         },
         addTextLayer: function (target, label) {
             var textLayer = target.addLayerOfType("text");
@@ -574,7 +584,7 @@ com.getflourish = (function () {
             // get hex colors from document
             var hexColors = com.getflourish.colorInventory.getDocumentColors();
 
-            if (hexColors.length != 0) {
+            if (hexColors.count() != 0) {
 
                 // feedback
                 doc.showMessage("Analyzing Colors…");
@@ -614,37 +624,35 @@ com.getflourish = (function () {
                 // Add background
                 var bg = com.getflourish.common.addCheckeredBackground(colorArtboard);
 
-                coscript.setShouldKeepAround(true)
-                coscript.scheduleWithInterval_jsFunction(0.01, function () {
-                    var execTime = (new Date() - startTime) / 1000;
-                    doc.showMessage("Painting Swatches… " + execTime + " s");
+                var execTime = (new Date() - startTime) / 1000;
+                doc.showMessage("Painting Swatches… " + execTime + " s");
 
-                    // create colorsheet by passing palettes that contain multiple color objects (name, value)
-                    com.getflourish.colors.createColorSheet(colorArtboard, palettes);
+                // create colorsheet by passing palettes that contain multiple color objects (name, value)
+                com.getflourish.colors.createColorSheet(colorArtboard, palettes);
 
-                    // position artboard
-                    if (!exists) com.getflourish.colorInventory.positionArtboard(colorArtboard, currentlySelectedArtboard);
+                // position artboard
+                if (!exists) com.getflourish.colorInventory.positionArtboard(colorArtboard, currentlySelectedArtboard);
 
-                    // finish it up
-                    com.getflourish.colorInventory.finish(colorArtboard);
+                // finish it up
+                com.getflourish.colorInventory.finish(colorArtboard);
 
-                    // resize background
-                    bg.frame()
-                        .setWidth(colorArtboard.frame()
-                            .width())
-                    bg.frame()
-                        .setHeight(colorArtboard.frame()
-                            .height())
+                // resize background
+                bg.frame()
+                    .setWidth(colorArtboard.frame()
+                        .width())
+                bg.frame()
+                    .setHeight(colorArtboard.frame()
+                        .height())
 
-                    // zoom
-                    com.getflourish.view.zoomTo(colorArtboard)
+                // zoom
+                com.getflourish.view.zoomTo(colorArtboard)
 
-                    // Feedback
-                    var execTime = (new Date() - startTime) / 1000;
-                    doc.showMessage("Generated Color Inventory in " + execTime + " s");
 
-                    return colorArtboard;
-                });
+                // Feedback
+                var execTime = (new Date() - startTime) / 1000;
+                doc.showMessage("Generated Color Inventory in " + execTime + " s");
+
+                return colorArtboard;
 
             } else {
                 doc.showMessage("No colors found :(")
@@ -774,7 +782,7 @@ com.getflourish = (function () {
                     var queryResult = colorSheet.children()
                         .filteredArrayUsingPredicate(predicate);
 
-                    for (var j = 0; j < queryResult.length(); j++) {
+                    for (var j = 0; j < queryResult.count(); j++) {
                         // check if there are swatches (groups of color swatches)
 
                         var group = queryResult[j];
@@ -947,7 +955,7 @@ com.getflourish = (function () {
                                 swatches: []
                             });
                         }
-                        var foo = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color isEqualForSync:%@) && NOT(parentArtboard.name == %@)", c, com.getflourish.config.colorInventoryName);
+                        var foo = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color isEqual:%@) && NOT(parentArtboard.name == %@)", c, com.getflourish.config.colorInventoryName);
                         var bar = doc.currentPage()
                             .children()
                             .filteredArrayUsingPredicate(foo);
@@ -960,7 +968,7 @@ com.getflourish = (function () {
                         definedColors.splice(index, 1);
                     } else {
                         // not part of a palette
-                        var foo = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color isEqualForSync:%@) && NOT(parentArtboard.name == %@)", c, com.getflourish.config.colorInventoryName);
+                        var foo = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color isEqual:%@) && NOT(parentArtboard.name == %@)", c, com.getflourish.config.colorInventoryName);
                         var bar = doc.currentPage()
                             .children()
                             .filteredArrayUsingPredicate(foo);
@@ -981,7 +989,7 @@ com.getflourish = (function () {
             };
 
             for (var i = 0; i < definedColors.length; i++) {
-                predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color isEqualForSync:%@) && NOT(parentArtboard.name == %@)", definedColors[i], com.getflourish.config.colorInventoryName);
+                predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color isEqual:%@) && NOT(parentArtboard.name == %@)", definedColors[i], com.getflourish.config.colorInventoryName);
                 queryResult = doc.currentPage()
                     .children()
                     .filteredArrayUsingPredicate(predicate);
@@ -1273,6 +1281,7 @@ com.getflourish = (function () {
         },
         // todo: change method to accept a color object with name and color value
         addColorChip: function (artboard, swatch) {
+
             var padding = 8;
 
             // get hex color
@@ -1296,14 +1305,13 @@ com.getflourish = (function () {
             group.setName(swatch.name);
 
             // draw white label rectangle
-            var white = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha("#FFFFFF", 0));
+            var white = MSColor.colorWithSVGString("#FFFFFF");
             var labelBG = my.colors.addColorShape(group, white, 120, 195);
             labelBG.frame()
                 .setY(0);
             labelBG.setName("Background");
             labelBG.setIsSelected(true);
 
-            white = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha("#FFFFFF", 1));
             var bottomBG = my.colors.addColorShape(group, white, 120, 75);
             bottomBG.frame()
                 .setY(120);
@@ -1344,7 +1352,8 @@ com.getflourish = (function () {
                 .shadows()
                 .addNewStylePart();
 
-            var black = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha("#000000", 0.5));
+            var black = MSColor.colorWithSVGString("#000000");
+            black.alpha = 0.5;
             textShadow.setOffsetX(0);
             textShadow.setOffsetY(1);
             textShadow.setBlurRadius(2);
@@ -1367,6 +1376,7 @@ com.getflourish = (function () {
                 .toFixed(2) * 255)) + ", " + String(Math.ceil(color.blue()
                 .toFixed(2) * 255)) + ", " + String(color.alpha()
                 .toFixed(2));
+
             var rgbLabel = my.common.addTextLayer(group, rgb);
             rgbLabel.frame()
                 .setY(hexLabel.frame()
@@ -1381,7 +1391,7 @@ com.getflourish = (function () {
                 .shadows()
                 .addNewStylePart();
 
-            black = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha("#000000", 0.2));
+            black.alpha = 0.2;
             shadow.setOffsetX(0);
             shadow.setOffsetY(2);
             shadow.setBlurRadius(3);
@@ -1391,11 +1401,11 @@ com.getflourish = (function () {
 
 
             return group;
+
         },
         addColorShape: function (artboard, color, width, height) {
             // add layer
-            var layer = artboard.addLayerOfType("rectangle")
-                .embedInShapeGroup();
+            var layer = my.common.addRectangleLayer(artboard)
             layer.frame()
                 .setWidth(width);
             layer.frame()
@@ -1414,8 +1424,7 @@ com.getflourish = (function () {
         },
         addGradientShape: function (artboard, gradient, width, height) {
             // add layer
-            var layer = artboard.addLayerOfType("rectangle")
-                .embedInShapeGroup();
+            var layer = my.common.addRectangleLayer(artboard)
             layer.frame()
                 .setWidth(width);
             layer.frame()
@@ -1587,13 +1596,17 @@ com.getflourish = (function () {
 
     my.view = {
         centerTo: function (layer) {
+        /* crashes in 3.3
             var selected_object = layer;
             var view = doc.currentView();
             view.centerRect(selected_object.absoluteRect());
+        */
         },
         zoomTo: function (layer) {
+            /*
             var view = doc.currentView();
             view.zoomToFitRect(layer.absoluteRect());
+            */
         }
     }
 
@@ -1941,7 +1954,7 @@ com.getflourish = (function () {
             case "MSRectangleShape":
                 // check if color is solid
                 if (ftype != 0) {
-                    predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill isEqualForSync:%@)", color);
+                    predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill isEqual:%@)", color);
                 } else {
                     predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.fillType == 0) && style.fill.color.hexValue == %@ && style.fill.color.alpha == %@", color.hexValue(), color.alpha());
                 }
@@ -2042,7 +2055,7 @@ com.getflourish = (function () {
             return result;
         },
         selectLayersByTextStyle: function (textStyle, scope) {
-            var predicate = NSPredicate.predicateWithFormat("(style.textStyle != NULL) && (style.textStyle isEqualForSync:%@)", textStyle);
+            var predicate = NSPredicate.predicateWithFormat("(style.textStyle != NULL) && (style.textStyle isEqual:%@)", textStyle);
 
             // query page layers
             var queryResult = scope.filteredArrayUsingPredicate(predicate);
@@ -2232,7 +2245,8 @@ com.getflourish = (function () {
 
             for (var i = 0; i < definedTextStyles.length; i++) {
 
-                var $grey = MSColor.colorWithNSColor(NSColor.colorWithHex_alpha("#000000", 0.5));
+                var $grey = MSColor.colorWithSVGString("#000000");
+                $grey.alpha = 0.5;
 
                 var definedTextStyle = definedTextStyles[i];
                 var textLayer = artboard.addLayerOfType("text");
