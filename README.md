@@ -92,4 +92,4 @@ Generates an artboard with all colors that are used on the current page.
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Colors.png)
 
 ### Rename/Rename selected layers
-`experimental` A simple wizard that will guide you through your styles that are missing variable names. This will be used to to provide more information for SASS and JSON export.
+`experimental` A simple wizard that will guide you through your styles that are missing variable names. This will be used to to provide more information for Sass and JSON export.
