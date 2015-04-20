@@ -584,7 +584,7 @@ com.getflourish = (function () {
             // get hex colors from document
             var hexColors = com.getflourish.colorInventory.getDocumentColors();
 
-            if (hexColors.count() != 0) {
+            if (hexColors.length != 0) {
 
                 // feedback
                 doc.showMessage("Analyzing Colors…");
@@ -1596,17 +1596,13 @@ com.getflourish = (function () {
 
     my.view = {
         centerTo: function (layer) {
-        /* crashes in 3.3
             var selected_object = layer;
             var view = doc.currentView();
-            view.centerRect(selected_object.absoluteRect());
-        */
+            view.centerRect(selected_object.absoluteRect().rect());
         },
         zoomTo: function (layer) {
-            /*
             var view = doc.currentView();
-            view.zoomToFitRect(layer.absoluteRect());
-            */
+            view.zoomToFitRect(layer.absoluteRect().rect());
         }
     }
 
@@ -2054,8 +2050,29 @@ com.getflourish = (function () {
 
             return result;
         },
+        selectLayersByString: function (referenceString, scope) {
+
+            // deselect
+            doc.documentData()
+                .deselectAllLayers();
+
+            // init predicate
+            var predicate = null;
+
+            // setup predicate
+            var predicate = NSPredicate.predicateWithFormat("stringValue == %@", referenceString);
+
+            // query page layers
+            var result = scope.filteredArrayUsingPredicate(predicate);
+
+            // select all results
+            doc.currentPage()
+                .selectLayers(result);
+
+            return result;
+        },
         selectLayersByTextStyle: function (textStyle, scope) {
-            var predicate = NSPredicate.predicateWithFormat("(style.textStyle != NULL) && (style.textStyle isEqual:%@)", textStyle);
+            var predicate = NSPredicate.predicateWithFormat("(style.textStyle != NULL) && (FUNCTION(style.textStyle, 'isEqualForSync:asPartOfSymbol:', %@, nil) == YES)", textStyle);
 
             // query page layers
             var queryResult = scope.filteredArrayUsingPredicate(predicate);
