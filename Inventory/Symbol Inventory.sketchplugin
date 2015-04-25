@@ -1,0 +1,104 @@
+// (control cmd option e)
+
+@import 'library.js'
+@import 'sandbox.js'
+
+log("fo")
+
+var doc = context.document;
+
+var documentPath = [[doc fileURL] path].split([doc displayName] + ".sketch")[0];
+
+new AppSandbox().authorize(documentPath, exportClickDummy);
+
+function exportClickDummy () {
+
+  // HTML will be exported to a new folder in the .sketch file's parent folder
+  var exportPath = [[doc fileURL] path] + '-ClickDummy/';
+
+  var html = '';
+  var artboardNames = [];
+  var linkTargets = [];
+
+  var HTML_HEAD = '<!DOCTYPE html>\n\
+  <html lang="en">\n\
+  <head>\n\
+    <meta charset="utf-8">\n\
+    <title>' + [doc displayName] + '</title>\n\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n\
+    <script type="text/javascript"> \n\
+      document.onmousedown = function() { \n\
+        document.body.setAttribute("class", "is-highlighted"); \n\
+      } \n\
+      document.onmouseup = function() { \n\
+        document.body.setAttribute("class", ""); \n\
+      } \n\
+    </script> \n\
+    <style> \n\
+      html, body { \n\
+        padding: 0; \n\
+        margin: 0; \n\
+      } \n\
+      a { \n\
+        position: absolute; \n\
+        z-index: 100; \n\
+      } \n\
+      body.is-highlighted a { \n\
+        background-color: #0000ff; \n\
+        opacity: .2; \n\
+      } \n\
+    </style> \n\
+  </head>\n\
+  <body>\n';
+
+  var HTML_FOOT = '</body></html>\n';
+
+  var artboards = doc.currentPage().artboards().objectEnumerator();
+
+  createFolder(exportPath);
+
+  // export all symbols
+
+  var exportLayers = doc.currentPage().children().objectEnumerator();
+
+  while (slice = exportLayers.nextObject()) {
+    if (slice.className() == "MSLayerGroup") {
+      var rect = slice.absoluteRect().rect();
+      [doc saveArtboardOrSlice:[GKRect rectWithRect:rect] toFile:exportPath + 'symbols/' + slice.name() + '.png'];
+    }
+
+  }
+
+  displayMissingArtboardsWarnings(linkTargets, artboardNames);
+
+  doc.showMessage('Click dummy files exported to: ' + exportPath);
+}
+
+function displayMissingArtboardsWarnings (targets, artboards) {
+  // Display a warning if there are link targets on this page that don't have a corresponding artboard
+  var warnings = '';
+  targets.sort();
+  for (var i = 0; i < targets.length; i++) {
+    var target = targets[i];
+    if (artboards.indexOf(target) === -1) {
+      warnings += '\n· ' + target
+    };
+  };
+
+  if (warnings !== '') {
+    warnings += '\n\nDon’t worry, the prototype will be exported anyway.'
+    var app = [NSApplication sharedApplication];
+    [app displayDialog:warnings withTitle:"There are links to missing artboards:"];
+  }
+}
+
+function createFolder(name) {
+  var fileManager = [NSFileManager defaultManager];
+  [fileManager createDirectoryAtPath:name withIntermediateDirectories:true attributes:nil error:nil];
+}
+
+function saveTextToFile (filename, text) {
+  var path = [@"" stringByAppendingString:filename];
+  var str = [@"" stringByAppendingString:text];
+  str.dataUsingEncoding_(NSUTF8StringEncoding).writeToFile_atomically_(path, true);
+}
