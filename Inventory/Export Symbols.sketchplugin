@@ -1,0 +1,44 @@
+// (control cmd option e)
+
+@import '../sandbox.js'
+
+var doc = context.document;
+
+var documentPath = [[doc fileURL] path].split([doc displayName] + ".sketch")[0];
+
+new AppSandbox().authorize(documentPath, exportSymbols);
+
+function exportSymbols () {
+
+  // HTML will be exported to a new folder in the .sketch file's parent folder
+  var exportPath = doc.fileURL().path().split(".sketch")[0] + '-export/';
+
+  var artboards = doc.currentPage().artboards().objectEnumerator();
+
+  createFolder(exportPath);
+
+  // export all symbols
+
+  var exportLayers = doc.currentPage().children().objectEnumerator();
+
+  while (slice = exportLayers.nextObject()) {
+    if (slice.className() == "MSLayerGroup") {
+      var rect = slice.absoluteRect().rect();
+      [doc saveArtboardOrSlice:[GKRect rectWithRect:rect] toFile:exportPath + 'symbols/' + slice.name() + '.png'];
+    }
+
+  }
+
+  doc.showMessage('Symbols exported to: ' + exportPath);
+}
+
+function createFolder(name) {
+  var fileManager = [NSFileManager defaultManager];
+  [fileManager createDirectoryAtPath:name withIntermediateDirectories:true attributes:nil error:nil];
+}
+
+function saveTextToFile (filename, text) {
+  var path = [@"" stringByAppendingString:filename];
+  var str = [@"" stringByAppendingString:text];
+  str.dataUsingEncoding_(NSUTF8StringEncoding).writeToFile_atomically_(path, true);
+}

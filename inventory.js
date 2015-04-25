@@ -1,5 +1,5 @@
-#import 'sandbox.js'
-#import 'persistence.js'
+@import 'sandbox.js'
+@import 'persistence.js'
 
 // Namespaced library of functions common across multiple plugins
 var com = com || {};
@@ -119,12 +119,12 @@ com.getflourish = (function () {
             return page;
         },
         addRectangleLayer: function (target) {
-            var shape = MSRectangleShape.alloc().init();
-            var shapeGroup = [MSShapeGroup shapeWithPath:shape];
-            target.addLayers([shapeGroup]);
+            // var shape = MSRectangleShape.alloc().init();
+            // var shapeGroup = [MSShapeGroup shapeWithPath:shape];
+            // target.addLayers([shapeGroup]);
 
-            var bla = target.addLayerOfType("rectangle");
-            return bla;
+            var layer = target.addLayerOfType("rectangle");
+            return layer;
         },
         addTextLayer: function (target, label) {
             var textLayer = target.addLayerOfType("text");
@@ -147,23 +147,33 @@ com.getflourish = (function () {
             textLayer.setFontPostscriptName("HelveticaNeue-Thin");
             return textLayer;
         },
+        areOfEqualClass: function (layers) {
+            var baseClass = layers[0].className();
+            for (var i = 0; i < layers.count(); i++) {
+                if (layers[i].className() != baseClass) {
+                    return false;
+                }
+            }
+            return true;
+        },
         createSelect: function (msg, items, selectedItemIndex) {
             selectedItemIndex = selectedItemIndex || 0
 
             var accessory = [[NSComboBox alloc] initWithFrame: NSMakeRect(0, 0, 200, 25)]
-      [accessory addItemsWithObjectValues: items]
-      [accessory selectItemAtIndex: selectedItemIndex]
+            [accessory addItemsWithObjectValues: items]
+            [accessory selectItemAtIndex: selectedItemIndex]
 
             var alert = [[NSAlert alloc] init]
-      [alert setMessageText: msg]
-      [alert addButtonWithTitle: 'OK']
-      [alert addButtonWithTitle: 'Cancel']
-      [alert setAccessoryView: accessory]
+            [alert setMessageText: msg]
+            [alert addButtonWithTitle: 'OK']
+            [alert addButtonWithTitle: 'Cancel']
+            [alert setAccessoryView: accessory]
 
             var responseCode = [alert runModal]
             var sel = [accessory indexOfSelectedItem]
+            var value = [accessory stringValue]
 
-            return [responseCode, sel]
+            return [responseCode, sel, value]
         },
         createWebView: function (url) {
             // WebView tests (shift alt ctrl y)
@@ -484,6 +494,32 @@ com.getflourish = (function () {
 
             return path;
 
+        },
+        getTextStyleByName: function (name) {
+            var textStyles = doc.documentData().layerTextStyles();
+
+            if (textStyles) {
+                // get index
+                for (var i = 0; i < textStyles.objects().count(); i++) {
+                    if (textStyles.objects().objectAtIndex(i).name() == name) {
+                        return textStyles.objects().objectAtIndex(i);
+                    }
+                }
+            }
+            return null;
+        },
+        getLayerStyleByName: function (name) {
+            var layerStyles = doc.documentData().layerStyles();
+
+            if (layerStyles) {
+                // get index
+                for (var i = 0; i < layerStyles.objects().count(); i++) {
+                    if (layerStyles.objects().objectAtIndex(i).name() == name) {
+                        return layerStyles.objects().objectAtIndex(i);
+                    }
+                }
+            }
+            return null;
         },
         showMarginsOf: function (layer) {
             // calculates margins and displays them
@@ -1660,6 +1696,56 @@ com.getflourish = (function () {
                 output.push(nsarray[i]);
             }
             return output;
+        },
+        naturalSort: function (a, b) {
+            /*
+             * Natural Sort algorithm for Javascript - Version 0.7 - Released under MIT license
+             * Author: Jim Palmer (based on chunking idea from Dave Koelle)
+             */
+
+            var re = /(^-?[0-9]+(\.?[0-9]*)[df]?e?[0-9]?$|^0x[0-9a-f]+$|[0-9]+)/gi,
+                sre = /(^[ ]*|[ ]*$)/g,
+                dre = /(^([\w ]+,?[\w ]+)?[\w ]+,?[\w ]+\d+:\d+(:\d+)?[\w ]?|^\d{1,4}[\/\-]\d{1,4}[\/\-]\d{1,4}|^\w+, \w+ \d+, \d{4})/,
+                hre = /^0x[0-9a-f]+$/i,
+                ore = /^0/,
+                i = function(s) { return com.getflourish.utils.naturalSort.insensitive && (''+s).toLowerCase() || ''+s },
+                // convert all to strings strip whitespace
+                x = i(a).replace(sre, '') || '',
+                y = i(b).replace(sre, '') || '',
+                // chunk/tokenize
+                xN = x.replace(re, '\0$1\0').replace(/\0$/,'').replace(/^\0/,'').split('\0'),
+                yN = y.replace(re, '\0$1\0').replace(/\0$/,'').replace(/^\0/,'').split('\0'),
+                // numeric, hex or date detection
+                xD = parseInt(x.match(hre)) || (xN.length != 1 && x.match(dre) && Date.parse(x)),
+                yD = parseInt(y.match(hre)) || xD && y.match(dre) && Date.parse(y) || null,
+                oFxNcL, oFyNcL;
+            // first try and sort Hex codes or Dates
+            if (yD)
+                if ( xD < yD ) return -1;
+                else if ( xD > yD ) return 1;
+            // natural sorting through split numeric strings and default strings
+            for(var cLoc=0, numS=Math.max(xN.length, yN.length); cLoc < numS; cLoc++) {
+                // find floats not starting with '0', string or 0 if not defined (Clint Priest)
+                oFxNcL = !(xN[cLoc] || '').match(ore) && parseFloat(xN[cLoc]) || xN[cLoc] || 0;
+                oFyNcL = !(yN[cLoc] || '').match(ore) && parseFloat(yN[cLoc]) || yN[cLoc] || 0;
+                // handle numeric vs string comparison - number < string - (Kyle Adams)
+                if (isNaN(oFxNcL) !== isNaN(oFyNcL)) { return (isNaN(oFxNcL)) ? 1 : -1; }
+                // rely on string comparison if different types - i.e. '02' < 2 != '02' < '2'
+                else if (typeof oFxNcL !== typeof oFyNcL) {
+                    oFxNcL += '';
+                    oFyNcL += '';
+                }
+                if (oFxNcL < oFyNcL) return -1;
+                if (oFxNcL > oFyNcL) return 1;
+            }
+            return 0;
+
+        },
+        sortName: function (_a, _b) {
+            var a = _a.name;
+            var b = _b.name;
+
+            return com.getflourish.utils.naturalSort(a, b);
         }
     }
 
@@ -1905,6 +1991,47 @@ com.getflourish = (function () {
             var artboard = scope.filteredArrayUsingPredicate(predicate);
 
             return artboard[0];
+        },
+        getLayersSortedByName: function (layers) {
+            var layer;
+            var layersMeta = [];
+
+            for (var i = 0; i < layers.count(); i++) {
+
+                layer = layers.objectAtIndex(i);
+
+                layersMeta.push({
+                    "name": layer.name(),
+                    "layer": layer
+                });
+            }
+
+            return layersMeta.sort(com.getflourish.utils.sortName);
+        },
+        getLayersByTextStyle: function (textStyle, scope) {
+            var predicate = NSPredicate.predicateWithFormat("(style.textStyle != NULL) && (FUNCTION(style.textStyle, 'isEqualForSync:asPartOfSymbol:', %@, nil) == YES)", textStyle);
+            // query page layers
+            var queryResult = scope.filteredArrayUsingPredicate(predicate);
+
+            return queryResult;
+        },
+        getLayersByLayerStyle: function (layerStyle, scope) {
+            var predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (FUNCTION(style.fill, 'isEqualForSync:asPartOfSymbol:', %@, nil) == YES)", layerStyle.fill());
+            // query page layers
+            var queryResult = scope.filteredArrayUsingPredicate(predicate);
+
+            return queryResult;
+        },
+        getLayersBySize: function (referenceLayer, scope) {
+            var predicate = NSPredicate.predicateWithFormat("(frame != NULL) && frame.width == %@ && frame.height == %@ && className == %@", referenceLayer.frame().width(), referenceLayer.frame().height());
+            var queryResult = scope.filteredArrayUsingPredicate(predicate);
+
+            return queryResult;
+        },
+        getEqualLayers: function (referenceLayer, scope) {
+            var predicate = NSPredicate.predicateWithFormat("(FUNCTION(self, 'isEqualForSync:asPartOfSymbol:', %@, nil) == YES)", context.selection[0]);
+            var queryResult = scope.filteredArrayUsingPredicate(predicate);
+            return queryResult;
         },
         select: function (layers) {
             // deselect first

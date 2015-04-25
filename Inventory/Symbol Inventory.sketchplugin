@@ -1,104 +1,376 @@
-// (control cmd option e)
+// Creates a shared object for the selected layers (cmd control option e)
 
-@import 'library.js'
-@import 'sandbox.js'
+@import '../inventory.js'
 
-log("fo")
 
-var doc = context.document;
+com.getflourish.config.BACKGROUND_COLOR = "#E7EAEE";
+com.getflourish.config.CARD_COLOR = "#ffffff";
+com.getflourish.config.FONT = "HelveticaNeue-Bold";
+com.getflourish.config.TEXT_COLOR = "#333333";
+com.getflourish.config.TEXTSTYLE_NAME = "Style Inventory / Label";
 
-var documentPath = [[doc fileURL] path].split([doc displayName] + ".sketch")[0];
+onRun();
 
-new AppSandbox().authorize(documentPath, exportClickDummy);
 
-function exportClickDummy () {
+function onRun () {
+    var doc = context.document;
+    addSymbolsSheetToPage("Style Inventory / Symbols");
+}
 
-  // HTML will be exported to a new folder in the .sketch file's parent folder
-  var exportPath = [[doc fileURL] path] + '-ClickDummy/';
+function addSymbolsSheetToPage (pageName) {
 
-  var html = '';
-  var artboardNames = [];
-  var linkTargets = [];
+    // get symbols
+    var symbols = doc.documentData().layerSymbols().objects();
 
-  var HTML_HEAD = '<!DOCTYPE html>\n\
-  <html lang="en">\n\
-  <head>\n\
-    <meta charset="utf-8">\n\
-    <title>' + [doc displayName] + '</title>\n\
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n\
-    <script type="text/javascript"> \n\
-      document.onmousedown = function() { \n\
-        document.body.setAttribute("class", "is-highlighted"); \n\
-      } \n\
-      document.onmouseup = function() { \n\
-        document.body.setAttribute("class", ""); \n\
-      } \n\
-    </script> \n\
-    <style> \n\
-      html, body { \n\
-        padding: 0; \n\
-        margin: 0; \n\
-      } \n\
-      a { \n\
-        position: absolute; \n\
-        z-index: 100; \n\
-      } \n\
-      body.is-highlighted a { \n\
-        background-color: #0000ff; \n\
-        opacity: .2; \n\
-      } \n\
-    </style> \n\
-  </head>\n\
-  <body>\n';
+    // get page
+    var page = com.getflourish.common.getPageByName(pageName);
 
-  var HTML_FOOT = '</body></html>\n';
+    // clear page
+    page.removeAllLayers();
 
-  var artboards = doc.currentPage().artboards().objectEnumerator();
+    // add an artboard where all symbols will be placed
 
-  createFolder(exportPath);
+    var artboard = MSArtboardGroup.new();
+    artboard.setName("Symbols");
+    var frame = artboard.frame();
+    frame.setX(0);
+    frame.setY(0);
+    frame.setConstrainProportions(false);
+    frame.setWidth(800)
+    frame.setHeight(500)
 
-  // export all symbols
+    // add artboard to page
+    page.addLayers([artboard])
 
-  var exportLayers = doc.currentPage().children().objectEnumerator();
+    for (var i = 0; i < symbols.count(); i++) {
 
-  while (slice = exportLayers.nextObject()) {
-    if (slice.className() == "MSLayerGroup") {
-      var rect = slice.absoluteRect().rect();
-      [doc saveArtboardOrSlice:[GKRect rectWithRect:rect] toFile:exportPath + 'symbols/' + slice.name() + '.png'];
+        // get symbol reference
+        var symbolRef = symbols.objectAtIndex(i);
+
+        // add layer from symbol to document
+        var symbol = symbols.objectAtIndex(i).newInstance();
+
+        // set name
+        symbol.setName(symbolRef.name());
+
+        // add symbol to page
+        artboard.addLayers([symbol]);
+    }
+    layout(artboard);
+}
+
+function layout (artboard) {
+
+    /**
+     * Very basic layout routine that places all layers with the same base name next to each other.
+     * Every time a new base name is found, a new row will be started.
+     * The nameing convention is: set/element/state
+     *
+     * e.g.     ui/checkbox/normal
+     *          ui/checkbox/selected
+     */
+
+    var name;
+    var moduleName;
+    var prevName = "";
+    var layer;
+    var layers = com.getflourish.layers.getLayersSortedByName(artboard.layers());
+
+    var padding = 200;
+    var nextX = padding;
+    var nextY = 0;
+    var gridX = 100;
+    var gridY = 200;
+    var maxX = 0;
+    var maxY = 0;
+
+    // storage
+    var cards = [];
+    var lines = [];
+    var card;
+
+    for (var i = 0; i < layers.length; i++) {
+        layer = layers[i].layer;
+        name = layer.name();
+        moduleName = name.substr(0, name.lastIndexOf("/"));
+
+        if (layer.frame().height() > maxY) maxY = layer.frame().height();
+
+        // new group
+        if (moduleName != prevName) {
+
+            var nextX = padding;
+
+            // finish up the card
+            if (card) {
+                card.frame().setHeight(nextY - card.frame().y() + maxY + gridY / 4);
+                card.frame().setX(nextX);
+            }
+
+            // add a margin before the next group
+            nextY += gridY + maxY;
+            nextX += gridX / 2;
+
+            // add a card background
+            card = addCard(artboard);
+            card.setName("card");
+            card.frame().setY(nextY - gridY / 4);
+
+            // resize card
+            cards.push(card);
+
+            // add a label
+            var labelString;
+            if (moduleName == "") {
+                labelString = "undefined";
+            } else {
+                labelString = moduleName;
+            }
+            var label = addLabel(artboard, labelString);
+            label.frame().setY(nextY);
+            label.frame().setX(nextX);
+
+            // add margin before separator
+            nextY += 24;
+
+            // draw a separator
+            var line = addLine(artboard);
+            line.frame().setX(nextX);
+            line.frame().setY(nextY);
+            line.frame().setWidth(100);
+            lines.push(line);
+
+            nextY += gridY / 4;
+            maxY = 0;
+
+            // set the prevname
+            prevName = moduleName;
+
+        } else {
+            nextX += gridX;
+        }
+
+        // in any case: add the symbol
+        layer.frame().setX(nextX);
+        layer.frame().setY(nextY);
+
+        var r = layer.frame().x() + layer.frame().width() + gridX / 2;
+        if (r > maxX) maxX = r;
+
+        nextX += layer.frame().width();
     }
 
-  }
+    // fix the very last card
+    if (card) {
+        card.frame().setHeight(nextY - card.frame().y() + maxY + gridY / 4);
+        card.frame().setX(padding)
+    }
 
-  displayMissingArtboardsWarnings(linkTargets, artboardNames);
+    artboard.frame().setHeight(nextY + padding + maxY)
+    artboard.frame().setWidth(maxX + padding)
 
-  doc.showMessage('Click dummy files exported to: ' + exportPath);
+    // resize separators
+    for (var i = 0; i < lines.length; i++) {
+        lines[i].frame().setWidth(maxX - padding - gridX);
+    }
+
+    // resize separators
+    for (var i = 0; i < cards.length; i++) {
+        cards[i].frame().setWidth(maxX - padding);
+    }
+
+    addBackground(artboard);
 }
 
-function displayMissingArtboardsWarnings (targets, artboards) {
-  // Display a warning if there are link targets on this page that don't have a corresponding artboard
-  var warnings = '';
-  targets.sort();
-  for (var i = 0; i < targets.length; i++) {
-    var target = targets[i];
-    if (artboards.indexOf(target) === -1) {
-      warnings += '\n· ' + target
-    };
-  };
+function addLabel (artboard, string) {
+    // add module name as text layer
+    var text = com.getflourish.common.addTextLayer(artboard, string.toUpperCase());
 
-  if (warnings !== '') {
-    warnings += '\n\nDon’t worry, the prototype will be exported anyway.'
-    var app = [NSApplication sharedApplication];
-    [app displayDialog:warnings withTitle:"There are links to missing artboards:"];
-  }
+    text.setFontSize(15);
+    text.setFontPostscriptName(com.getflourish.config.FONT);
+    text.setCharacterSpacing(2);
+
+    // color
+    var color = MSColor.colorWithSVGString(com.getflourish.config.TEXT_COLOR);
+
+    // set text style
+    text.setTextColor(color);
+
+    // add shared style
+    var sharedStyles = doc.documentData().layerTextStyles();
+
+    var styleName = "Style Inventory / Label";
+    var textStyle = com.getflourish.common.getTextStyleByName(styleName);
+
+    if (textStyle == null) {
+        sharedStyles.addSharedStyleWithName_firstInstance(styleName, text.style());
+    } else {
+        // apply style
+        styleAllTextLayersBasedOnLayerWithTextStyle(text, textStyle);
+    }
+
+    return text;
 }
 
-function createFolder(name) {
-  var fileManager = [NSFileManager defaultManager];
-  [fileManager createDirectoryAtPath:name withIntermediateDirectories:true attributes:nil error:nil];
+function addBackground (artboard) {
+    // add background
+    var bg = com.getflourish.common.addSolidBackground(artboard, com.getflourish.config.BACKGROUND_COLOR);
+
+    // add shared style
+    var sharedStyles = doc.documentData().layerStyles();
+
+    var styleName = "Style Inventory / Background";
+    var layerStyle = com.getflourish.common.getLayerStyleByName(styleName);
+
+    if (layerStyle == null) {
+        sharedStyles.addSharedStyleWithName_firstInstance("Style Inventory / Background", bg.style());
+    } else {
+        // apply style
+        styleAllLayersBasedOnLayerWithLayerStyle(bg, layerStyle);
+    }
+
+    doc.currentPage().deselectAllLayers();
+    bg.setIsSelected(true);
+    com.getflourish.utils.sendToBack();
+    bg.setIsLocked(true);
 }
 
-function saveTextToFile (filename, text) {
-  var path = [@"" stringByAppendingString:filename];
-  var str = [@"" stringByAppendingString:text];
-  str.dataUsingEncoding_(NSUTF8StringEncoding).writeToFile_atomically_(path, true);
+function addCard (artboard) {
+    // add background
+    var color = MSColor.colorWithSVGString(com.getflourish.config.CARD_COLOR);
+    var card = com.getflourish.colors.addColorShape(artboard, color, 100, 100);
+
+    // Shadow
+    var shadow = card.style()
+        .shadows()
+        .addNewStylePart();
+
+    var black = MSColor.colorWithSVGString("#000000");
+    black.alpha = 0.1;
+    shadow.setOffsetX(0);
+    shadow.setOffsetY(2);
+    shadow.setBlurRadius(3);
+    shadow.setSpread(0);
+
+    shadow.setColor(black);
+
+    // add shared style
+    var sharedStyles = doc.documentData().layerStyles();
+
+    var styleName = "Style Inventory / Card";
+    var layerStyle = com.getflourish.common.getLayerStyleByName(styleName);
+
+    if (layerStyle == null) {
+        sharedStyles.addSharedStyleWithName_firstInstance("Style Inventory / Card", card.style());
+    } else {
+        // apply style
+        styleAllLayersBasedOnLayerWithLayerStyle(card, layerStyle);
+    }
+
+    doc.currentPage().deselectAllLayers();
+    card.setIsSelected(true);
+    com.getflourish.utils.sendToBack();
+    return card;
+
+}
+
+function addLine (target) {
+    var black = MSColor.colorWithSVGString("#000000");
+    black.alpha = 0.15;
+    var line = com.getflourish.colors.addColorShape(target, black, 100, 1);
+    line.setName("separator");
+
+    // add shared style
+    var sharedStyles = doc.documentData().layerStyles();
+
+    var styleName = "Style Inventory / Separator";
+    var layerStyle = com.getflourish.common.getLayerStyleByName(styleName);
+
+    if (layerStyle == null) {
+        sharedStyles.addSharedStyleWithName_firstInstance("Style Inventory / Separator", line.style());
+    } else {
+        // apply style
+        styleAllLayersBasedOnLayerWithLayerStyle(line, layerStyle);
+    }
+
+    return line;
+}
+
+function getUserInput(placeholder) {
+    var name = [doc askForUserInput:"Consistency" initialValue:placeholder]);
+    return name;
+}
+
+function styleAll(layers, style) {
+    for (var i = 0; i < layers.count(); i++) {
+        styleLayer(layers[i], style);
+    }
+}
+
+function styleLayer(layer, style) {
+    layer.setStyle(style.newInstance());
+}
+
+function styleAllTextLayersBasedOnLayerWithTextStyle (layer, textStyle) {
+
+    // get all text layers that match the style
+    var layers = com.getflourish.layers.getLayersByTextStyle(layer.style().textStyle(), doc.currentPage().children());
+    styleAll(layers, textStyle);
+    return layers;
+}
+
+function styleAllLayersBasedOnLayerWithLayerStyle (layer, layerStyle) {
+
+    // get all text layers that match the style
+    var layers = com.getflourish.layers.getLayersByLayerStyle(layer.style(), doc.currentPage().children());
+    styleAll(layers, layerStyle);
+    return layers;
+}
+
+
+function selectTextStyle (preselect) {
+    var preselect = preselect || 0;
+    var textStyles = [];
+    var textItems = [];
+
+    var selection;
+
+    var styles = doc.documentData().layerTextStyles().objects();
+    if (styles.count() != 0) {
+        for (var i = 0; i < styles.count(); i++) {
+          var style = styles.objectAtIndex(i);
+            textStyles.push({
+                "textStyle": style,
+                "name": style.name()
+            });
+            textItems.push(style.name());
+        }
+        if (textItems) selection = com.getflourish.common.createSelect("Select a text style or create a new one", textItems, preselect);
+    } else {
+        return;
+    }
+    return selection;
+}
+
+function selectLayerStyle () {
+    var layerStyles = [];
+    var layerStyleItems = [];
+
+    var selection;
+
+    var styles = doc.documentData().layerStyles().objects();
+    if (styles.count() != 0) {
+        for (var i = 0; i < styles.count(); i++) {
+          var style = styles.objectAtIndex(i);
+            layerStyles.push({
+                "layerStyle": style,
+                "name": style.name()
+            });
+            layerStyleItems.push(style.name());
+        }
+        if (layerStyleItems) selection = com.getflourish.common.createSelect("Select a style or create a new one", layerStyleItems, 0);
+    } else {
+        return;
+    }
+    return selection;
 }

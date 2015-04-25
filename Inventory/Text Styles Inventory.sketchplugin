@@ -1,6 +1,8 @@
 // init (control alt cmd t)
 
-#import 'inventory.js'
+@import '../inventory.js'
+@import '../sandbox.js'
+@import '../persistence.js'
 
 // use "rem" for font sizes
 com.getflourish.css.formatOptions.useRelativeFontSize = false;
