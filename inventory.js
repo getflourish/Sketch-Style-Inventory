@@ -1149,7 +1149,7 @@ com.getflourish = (function () {
             artboard.setIsSelected(true);
 
             // focus the view on the artboard
-            com.getflourish.view.centerTo(artboard);
+            // com.getflourish.view.centerTo(artboard);
         }
     }
 
@@ -1634,11 +1634,13 @@ com.getflourish = (function () {
         centerTo: function (layer) {
             var selected_object = layer;
             var view = doc.currentView();
-            view.centerRect(selected_object.absoluteRect().rect());
+            // view.centerRect(selected_object.absoluteRect().rect());
         },
         zoomTo: function (layer) {
             var view = doc.currentView();
-            view.zoomToFitRect(layer.absoluteRect().rect());
+            layer.setIsSelected(true);
+            view.zoomToSelection();
+            view.refresh();
         }
     }
 
