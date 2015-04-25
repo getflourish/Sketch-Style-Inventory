@@ -1,0 +1,46 @@
+// todo: add overlay
+// use own labels instead of modifying the original ones
+
+var doc = context.document;
+var scope = doc.currentPage().currentArtboard().children();
+var layers = getTextLayers(scope);
+
+doc.currentPage().currentArtboard().duplicate();
+doc.currentPage().currentArtboard().frame().addX(doc.currentPage().currentArtboard().frame().width() + 100);
+
+
+var layer;
+var hasSharedStyle;
+
+for (var i = 0; i < layers.count(); i++) {
+	layer = layers.objectAtIndex(i);
+	hasSharedStyle = layer.style().sharedObjectID() != null;
+
+	if (hasSharedStyle) {
+		var style = getTextStyleForID(layer.style().sharedObjectID())
+		relabelWithString(layer, style.name());
+	}
+}
+
+
+function relabelWithString (layer, newString) {
+	layer.setStringValue(newString);
+	return layer;
+}
+
+function getTextLayers (scope) {
+    var predicate = NSPredicate.predicateWithFormat("className == %@", "MSTextLayer");
+    var queryResult = scope.filteredArrayUsingPredicate(predicate);
+    return queryResult;
+}
+
+function getTextStyleForID (id) {
+	var styles = doc.documentData().layerTextStyles().objects();
+	if (styles.count() != 0) {
+	    for (var i = 0; i < styles.count(); i++) {
+	      var style = styles.objectAtIndex(i);
+	        if (style.objectID() == id) return style;
+	    }
+	}
+	return null;
+}
