@@ -18,6 +18,8 @@ com.getflourish.config.samePage = false;
 
 var states = persist.get('com.getflourish.inventory.configuration');
 
+com.getflourish.common.getStyleSheetPage();
+
 var configuration = showConfigurationDialog(states);
 
 if (configuration[0] == 1000) {
@@ -33,7 +35,7 @@ if (configuration[0] == 1000) {
 
     if (colors == 1) {
         var ca = com.getflourish.colorInventory.generate();
-        artboards.push(ca);
+        if (ca) artboards.push(ca);
     }
     if (textStyles == 1) {
         var ta = com.getflourish.textStyleInventory.generate();

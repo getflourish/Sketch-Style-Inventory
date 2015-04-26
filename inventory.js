@@ -632,6 +632,8 @@ com.getflourish = (function () {
                 doc.showMessage("Please select an artboard. The Inventory will be placed next to it.");
             }
 
+            log("generating")
+
             var exists = false;
 
             // start tracking the time
@@ -647,7 +649,7 @@ com.getflourish = (function () {
             // get hex colors from document
             var hexColors = my.colorInventory.getDocumentColors();
 
-            if (hexColors.length != 0) {
+            if (hexColors.length > 0) {
 
                 // feedback
                 doc.showMessage("Analyzing Colors…");
@@ -712,7 +714,8 @@ com.getflourish = (function () {
                 return colorArtboard;
 
             } else {
-                doc.showMessage("No colors found :(")
+                doc.showMessage("No colors found :(");
+                return null;
             }
         },
         getColorArtboardColors: function (colorArtboard) {
@@ -802,20 +805,26 @@ com.getflourish = (function () {
         getDocumentTextColors: function () {
             return my.colorInventory.getDestinctProperties("textColor");
         },
-        getDestinctProperties: function (keyPath) {
+        getDestinctProperties: function (keyPath, scope) {
             // get all layers of the current page, except the ones used on the color artboard
             // todo: should accept scope
-            var layers = doc.currentPage()
-                .children();
-            var predicate = NSPredicate.predicateWithFormat("NOT(parentArtboard.name == %@)", my.config.colorInventoryName);
-            var result = layers.filteredArrayUsingPredicate(predicate);
+            var props = [];
+            for (var i = 0; i < doc.pages().count(); i++) {
+                var page = doc.pages().objectAtIndex(i);
+                var layers = page.children();
+                var predicate = NSPredicate.predicateWithFormat("NOT(parentArtboard.name == %@)", my.config.colorInventoryName);
+                var result = layers.filteredArrayUsingPredicate(predicate);
 
-            // analyse the colors
-            var keyPath = "@distinctUnionOfObjects." + keyPath;
-            var objects = [result valueForKeyPath: keyPath];
-            var properties = my.utils.arrayFromImmutableArray(objects);
+                // analyse the colors
+                var keyPath = "@distinctUnionOfObjects." + keyPath;
+                var objects = [result valueForKeyPath: keyPath];
+                var properties = my.utils.arrayFromImmutableArray(objects);
+                props.push(properties);
+            }
+            props = [].concat.apply([], props)
+            log(props)
 
-            return properties;
+            return props;
         },
         export: function (exportPath) {
             var data = {};
