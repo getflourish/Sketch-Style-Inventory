@@ -2393,7 +2393,7 @@ com.getflourish = (function () {
                     .textStyle()
                     .attributes();
                 var textStyle = style
-                if (!my.common.isIncluded(definedTextStyles, textStyle)) {
+                if (!my.common.isIncluded(definedTextStyles, textStyle) && style.name().indexOf("Style Inventory") == -1) {
                     definedTextStyles.push({
                         "attributes": attributes,
                         "textStyle": style,
