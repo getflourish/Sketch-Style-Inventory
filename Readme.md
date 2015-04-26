@@ -61,6 +61,8 @@ This command can generate artboards that collect all colors, text styles and sym
 
 **Shortcut:** `ctrl` + `⌘` + `⌥` + `I`
 
+![Generate dialog](https://dl-web.dropbox.com/get/public/_keepalive/Style%20Inventory/generate.gif?_subject_uid=974773&w=AACkCPJ0FlOKcST819YnSSc8_9oZIwhcsets6tTSprJqoQ)
+
 ### Export Metadata
 
 When you select this option in the generator, Sketch will export metadata and images of your project that you can use in development. Colors as JSON, symbols as PNG, text styles as JSON.
