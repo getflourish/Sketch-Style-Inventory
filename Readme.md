@@ -61,7 +61,7 @@ This command can generate artboards that collect all colors, text styles and sym
 
 **Shortcut:** `ctrl` + `⌘` + `⌥` + `I`
 
-![Generate dialog](https://dl-web.dropbox.com/get/public/_keepalive/Style%20Inventory/generate.gif?_subject_uid=974773&w=AACkCPJ0FlOKcST819YnSSc8_9oZIwhcsets6tTSprJqoQ)
+![Generate dialog](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/generate.gif)
 
 ### Export Metadata
 
