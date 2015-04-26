@@ -79,10 +79,12 @@ function layout (artboard) {
     var padding = 200;
     var nextX = padding;
     var nextY = 0;
-    var gridX = 100;
+    var gridX = 80;
     var gridY = 200;
     var maxX = 0;
     var maxY = 0;
+
+    var artboardWidth = 0;
 
     // storage
     var cards = [];
@@ -94,8 +96,6 @@ function layout (artboard) {
         name = layer.name();
         moduleName = name.substr(0, name.lastIndexOf("/"));
 
-        if (layer.frame().height() > maxY) maxY = layer.frame().height();
-
         // new group
         if (moduleName != prevName) {
 
@@ -105,6 +105,11 @@ function layout (artboard) {
             if (card) {
                 card.frame().setHeight(nextY - card.frame().y() + maxY + gridY / 4);
                 card.frame().setX(nextX);
+                card.frame().setWidth(maxX - padding);
+            }
+
+            if (line) {
+                line.frame().setWidth(maxX - padding - gridX);
             }
 
             // add a margin before the next group
@@ -120,15 +125,7 @@ function layout (artboard) {
             cards.push(card);
 
             // add a label
-            var labelString;
-            if (moduleName == "") {
-                labelString = "undefined";
-            } else {
-                labelString = moduleName;
-            }
-            var label = addLabel(artboard, labelString);
-            label.frame().setY(nextY);
-            label.frame().setX(nextX);
+            var label = addLabel(artboard, moduleName, nextX, nextY);
 
             // add margin before separator
             nextY += 24;
@@ -137,10 +134,14 @@ function layout (artboard) {
             var line = addLine(artboard);
             line.frame().setX(nextX);
             line.frame().setY(nextY);
-            line.frame().setWidth(100);
+            line.frame().setWidth(maxX - padding - gridX);
             lines.push(line);
 
             nextY += gridY / 4;
+
+            if (maxX > artboardWidth) artboardWidth = maxX;
+
+            maxX = 0;
             maxY = 0;
 
             // set the prevname
@@ -148,6 +149,11 @@ function layout (artboard) {
 
         } else {
             nextX += gridX;
+        }
+        if (layer.frame().height() > maxY) {
+            log("module: " + moduleName);
+            maxY = layer.frame().height();
+            log(maxY)
         }
 
         // in any case: add the symbol
@@ -164,37 +170,40 @@ function layout (artboard) {
     if (card) {
         card.frame().setHeight(nextY - card.frame().y() + maxY + gridY / 4);
         card.frame().setX(padding)
+        card.frame().setWidth(maxX - padding)
+        line.frame().setWidth(maxX - padding - gridX);
     }
 
+    // resize artboard
     artboard.frame().setHeight(nextY + padding + maxY)
-    artboard.frame().setWidth(maxX + padding)
+    artboard.frame().setWidth(artboardWidth + padding)
 
-    // resize separators
-    for (var i = 0; i < lines.length; i++) {
-        lines[i].frame().setWidth(maxX - padding - gridX);
-    }
-
-    // resize separators
-    for (var i = 0; i < cards.length; i++) {
-        cards[i].frame().setWidth(maxX - padding);
-    }
-
+    // add background
     addBackground(artboard);
 }
 
-function addLabel (artboard, string) {
-    // add module name as text layer
-    var text = com.getflourish.common.addTextLayer(artboard, string.toUpperCase());
+function addLabel (artboard, string, x, y) {
 
-    text.setFontSize(15);
-    text.setFontPostscriptName(com.getflourish.config.FONT);
-    text.setCharacterSpacing(2);
+    if (string == "") {
+        string = "undefined";
+    }
+
+    // add module name as text layer
+    var label = com.getflourish.common.addTextLayer(artboard, string.toUpperCase());
+
+    label.setFontSize(15);
+    label.setFontPostscriptName(com.getflourish.config.FONT);
+    label.setCharacterSpacing(2);
 
     // color
     var color = MSColor.colorWithSVGString(com.getflourish.config.TEXT_COLOR);
 
+    // position
+    label.frame().setX(x);
+    label.frame().setY(y);
+
     // set text style
-    text.setTextColor(color);
+    label.setTextColor(color);
 
     // add shared style
     var sharedStyles = doc.documentData().layerTextStyles();
@@ -203,13 +212,13 @@ function addLabel (artboard, string) {
     var textStyle = com.getflourish.common.getTextStyleByName(styleName);
 
     if (textStyle == null) {
-        sharedStyles.addSharedStyleWithName_firstInstance(styleName, text.style());
+        sharedStyles.addSharedStyleWithName_firstInstance(styleName, label.style());
     } else {
         // apply style
-        styleAllTextLayersBasedOnLayerWithTextStyle(text, textStyle);
+        styleAllTextLayersBasedOnLayerWithTextStyle(label, textStyle);
     }
 
-    return text;
+    return label;
 }
 
 function addBackground (artboard) {

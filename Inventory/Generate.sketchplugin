@@ -1,6 +1,8 @@
 // Shows a dialog with all actions available from Color Inventory (control alt cmd i)
 
-#import 'inventory.js'
+@import '../inventory.js'
+@import '../sandbox.js'
+@import '../persistence.js'
 
 // remember current artboard
 var selectedArtboard = doc.currentPage().currentArtboard();
@@ -20,14 +22,73 @@ path = fileURL.path();
 // get authorization to write to the export folder
 new AppSandbox().authorize(path, function () {
 
-	// generate and get the inventories 
+	// generate and get the inventories
 	var ca = com.getflourish.colorInventory.generate();
 
 	// generate the text styles and save them
 	com.getflourish.textStyleInventory.generate(path + "/" + filename)
 
 	// var shiftWidth = ca.frame().width() + ta.frame().width() + 200;
-// 
+//
 	// com.getflourish.colorInventory.shiftArtboardsFromArtboardBy(selectedArtboard, shiftWidth);
 	// ca.frame().setX(selectedArtboard.frame().x(x));
 });
+
+var configuration = showConfigurationDialog();
+
+var states = configuration[1];
+var colors = states[0];
+var textStyles = states[1];
+var symbols = states[2];
+
+function showConfigurationDialog () {
+    var accessoryView = NSView.alloc().initWithFrame(NSMakeRect(0.0, 0.0, 200.0, 90.0))
+
+    var buttonStates = [1, 1, 1, 0]
+
+    var buttonOne = NSButton.alloc().initWithFrame(NSMakeRect(0.0, 70.0, 200.0, 20.0))
+    buttonOne.setButtonType(NSSwitchButton)
+    buttonOne.setTitle("Colors")
+    buttonOne.setState(NSOnState)
+    buttonOne.setCOSJSTargetFunction(function(sender){
+      buttonStates[0] = buttonStates[0] == 0 ? 1 : 0
+    })
+    accessoryView.addSubview(buttonOne)
+
+    var buttonTwo = NSButton.alloc().initWithFrame(NSMakeRect(0.0, 50.0, 200.0, 20.0))
+    buttonTwo.setButtonType(NSSwitchButton)
+    buttonTwo.setTitle("Text Styles")
+    buttonTwo.setState(NSOnState)
+    buttonTwo.setCOSJSTargetFunction(function(sender){
+      buttonStates[1] = buttonStates[1] == 0 ? 1 : 0
+    })
+    accessoryView.addSubview(buttonTwo)
+
+    var buttonThree = NSButton.alloc().initWithFrame(NSMakeRect(0.0, 30.0, 200.0, 20.0))
+    buttonThree.setButtonType(NSSwitchButton)
+    buttonThree.setTitle("Symbols")
+    buttonThree.setState(NSOnState)
+    buttonThree.setCOSJSTargetFunction(function(sender){
+      buttonStates[2] = buttonStates[2] == 0 ? 1 : 0
+    })
+    accessoryView.addSubview(buttonThree)
+
+    var buttonFour = NSButton.alloc().initWithFrame(NSMakeRect(0.0, 0.0, 200.0, 20.0))
+    buttonFour.setButtonType(NSSwitchButton)
+    buttonFour.setTitle("Export Metadata")
+    buttonFour.setState(NSOffState)
+    buttonFour.setCOSJSTargetFunction(function(sender){
+      buttonStates[3] = buttonStates[3] == 0 ? 1 : 0
+    })
+    accessoryView.addSubview(buttonFour)
+
+    var alert = NSAlert.alloc().init()
+    alert.messageText = "Style Inventory Configuration"
+    alert.addButtonWithTitle("Run")
+    alert.addButtonWithTitle("Cancel")
+    alert.setAccessoryView(accessoryView)
+
+    var responseCode = alert.runModal()
+
+    return [responseCode, buttonStates]
+  }
