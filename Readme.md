@@ -10,6 +10,11 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 
 ## Change Log
 
+**April 26, 2015**
+* added Symbols Inventory
+* simplified export
+* added configurator
+
 **April 14, 2015**
 Updated plugins for Sketch 3.3+
 
@@ -19,8 +24,6 @@ Updated plugins for Sketch 3.3+
 ## Plugin Directory
 
 #### Inventory
-* Generate/Color Inventory `experimental` `ctrl` + `⌘` + `⌥` + `C`
-* Generate/Text Styles Inventory `experimental` `ctrl` + `⌘` + `⌥` + `T`
 * Generate `ctrl` + `⌘` + `⌥` + `I`
 
 #### Selection
@@ -28,6 +31,7 @@ Updated plugins for Sketch 3.3+
 * by Color/Select Layers by Color on Artboard `ctrl` + `⌘` + `C`
 * by Name/Select Layers by Name `shift` + `ctrl` + `⌘` + `N`
 * by Name/Select Layers by Name on Artboard `ctrl` + `⌘` + `N`
+* by String/Replace String `shift` + `⌘` + `K`
 * by Text Style/Select Similar Text Layers `shift` + `ctrl` + `⌘` + `T`
 * by Text Style/Select Similar Text Layers on Artboard `⌘` + `control` + `T`
 
@@ -50,6 +54,21 @@ For example, the first line of `Duplicate Artboard.sketchplugin`:
 
 You can use modifier keys such as `option`, `command`, `control`, `shift`
 
+
+### Generate
+
+This command can generate artboards that collect all colors, text styles and symbols of a document. Choose what you want to generate in the configurator. The artboards will be generated on a new page called "Style Inventory".
+
+**Shortcut:** `ctrl` + `⌘` + `⌥` + `I`
+
+### Export Metadata
+
+When you select this option in the generator, Sketch will export metadata and images of your project that you can use in development. Colors as JSON, symbols as PNG, text styles as JSON.
+
+**Shortcut:** `ctrl` + `⌘` + `⌥` + `I`
+
+![Generate dialog](http://f.cl.ly/items/3944230o3a0V1u2u463t/export%20metadata.gif)
+
 ### Select Layers by Color on Artboard
 
 Based on a selected layer, all layers on the current artboard that match the fill or text color will be selected.
@@ -67,6 +86,12 @@ Based on a selected layer, all layers on the current artboard that match the fil
 Based on a selected layer, all layers that match the name of the reference layer will be selected. This will also include layers that have appended numbers from duplication (e.g. Rectangle 1, Rectangle 2, …)
 
 **Shortcut:** `ctrl` + `⌘` + `N`
+
+### Replace String
+
+Replaces all occurences of the text string found in the selected text layer
+
+**Shortcut:** `shift` + `⌘` + `K`
 
 ![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Name.gif)
 

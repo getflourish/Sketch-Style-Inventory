@@ -1,4 +1,4 @@
-// Selects all layers with the same layer name on the current artboard (shift cmd k)
+// Replaces all occurences of the text string found in the selected text layer
 
 #import 'inventory.js'
 
