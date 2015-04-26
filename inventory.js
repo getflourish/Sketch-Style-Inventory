@@ -1567,6 +1567,20 @@ com.getflourish = (function () {
                 return false;
             }
         },
+        getColorInventory: function () {
+            // setup predicate
+            var predicate = NSPredicate.predicateWithFormat("name == %@", my.config.colorInventoryName);
+
+            // get the color artboard
+            var result = doc.currentPage()
+                .artboards()
+                .filteredArrayUsingPredicate(predicate);
+            if (result.count() != 0) {
+                return result.objectAtIndex(0);
+            } else {
+                return null;
+            }
+        },
         getTextColorOf: function (layer) {
             var color = null;
 
@@ -1999,13 +2013,18 @@ com.getflourish = (function () {
          * @return {artboard} artboard
          */
         getRightmostArtboard: function () {
+            var rma = null;
+
             var scope = doc.currentPage()
                 .artboards();
-            var maxX = [scope valueForKeyPath: "@max.frame.maxX"];
-            var predicate = NSPredicate.predicateWithFormat("frame.maxX == %@", maxX);
-            var artboard = scope.filteredArrayUsingPredicate(predicate);
+            if(scope.count() > 0) {
+                var maxX = [scope valueForKeyPath: "@max.frame.maxX"];
+                var predicate = NSPredicate.predicateWithFormat("frame.maxX == %@", maxX);
+                var artboard = scope.filteredArrayUsingPredicate(predicate);
+                rma = artboard[0];
+            }
 
-            return artboard[0];
+            return rma;
         },
         getLayersSortedByName: function (layers) {
             var layer;

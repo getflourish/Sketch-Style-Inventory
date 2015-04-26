@@ -13,8 +13,8 @@
 
 
 com.getflourish.config.samePage = false;
-var referenceArtboard = null;
-if (com.getflourish.config.samePage) referenceArtboard = com.getflourish.layers.getRightmostArtboard();
+
+// if (colorInventory != null) rma = colorInventory;
 
 var states = persist.get('com.getflourish.inventory.configuration');
 
@@ -33,33 +33,39 @@ if (configuration[0] == 1000) {
 
     if (colors == 1) {
         var ca = com.getflourish.colorInventory.generate();
-        layout(ca);
+        artboards.push(ca);
     }
     if (textStyles == 1) {
         var ta = com.getflourish.textStyleInventory.generate();
-        layout(ta);
+        artboards.push(ta);
     }
     if (symbols == 1) {
         var sa = com.getflourish.symbolInventory.generate();
-        layout(sa);
+        artboards.push(sa);
     }
     if (exportMetadata == 1) handleExport();
 
-    doc.currentPage().selectLayers(artboards)
-    com.getflourish.view.zoomTo(context.selection[0]);
+    layout(artboards)
+
+    var view = doc.currentView();
+    doc.currentPage().selectLayers(artboards);
+    view.zoomToSelection();
+    view.refresh();
+
     doc.currentPage().deselectAllLayers();
+    com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
     doc.showMessage("Generated Style Inventory");
 }
 
-function layout (artboard) {
-    if (referenceArtboard != null) {
-        com.getflourish.common.placeNextTo(artboard, referenceArtboard)
+function layout (artboards) {
+    var x = 0;
+    var artboard;
+    for (var i = 0; i < artboards.length; i++) {
+        artboard = artboards[i];
+        artboard.frame().setX(x);
+        x += artboard.frame().width() + 100;
     }
-    referenceArtboard = artboard;
-    artboards.push(artboard);
 
-    com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
-    doc.currentPage().deselectAllLayers();
 }
 
 function handleExport () {
