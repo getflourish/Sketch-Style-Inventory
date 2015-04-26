@@ -181,7 +181,7 @@ function showConfigurationDialog (states) {
 
     var alert = NSAlert.alloc().init()
     alert.messageText = "Style Inventory Configuration"
-    alert.addButtonWithTitle("Run")
+    alert.addButtonWithTitle("Generate")
     alert.addButtonWithTitle("Cancel")
     alert.setAccessoryView(accessoryView)
 
