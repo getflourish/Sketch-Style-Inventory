@@ -4,52 +4,69 @@
 @import '../sandbox.js'
 @import '../persistence.js'
 
+
 // remember current artboard
-var selectedArtboard = doc.currentPage().currentArtboard();
+if (doc.currentPage().children() > 0) {
+    var selectedArtboard = doc.currentPage().currentArtboard();
 
-// get right most artboard if no artboard is selected
-if (selectedArtboard == null) selectedArtboard = com.getflourish.layers.getRightmostArtboard();
+    // get right most artboard if no artboard is selected
+    if (selectedArtboard == null) selectedArtboard = com.getflourish.layers.getRightmostArtboard();
 
-var x = selectedArtboard.frame().x();
+    var x = selectedArtboard.frame().x();
+}
 
-// file name of the exported file
-var filename = "typography.css"
+var states = persist.get('com.getflourish.inventory.configuration');
 
-// let the user choose the export location
-var fileURL = com.getflourish.common.fileSaver();
-path = fileURL.path();
+var configuration = showConfigurationDialog(states);
 
-// get authorization to write to the export folder
-new AppSandbox().authorize(path, function () {
+if (configuration[0] == 1000) {
+    states = configuration[1];
 
-	// generate and get the inventories
-	var ca = com.getflourish.colorInventory.generate();
+    persist.set('com.getflourish.inventory.configuration', states)
 
-	// generate the text styles and save them
-	com.getflourish.textStyleInventory.generate(path + "/" + filename)
+    var colors = states[0];
+    var textStyles = states[1];
+    var symbols = states[2];
+    var exportMetadata = states[3];
 
-	// var shiftWidth = ca.frame().width() + ta.frame().width() + 200;
-//
-	// com.getflourish.colorInventory.shiftArtboardsFromArtboardBy(selectedArtboard, shiftWidth);
-	// ca.frame().setX(selectedArtboard.frame().x(x));
-});
+    if (colors == 1) com.getflourish.colorInventory.generate();
+    if (textStyles == 1) com.getflourish.textStyleInventory.generate()
+    if (symbols == 1) com.getflourish.symbolInventory.generate();
+    if (exportMetadata == 1) handleExport();
+}
 
-var configuration = showConfigurationDialog();
+function handleExport () {
 
-var states = configuration[1];
-var colors = states[0];
-var textStyles = states[1];
-var symbols = states[2];
+    // file name of the exported file
+    var filename = "typography.css"
 
-function showConfigurationDialog () {
+    // let the user choose the export location
+    var fileURL = com.getflourish.common.fileSaver();
+    path = fileURL.path();
+
+    // export path + "/" + filename
+
+
+    // get authorization to write to the export folder
+    new AppSandbox().authorize(path, function () {
+
+    });
+
+}
+
+function showConfigurationDialog (states) {
     var accessoryView = NSView.alloc().initWithFrame(NSMakeRect(0.0, 0.0, 200.0, 90.0))
 
-    var buttonStates = [1, 1, 1, 0]
+    var buttonStates = states || [1, 1, 1, 0];
+
+    if (persist.get('com.getflourish.inventory.configuration') != null) {
+        buttonStates = persist.get('com.getflourish.inventory.configuration');
+    }
 
     var buttonOne = NSButton.alloc().initWithFrame(NSMakeRect(0.0, 70.0, 200.0, 20.0))
     buttonOne.setButtonType(NSSwitchButton)
     buttonOne.setTitle("Colors")
-    buttonOne.setState(NSOnState)
+    buttonOne.setState(buttonStates[0])
     buttonOne.setCOSJSTargetFunction(function(sender){
       buttonStates[0] = buttonStates[0] == 0 ? 1 : 0
     })
@@ -58,7 +75,7 @@ function showConfigurationDialog () {
     var buttonTwo = NSButton.alloc().initWithFrame(NSMakeRect(0.0, 50.0, 200.0, 20.0))
     buttonTwo.setButtonType(NSSwitchButton)
     buttonTwo.setTitle("Text Styles")
-    buttonTwo.setState(NSOnState)
+    buttonTwo.setState(buttonStates[1])
     buttonTwo.setCOSJSTargetFunction(function(sender){
       buttonStates[1] = buttonStates[1] == 0 ? 1 : 0
     })
@@ -67,7 +84,7 @@ function showConfigurationDialog () {
     var buttonThree = NSButton.alloc().initWithFrame(NSMakeRect(0.0, 30.0, 200.0, 20.0))
     buttonThree.setButtonType(NSSwitchButton)
     buttonThree.setTitle("Symbols")
-    buttonThree.setState(NSOnState)
+    buttonThree.setState(buttonStates[2])
     buttonThree.setCOSJSTargetFunction(function(sender){
       buttonStates[2] = buttonStates[2] == 0 ? 1 : 0
     })
@@ -76,7 +93,7 @@ function showConfigurationDialog () {
     var buttonFour = NSButton.alloc().initWithFrame(NSMakeRect(0.0, 0.0, 200.0, 20.0))
     buttonFour.setButtonType(NSSwitchButton)
     buttonFour.setTitle("Export Metadata")
-    buttonFour.setState(NSOffState)
+    buttonFour.setState(buttonStates[3])
     buttonFour.setCOSJSTargetFunction(function(sender){
       buttonStates[3] = buttonStates[3] == 0 ? 1 : 0
     })
