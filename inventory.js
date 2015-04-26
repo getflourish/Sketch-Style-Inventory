@@ -541,6 +541,12 @@ com.getflourish = (function () {
             }
             return null;
         },
+        placeNextTo: function (self, other) {
+            var x = other.frame().x() + other.frame().width() + 100;
+            var y = other.frame().y();
+            self.frame().setX(x);
+            self.frame().setY(y);
+        },
         showMarginsOf: function (layer) {
             // calculates margins and displays them
             var parent = layer.parentGroup();
@@ -636,7 +642,7 @@ com.getflourish = (function () {
 
             // the right most artboard
             var rma;
-            if (currentlySelectedArtboard != null) my.layers.getRightmostArtboard();
+            if (currentlySelectedArtboard != null) rma = my.layers.getRightmostArtboard();
 
             // get hex colors from document
             var hexColors = my.colorInventory.getDocumentColors();
@@ -686,9 +692,6 @@ com.getflourish = (function () {
 
                 // create colorsheet by passing palettes that contain multiple color objects (name, value)
                 my.colors.createColorSheet(colorArtboard, palettes);
-
-                // position artboard
-                if (!exists && currentlySelectedArtboard != null) my.colorInventory.positionArtboard(colorArtboard, currentlySelectedArtboard);
 
                 // finish it up
                 my.colorInventory.finish(colorArtboard);
@@ -814,74 +817,61 @@ com.getflourish = (function () {
 
             return properties;
         },
-        export: function (filename) {
+        export: function (exportPath) {
             var data = {};
             var colorName = null;
             var colorSheet = my.common.getArtboardByPageAndName(doc.currentPage(), my.config.colorInventoryName);
             var hexColor = null;
             var pName;
 
-            // file name of the exported file
-            var filename = "typography.css"
+            // get defined colors, rename existing swatches
+            var predicate = NSPredicate.predicateWithFormat("className == %@ AND name != %@", "MSLayerGroup", "Untitled Color Swatch");
+            var queryResult = colorSheet.children()
+                .filteredArrayUsingPredicate(predicate);
 
-            // let the user choose the export location
-            var fileURL = my.common.fileSaver();
-            path = fileURL.path();
+            for (var j = 0; j < queryResult.count(); j++) {
+                // check if there are swatches (groups of color swatches)
 
-            // get authorization to write to the export folder
-            new AppSandbox()
-                .authorize(path, function () {
+                var group = queryResult[j];
+                colorName = group.name();
+                pName = "Defined";
 
-                    // get defined colors, rename existing swatches
-                    var predicate = NSPredicate.predicateWithFormat("className == %@ AND name != %@", "MSLayerGroup", "Untitled Color Swatch");
-                    var queryResult = colorSheet.children()
-                        .filteredArrayUsingPredicate(predicate);
+                // loop through all child layers to find the color
+                var layers = group.layers()
+                    .array();
+                for (var i = 0; i < layers.count(); i++) {
 
-                    for (var j = 0; j < queryResult.count(); j++) {
-                        // check if there are swatches (groups of color swatches)
+                    // get the current layer
+                    var currentLayer = layers[i];
+                    if (currentLayer.name()
+                        .indexOf("Color Swatch") == 0) {
+                        hexColor = currentLayer.name()
+                            .substr(13);
 
-                        var group = queryResult[j];
-                        colorName = group.name();
-                        pName = "Defined";
+                        // remember color and name
+                        // todo: format string for use in SCSS?
+                        colorName = colorName;
 
-                        // loop through all child layers to find the color
-                        var layers = group.layers()
-                            .array();
-                        for (var i = 0; i < layers.count(); i++) {
-
-                            // get the current layer
-                            var currentLayer = layers[i];
-                            if (currentLayer.name()
-                                .indexOf("Color Swatch") == 0) {
-                                hexColor = currentLayer.name()
-                                    .substr(13);
-
-                                // remember color and name
-                                // todo: format string for use in SCSS?
-                                colorName = colorName;
-
-                                // check for palette in name
-                                if (colorName.indexOf(">") != -1) {
-                                    pName = colorName.substr(0, colorName.indexOf(">") - 1);
-                                    colorName = colorName.substr(colorName.indexOf(">") + 2);
-                                }
-                                if (data[pName] == null) data[pName] = {};
-                                data[pName][colorName] = hexColor;
-                            }
+                        // check for palette in name
+                        if (colorName.indexOf(">") != -1) {
+                            pName = colorName.substr(0, colorName.indexOf(">") - 1);
+                            colorName = colorName.substr(colorName.indexOf(">") + 2);
                         }
+                        if (data[pName] == null) data[pName] = {};
+                        data[pName][colorName] = hexColor;
                     }
+                }
+            }
 
-                    var output = JSON.stringify(data, undefined, 2);
+            var output = JSON.stringify(data, undefined, 2);
 
-                    if (output == "{}") {
-                        doc.showMessage("Nothing to export. You need to define swatches.")
-                    } else {
-                        path += "/colors.json";
-                        my.common.save_file_from_string(path, output);
-                        doc.showMessage("Exported to " + path);
-                    }
-
-                });
+            if (output == "{}") {
+                doc.showMessage("Nothing to export. You need to define swatches.")
+            } else {
+                exportPath += "/colors.json";
+                my.common.save_file_from_string(exportPath, output);
+                doc.showMessage("Exported to " + exportPath);
+            }
         },
         import: function () {
 
@@ -948,9 +938,6 @@ com.getflourish = (function () {
 
             // generate color sheet
             my.colors.createColorSheet(artboard, palettes);
-
-            // position artboard
-            my.colorInventory.positionArtboard(artboard, artboard);
 
             // finish
             my.colorInventory.finish(artboard);
@@ -1663,6 +1650,14 @@ com.getflourish = (function () {
     }
 
     my.utils = {
+        openInFinder: function(path) {
+            var finderTask = [[NSTask alloc] init],
+                openFinderArgs = [NSArray arrayWithObjects:"-R", path, nil];
+
+            [finderTask setLaunchPath:"/usr/bin/open"];
+            [finderTask setArguments:openFinderArgs];
+            [finderTask launch];
+        },
         sendAction: function (commandToPerform) {
             try {
             [NSApp sendAction: commandToPerform to: nil from: doc];
@@ -2509,13 +2504,9 @@ com.getflourish = (function () {
             artboard.frame()
                 .setHeight(bounds.size.height);
 
-            my.colorInventory.positionArtboard(artboard, artboard);
-
-            // Zoom the view to make the entire artboard visible
-            my.view.zoomTo(artboard)
 
         },
-        exportStyles: function (artboard, path) {
+        export: function (artboard, path, virtual) {
 
             // ask for base unit
             var baseunit = my.css.getBaseUnit();
@@ -2536,7 +2527,7 @@ com.getflourish = (function () {
                 view.refresh();
 
                 // create web view and show the generated html
-                my.common.createWebView(path);
+                if (virtual) my.common.createWebView(path);
             } else {
                 doc.showMessage("Export failed. Please save your file first.")
             }
@@ -2582,6 +2573,8 @@ com.getflourish = (function () {
                 artboard.addLayers([symbol]);
             }
             my.symbolInventory.layout(artboard);
+            return artboard;
+
         },
         generate: function () {
 
@@ -2594,10 +2587,12 @@ com.getflourish = (function () {
 
             // clear existing artboard
             page.removeLayer(artboard);
-            my.symbolInventory.addSymbolsSheetToPage(page);
+            artboard = my.symbolInventory.addSymbolsSheetToPage(page);
 
             var execTime = (new Date() - startTime) / 1000;
             doc.showMessage("Generated Symbols in " + execTime + " s");
+
+            return artboard;
         },
 
         layout: function (artboard) {
@@ -2609,6 +2604,8 @@ com.getflourish = (function () {
              *
              * e.g.     ui/checkbox/normal
              *          ui/checkbox/selected
+             *
+             * todo: improve rendering time
              */
 
             var name;
@@ -2718,7 +2715,7 @@ com.getflourish = (function () {
             artboard.frame().setWidth(artboardWidth + padding)
 
             // add background
-            // my.symbolInventory.addBackground(artboard);
+            my.symbolInventory.addBackground(artboard);
         },
 
         addLabel: function (artboard, string, x, y) {
@@ -2780,6 +2777,7 @@ com.getflourish = (function () {
             doc.currentPage().selectLayers([bg]);
             my.utils.sendToBack();
             bg.setIsLocked(true);
+            bg.setIsSelected(false);
         },
 
         addCard: function (artboard) {
@@ -2841,6 +2839,49 @@ com.getflourish = (function () {
             }
 
             return line;
+        },
+        /**
+         * Exports all symbols as PNG
+         */
+        export: function (exportPath) {
+
+            var scope = doc.currentPage().children();
+            var predicate = NSPredicate.predicateWithFormat("parentOrSelfIsSymbol == %@ && className != %@", false, "MSArtboardGroup");
+
+            // hide non symbols
+            var results = scope.filteredArrayUsingPredicate(predicate);
+
+            var layers = results.objectEnumerator();
+
+            while (layer = layers.nextObject()) {
+                layer.setIsVisible(false);
+            }
+
+            /**
+             * export
+             */
+
+            var exportLayers = doc.currentPage().children().objectEnumerator();
+
+            while (slice = exportLayers.nextObject()) {
+              if (slice.isSymbol()) {
+                var rect = slice.absoluteRect().rect();
+                var rect = slice.absoluteInfluenceRect();
+                [doc saveArtboardOrSlice:[GKRect rectWithRect:rect] toFile:exportPath + slice.name() + '.png'];
+                // [doc saveArtboardOrSlice:slice toFile:exportPath + slice.name() + '.png'];
+              }
+            }
+
+            /**
+             * show symbols
+             */
+
+            layers = results.objectEnumerator();
+            while (layer = layers.nextObject()) {
+                layer.setIsVisible(true);
+            }
+
+            doc.showMessage('Symbols exported to: ' + exportPath);
         },
 
         styleAll: function (layers, style) {

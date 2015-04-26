@@ -1,19 +1,20 @@
-// Shows a dialog with all actions available from Color Inventory (control alt cmd i)
+//  (control alt cmd i)
+
+/**
+ * Style Inventory Generator
+ *
+ * This command shows a configuration dialog before running the selected inventories.
+ * If the export checkbox is selected, the styles will be exported to a export folder near the Sketch file.
+ */
 
 @import '../inventory.js'
 @import '../sandbox.js'
 @import '../persistence.js'
 
 
-// remember current artboard
-if (doc.currentPage().children() > 0) {
-    var selectedArtboard = doc.currentPage().currentArtboard();
-
-    // get right most artboard if no artboard is selected
-    if (selectedArtboard == null) selectedArtboard = com.getflourish.layers.getRightmostArtboard();
-
-    var x = selectedArtboard.frame().x();
-}
+com.getflourish.config.samePage = false;
+var referenceArtboard = null;
+if (com.getflourish.config.samePage) referenceArtboard = com.getflourish.layers.getRightmostArtboard();
 
 var states = persist.get('com.getflourish.inventory.configuration');
 
@@ -28,30 +29,103 @@ if (configuration[0] == 1000) {
     var textStyles = states[1];
     var symbols = states[2];
     var exportMetadata = states[3];
+    var artboards = [];
 
-    if (colors == 1) com.getflourish.colorInventory.generate();
-    if (textStyles == 1) com.getflourish.textStyleInventory.generate()
-    if (symbols == 1) com.getflourish.symbolInventory.generate();
+    if (colors == 1) {
+        var ca = com.getflourish.colorInventory.generate();
+        layout(ca);
+    }
+    if (textStyles == 1) {
+        var ta = com.getflourish.textStyleInventory.generate();
+        layout(ta);
+    }
+    if (symbols == 1) {
+        var sa = com.getflourish.symbolInventory.generate();
+        layout(sa);
+    }
     if (exportMetadata == 1) handleExport();
+
+    doc.currentPage().selectLayers(artboards)
+    com.getflourish.view.zoomTo(context.selection[0]);
+    doc.currentPage().deselectAllLayers();
+    doc.showMessage("Generated Style Inventory");
+}
+
+function layout (artboard) {
+    if (referenceArtboard != null) {
+        com.getflourish.common.placeNextTo(artboard, referenceArtboard)
+    }
+    referenceArtboard = artboard;
+    artboards.push(artboard);
+
+    com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
+    doc.currentPage().deselectAllLayers();
 }
 
 function handleExport () {
 
-    // file name of the exported file
-    var filename = "typography.css"
-
     // let the user choose the export location
-    var fileURL = com.getflourish.common.fileSaver();
-    path = fileURL.path();
+    // var fileURL = com.getflourish.common.fileSaver();
+    // path = fileURL.path();
+
+    var documentPath = [[doc fileURL] path].split([doc displayName] + ".sketch")[0];
 
     // export path + "/" + filename
-
+    //
 
     // get authorization to write to the export folder
-    new AppSandbox().authorize(path, function () {
+    new AppSandbox().authorize(documentPath, function () {
 
+        // Everything will be exported to a new folder in the .sketch file's parent folder
+        var baseExportPath = documentPath + 'export/' + doc.displayName().split(".sketch") + '/';
+        createFolder(baseExportPath);
+
+        var exportPath;
+
+        if (colors == 1) {
+
+            // set the export path
+            exportPath = baseExportPath + "colors/";
+
+            // create the folder
+            createFolder(exportPath);
+
+            // export
+            com.getflourish.colorInventory.export(exportPath);
+        }
+
+        if (textStyles == 1) {
+
+            // set the export path
+            exportPath = baseExportPath + "typography/";
+
+            // create the folder
+            createFolder(exportPath);
+
+            // export
+            com.getflourish.textStyleInventory.export(ta, exportPath)
+        }
+
+        if (symbols == 1) {
+
+            // set the export path
+            exportPath = baseExportPath + "symbols/";
+
+            // create the folder
+            createFolder(exportPath);
+
+            // export
+            com.getflourish.symbolInventory.export(exportPath);
+        }
+
+        com.getflourish.utils.openInFinder(baseExportPath);
     });
 
+}
+
+function createFolder(name) {
+  var fileManager = [NSFileManager defaultManager];
+  [fileManager createDirectoryAtPath:name withIntermediateDirectories:true attributes:nil error:nil];
 }
 
 function showConfigurationDialog (states) {
