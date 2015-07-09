@@ -1039,6 +1039,9 @@ com.getflourish = (function () {
                 }
             };
 
+            // todo: get occurences for all pages
+            // todo: include symbol colors
+
             for (var i = 0; i < definedColors.length; i++) {
                 predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color isEqual:%@) && NOT(parentArtboard.name == %@)", definedColors[i], my.config.colorInventoryName);
                 queryResult = doc.currentPage()
@@ -2837,7 +2840,7 @@ com.getflourish = (function () {
                 sharedStyles.addSharedStyleWithName_firstInstance("Style Inventory / Card", card.style());
             } else {
                 // apply style
-                my.symbolInventory.styleAllLayersBasedOnLayerWithLayerStyle(card, layerStyle);
+                my.symbolInventory.styleAllLayersBasedOnLayerWithLayerStyle(card, layerStyle, card.children());
             }
 
             doc.currentPage().deselectAllLayers();
@@ -2930,10 +2933,11 @@ com.getflourish = (function () {
             return layers;
         },
 
-        styleAllLayersBasedOnLayerWithLayerStyle: function (layer, layerStyle) {
+        styleAllLayersBasedOnLayerWithLayerStyle: function (layer, layerStyle, scope) {
 
+            var scope = scope || doc.currentPage().children();
             // get all text layers that match the style
-            var layers = my.layers.getLayersByLayerStyle(layer.style(), doc.currentPage().children());
+            var layers = my.layers.getLayersByLayerStyle(layer.style(), scope);
             my.symbolInventory.styleAll(layers, layerStyle);
             return layers;
         },
