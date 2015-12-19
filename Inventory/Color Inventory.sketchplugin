@@ -1,6 +1,7 @@
 // Shows a dialog with all actions available from Color Inventory (control alt cmd c)
 
 #import 'inventory.js'
+@import '../sandbox.js'
 
 var action = chooseAction();
 action.run(action.params);
@@ -16,7 +17,7 @@ function chooseAction() {
 		},
 		{
 			name: "Export",
-			run: com.getflourish.colorInventory.export,
+			run: exportColors,
 			params: "colors.json"
 		});
 	} else {
@@ -55,8 +56,20 @@ function chooseAction() {
 	return action;
 }
 
+function createFolder(name) {
+	var fileManager = [NSFileManager defaultManager];
+	[fileManager createDirectoryAtPath:name withIntermediateDirectories:true attributes:nil error:nil];
+}
+
 function exportColors () {
-	com.getflourish.colorInventory.export("colors.json");
+	var documentPath = [[doc fileURL] path].split([doc displayName] + ".sketch")[0];
+	new AppSandbox().authorize(documentPath, function () {
+		var baseExportPath = documentPath + 'export/' + doc.displayName().split(".sketch") + '/';
+		createFolder(baseExportPath);
+		var exportPath = baseExportPath + "colors";
+		createFolder(exportPath);
+		com.getflourish.colorInventory.export(exportPath);
+	});
 }
 
 function hasColorInventory () {
