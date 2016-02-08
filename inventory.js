@@ -1271,7 +1271,6 @@ com.getflourish = (function () {
                     // colorChip.frame().setX(left);
                     // colorChip.frame().setY(top);
                     var colorChip;
-
                     for (var j = 0; j < palette.swatches.length; j++) {
                         // colorChip.duplicate()
                         left += margin;
@@ -1336,11 +1335,21 @@ com.getflourish = (function () {
         // todo: change method to accept a color object with name and color value
         addColorChip: function (artboard, swatch) {
 
+            // Regular expression to check if the value is a valid Hex color.
+            var isHex = /([0-9A-F]{6}$)|([0-9A-F]{3}$)/i
             var padding = 8;
 
-            // get hex color
-            var hex_string = "#" + swatch.color.hexValue();
-            var color = swatch.color;
+            // Check if the value is valid hex color. If so, set the hex_string to the value and get the
+            // RGBA Tupel with MSColor and set it to color.
+
+            if( isHex.test(swatch.color) ) {
+                var hex_string = "#" + swatch.color;
+                var color =  MSColor.colorWithSVGString(hex_string)
+            } else {
+                var hex_string = "#" + swatch.color.hexValue();
+                var color = swatch.color;
+            }
+
             var colorName = "";
 
             // add layer group
