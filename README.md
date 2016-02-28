@@ -11,7 +11,7 @@ Design requires free, sometimes chaotic exploration. But design also means organ
 ## Change Log
 
 **February 28, 2016**
-* refactored for new plugin bundle format
+* refactored to new plugin bundle format
 
 **April 26, 2015**
 * added Symbols Inventory
