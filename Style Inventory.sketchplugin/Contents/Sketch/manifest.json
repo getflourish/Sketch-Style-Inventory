@@ -16,6 +16,12 @@
       "script": "Inventory/Generate.js"
     },
     {
+      "name": "Name Color Swatch",
+      "identifier": "com.getflourish.styleinventory.inventory.namecolorswatch",
+      "shortcut": "",
+      "script": "Inventory/Name Color Swatch.js"
+    },
+    {
       "name": "Select Layers by Color on Artboard",
       "identifier": "com.getflourish.styleinventory.selection.bycolor.onartboard",
       "shortcut": "control cmd c",
@@ -69,7 +75,8 @@
         {
            "title": "Inventory",
            "items": [
-                "com.getflourish.styleinventory.inventory.generate"
+                "com.getflourish.styleinventory.inventory.generate",
+                "com.getflourish.styleinventory.inventory.namecolorswatch"
             ]
         },
         {
