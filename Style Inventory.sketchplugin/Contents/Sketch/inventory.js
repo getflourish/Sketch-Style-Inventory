@@ -845,6 +845,7 @@ com.getflourish.colorInventory = {
         return props;
     },
     export: function (exportPath) {
+
         var data = {};
         var colorName = null;
         var colorSheet = com.getflourish.common.getArtboardByPageAndName(doc.currentPage(), com.getflourish.config.colorInventoryName);
@@ -2601,7 +2602,7 @@ com.getflourish.textStyleInventory = {
 
             // refresh view
             var view = [doc currentView];
-            view.refresh();
+            // view.refresh();
 
             // create web view and show the generated html
             if (virtual) com.getflourish.common.createWebView(path);

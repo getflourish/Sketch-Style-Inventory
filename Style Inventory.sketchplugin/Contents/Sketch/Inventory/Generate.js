@@ -9,6 +9,14 @@
 @import '../sandbox.js'
 @import '../persistence.js'
 
+var colors;
+var textStyles;
+var symbols;
+var exportMetadata;
+var artboards;
+
+var ca, ta, sa;
+
 
 function layout (artboards) {
     var x = 0;
@@ -41,6 +49,7 @@ function handleExport () {
 
         var exportPath;
 
+
         if (colors == 1) {
 
             // set the export path
@@ -51,9 +60,14 @@ function handleExport () {
 
             // export
             com.getflourish.colorInventory.export(exportPath);
+
+            com.getflourish.doc.showMessage("colors done")
+
         }
 
         if (textStyles == 1) {
+
+            com.getflourish.doc.showMessage("exporting text")
 
             // set the export path
             exportPath = baseExportPath + "typography/";
@@ -63,6 +77,8 @@ function handleExport () {
 
             // export
             com.getflourish.textStyleInventory.export(ta, exportPath)
+
+            com.getflourish.doc.showMessage("exported text")
         }
 
         if (symbols == 1) {
@@ -166,22 +182,22 @@ var onRun = function (context) {
 
         persist.set('com.getflourish.inventory.configuration', states)
 
-        var colors = states[0];
-        var textStyles = states[1];
-        var symbols = states[2];
-        var exportMetadata = states[3];
-        var artboards = [];
+        colors = states[0];
+        textStyles = states[1];
+        symbols = states[2];
+        exportMetadata = states[3];
+        artboards = [];
 
         if (colors == 1) {
-            var ca = com.getflourish.colorInventory.generate();
+            ca = com.getflourish.colorInventory.generate();
             if (ca) artboards.push(ca);
         }
         if (textStyles == 1) {
-            var ta = com.getflourish.textStyleInventory.generate();
+            ta = com.getflourish.textStyleInventory.generate();
             artboards.push(ta);
         }
         if (symbols == 1) {
-            var sa = com.getflourish.symbolInventory.generate();
+            sa = com.getflourish.symbolInventory.generate();
             artboards.push(sa);
         }
         if (exportMetadata == 1) handleExport();
