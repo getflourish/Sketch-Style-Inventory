@@ -15,6 +15,9 @@ var symbols;
 var exportMetadata;
 var artboards;
 
+// turn the text styles panel on / off
+var showTextStylesPanel = true;
+
 var ca, ta, sa;
 
 
@@ -76,7 +79,7 @@ function handleExport () {
             createFolder(exportPath);
 
             // export
-            com.getflourish.textStyleInventory.export(ta, exportPath)
+            com.getflourish.textStyleInventory.export(ta, exportPath, showTextStylesPanel)
 
             com.getflourish.doc.showMessage("exported text")
         }
@@ -193,7 +196,7 @@ var onRun = function (context) {
             if (ca) artboards.push(ca);
         }
         if (textStyles == 1) {
-            ta = com.getflourish.textStyleInventory.generate();
+            ta = com.getflourish.textStyleInventory.generate(showTextStylesPanel);
             artboards.push(ta);
         }
         if (symbols == 1) {
