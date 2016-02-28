@@ -77,12 +77,7 @@ com.getflourish = (function () {
                 .addNewStylePart();
             if (fill) {
                 fill.setFillType(4);
-                var coll = layer.style()
-                    .fills()
-                    .firstObject()
-                    .documentData()
-                    .images();
-              [fill setPatternImage: image collection: coll]
+                fill.setPatternImage(image);
                 fill.setPatternFillType(0);
                 fill.setPatternTileScale(1);
             }
