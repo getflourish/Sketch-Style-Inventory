@@ -1,0 +1,110 @@
+{
+  "name": "Style Inventory",
+  "description": "Review, import & export styles in Sketch.",
+  "author": "Florian Schulz",
+  "homepage": "https://github.com/getflourish/Sketch-Style-Inventory",
+  "version": 1.0,
+  "identifier": "com.getflourish.sketch.styleinventory",
+  "updateURL": "https://github.com/downloads/example/sketchplugins/sketchplugins.json",
+  "compatibleVersion": 3.5,
+  "bundleVersion": 1,
+  "commands": [
+    {
+      "name": "Generate",
+      "identifier": "com.getflourish.styleinventory.inventory.generate",
+      "shortcut": "control alt cmd i",
+      "script": "Inventory/Generate.js"
+    },
+    {
+      "name": "Select Layers by Color on Artboard",
+      "identifier": "com.getflourish.styleinventory.selection.bycolor.onartboard",
+      "shortcut": "control cmd c",
+      "script": "selection/by Color/Select Layers by Color on Artboard.js"
+    },
+    {
+      "name": "Select Layers by Color on Page",
+      "identifier": "com.getflourish.styleinventory.selection.bycolor.onpage",
+      "shortcut": "shift control cmd c",
+      "script": "selection/by Color/Select Layers by Color on Page.js"
+    },
+    {
+      "name": "Select Layers by Name on Artboard",
+      "identifier": "com.getflourish.styleinventory.selection.byname.onartboard",
+      "shortcut": "control cmd n",
+      "script": "selection/by Name/Select Layers by Name on Artboard.js"
+    },
+    {
+      "name": "Select Layers by Name on Page",
+      "identifier": "com.getflourish.styleinventory.selection.byname.onpage",
+      "shortcut": "shift control cmd n",
+      "script": "selection/by Name/Select Layers by Name on Page.js"
+    },
+    {
+      "name": "Select Layers by Text Style on Artboard",
+      "identifier": "com.getflourish.styleinventory.selection.bytextstyle.onartboard",
+      "shortcut": "control cmd t",
+      "script": "selection/by Text Style/Select Layers by Text Style on Artboard.js"
+    },
+    {
+      "name": "Select Layers by Text Style on Page",
+      "identifier": "com.getflourish.styleinventory.selection.bytextstyle.onpage",
+      "shortcut": "shift control cmd t",
+      "script": "selection/by Text Style/Select Layers by Text Style on Page.js"
+    },
+    {
+      "name": "Replace Strings on Artboard",
+      "identifier": "com.getflourish.styleinventory.selection.bystring.onartboard",
+      "shortcut": "",
+      "script": "selection/by String/Replace Strings on Artboard.js"
+    },
+    {
+      "name": "Replace Strings on Page",
+      "identifier": "com.getflourish.styleinventory.selection.bystring.onpage",
+      "shortcut": "",
+      "script": "selection/by String/Replace Strings on Page.js"
+    }
+  ],
+  "menu": {
+    "items": [
+        {
+           "title": "Inventory",
+           "items": [
+                "com.getflourish.styleinventory.inventory.generate"
+            ]
+        },
+        {
+           "title": "Selection",
+           "items": [
+                {
+                    "title": "by Color",
+                    "items": [
+                        "com.getflourish.styleinventory.selection.bycolor.onartboard",
+                        "com.getflourish.styleinventory.selection.bycolor.onpage"
+                    ]
+                },
+                {
+                    "title": "by Name",
+                    "items": [
+                        "com.getflourish.styleinventory.selection.byname.onartboard",
+                        "com.getflourish.styleinventory.selection.byname.onpage"
+                    ]
+                },
+                {
+                    "title": "by String",
+                    "items": [
+                        "com.getflourish.styleinventory.selection.bystring.onartboard",
+                        "com.getflourish.styleinventory.selection.bystring.onpage"
+                    ]
+                },
+                {
+                    "title": "by Text Style",
+                    "items": [
+                        "com.getflourish.styleinventory.selection.bytextstyle.onartboard",
+                        "com.getflourish.styleinventory.selection.bytextstyle.onpage"
+                    ]
+                }
+            ]
+        }
+    ]
+  }
+}

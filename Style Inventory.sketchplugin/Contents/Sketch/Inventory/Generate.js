@@ -1,5 +1,3 @@
-//  (control alt cmd i)
-
 /**
  * Style Inventory Generator
  *
@@ -11,53 +9,6 @@
 @import '../sandbox.js'
 @import '../persistence.js'
 
-
-com.getflourish.config.samePage = false;
-
-// if (colorInventory != null) rma = colorInventory;
-
-var states = persist.get('com.getflourish.inventory.configuration');
-
-com.getflourish.common.getStyleSheetPage();
-
-var configuration = showConfigurationDialog(states);
-
-if (configuration[0] == 1000) {
-    states = configuration[1];
-
-    persist.set('com.getflourish.inventory.configuration', states)
-
-    var colors = states[0];
-    var textStyles = states[1];
-    var symbols = states[2];
-    var exportMetadata = states[3];
-    var artboards = [];
-
-    if (colors == 1) {
-        var ca = com.getflourish.colorInventory.generate();
-        if (ca) artboards.push(ca);
-    }
-    if (textStyles == 1) {
-        var ta = com.getflourish.textStyleInventory.generate();
-        artboards.push(ta);
-    }
-    if (symbols == 1) {
-        var sa = com.getflourish.symbolInventory.generate();
-        artboards.push(sa);
-    }
-    if (exportMetadata == 1) handleExport();
-
-    layout(artboards)
-
-    var view = doc.currentView();
-    doc.currentPage().selectLayers(artboards);
-    view.zoomToSelection();
-    view.refresh();
-
-    doc.currentPage().deselectAllLayers();
-    com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
-    doc.showMessage("Generated Style Inventory");
-}
 
 function layout (artboards) {
     var x = 0;
@@ -174,7 +125,7 @@ function showConfigurationDialog (states) {
 
     var buttonFour = NSButton.alloc().initWithFrame(NSMakeRect(0.0, 0.0, 200.0, 20.0))
     buttonFour.setButtonType(NSSwitchButton)
-    buttonFour.setTitle("Export")
+    buttonFour.setTitle("Export Metadata")
     buttonFour.setState(buttonStates[3])
     buttonFour.setCOSJSTargetFunction(function(sender){
       buttonStates[3] = buttonStates[3] == 0 ? 1 : 0
@@ -190,4 +141,61 @@ function showConfigurationDialog (states) {
     var responseCode = alert.runModal()
 
     return [responseCode, buttonStates]
-  }
+}
+
+var onRun = function (context) {
+
+    // old school variable
+    doc = context.document;
+    selection = context.selection;
+
+    com.getflourish.common.init(context);
+
+    com.getflourish.config.samePage = false;
+
+    // if (colorInventory != null) rma = colorInventory;
+
+    var states = persist.get('com.getflourish.inventory.configuration');
+
+    com.getflourish.common.getStyleSheetPage();
+
+    var configuration = showConfigurationDialog(states);
+
+    if (configuration[0] == 1000) {
+        states = configuration[1];
+
+        persist.set('com.getflourish.inventory.configuration', states)
+
+        var colors = states[0];
+        var textStyles = states[1];
+        var symbols = states[2];
+        var exportMetadata = states[3];
+        var artboards = [];
+
+        if (colors == 1) {
+            var ca = com.getflourish.colorInventory.generate();
+            if (ca) artboards.push(ca);
+        }
+        if (textStyles == 1) {
+            var ta = com.getflourish.textStyleInventory.generate();
+            artboards.push(ta);
+        }
+        if (symbols == 1) {
+            var sa = com.getflourish.symbolInventory.generate();
+            artboards.push(sa);
+        }
+        if (exportMetadata == 1) handleExport();
+
+        layout(artboards)
+
+        var view = doc.currentView();
+        doc.currentPage().selectLayers(artboards);
+        view.zoomToSelection();
+        // view.refresh();
+
+        doc.currentPage().deselectAllLayers();
+        com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
+        doc.showMessage("Generated Style Inventory");
+    }
+
+}
