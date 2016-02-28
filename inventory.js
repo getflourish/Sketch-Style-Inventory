@@ -2078,7 +2078,7 @@ com.getflourish = (function () {
             return queryResult;
         },
         getLayersBySize: function (referenceLayer, scope) {
-            var predicate = NSPredicate.predicateWithFormat("(frame != NULL) && frame.width == %@ && frame.height == %@ && className == %@", referenceLayer.frame().width(), referenceLayer.frame().height());
+            var predicate = NSPredicate.predicateWithFormat("(frame != NULL) && frame.width == %@ && frame.height == %@ && className == %@ && children.count == 0", referenceLayer.frame().width(), referenceLayer.frame().height());
             var queryResult = scope.filteredArrayUsingPredicate(predicate);
 
             return queryResult;
@@ -2221,7 +2221,7 @@ com.getflourish = (function () {
             var predicate = null;
 
             // setup predicate
-            var predicate = NSPredicate.predicateWithFormat("frame.width == %@ AND frame.height == %@", width, height);
+            var predicate = NSPredicate.predicateWithFormat("frame.width == %@ AND frame.height == %@ AND className == %@", width, height, "MSShapePathLayer");
 
             // query page layers
             var result = scope.filteredArrayUsingPredicate(predicate);

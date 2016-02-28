@@ -1,0 +1,21 @@
+// (shift control cmd n)
+
+ /**
+ * This plugin selects similar name layers
+ * Scope: current page
+ *
+ * Florian Schulz Copyright 2014, MIT License
+ */
+
+#import 'inventory.js'
+
+if (selection.count() == 1) {
+
+    var layer = selection[0];
+    var scope = doc.currentPage().currentArtboard().children();
+    var result = com.getflourish.layers.selectLayersBySize(layer.frame().width(), layer.frame().height(), scope);
+
+    doc.showMessage("Selected " + result.count());
+} else {
+    doc.showMessage("Please select a reference layer.");
+}
