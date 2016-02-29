@@ -2162,7 +2162,7 @@ com.getflourish.layers = {
 
         switch (String(referenceLayer.className())) {
         case "MSTextLayer":
-            predicate = NSPredicate.predicateWithFormat("textColor.hexValue == %@ && textColor.alpha == %@", color.hexValue(), color.alpha());
+            predicate = NSPredicate.predicateWithFormat("isVisible == true && isLocked == false && textColor.hexValue == %@ && textColor.alpha == %@", color.hexValue(), color.alpha());
             break;
         case "MSOvalShape":
         case "MSShapeGroup":
@@ -2170,9 +2170,9 @@ com.getflourish.layers = {
         case "MSRectangleShape":
             // check if color is solid
             if (ftype != 0) {
-                predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill isEqual:%@)", color);
+                predicate = NSPredicate.predicateWithFormat("isVisible == true && isLocked == false && (style.fill != NULL) && (style.fill isEqual:%@)", color);
             } else {
-                predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.fillType == 0) && style.fill.color.hexValue == %@ && style.fill.color.alpha == %@", color.hexValue(), color.alpha());
+                predicate = NSPredicate.predicateWithFormat("isVisible == true && isLocked == false && (style.fill != NULL) && (style.fill.fillType == 0) && style.fill.color.hexValue == %@ && style.fill.color.alpha == %@", color.hexValue(), color.alpha());
             }
             break;
         default:
