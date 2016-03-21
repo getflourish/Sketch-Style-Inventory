@@ -39,19 +39,19 @@ com.getflourish.config = {
 // either on the same page or a separate page?
 
 com.getflourish.common = {
-      init: function (context) {
+  init: function (context) {
 
-        com.getflourish.context = context;
-        com.getflourish.doc = context.document;
-        com.getflourish.selection = context.selection;
+    com.getflourish.context = context;
+    com.getflourish.doc = context.document;
+    com.getflourish.selection = context.selection;
 
-        var pluginPath = context.scriptPath;
-        var lastSlash = pluginPath.lastIndexOf("/");
-        var basePath = pluginPath.substr(0, lastSlash);
+    var pluginPath = context.scriptPath;
+    var lastSlash = pluginPath.lastIndexOf("/");
+    var basePath = pluginPath.substr(0, lastSlash);
 
-        com.getflourish.config.background_image = basePath + "/pattern.png";
+    com.getflourish.config.background_image = basePath + "/pattern.png";
 
-    },
+  },
     // Adds an artboard to the given page
     addArtboard: function (page, name) {
         var artboard = MSArtboardGroup.new();
@@ -68,21 +68,21 @@ com.getflourish.common = {
         var layer = com.getflourish.common.addRectangleLayer(artboard)
 
         layer.frame()
-            .setWidth(artboard.frame()
-                .width());
+        .setWidth(artboard.frame()
+                  .width());
         layer.frame()
-            .setHeight(artboard.frame()
-                .height());
+        .setHeight(artboard.frame()
+                   .height());
         layer.setName("Background");
 
 
 
         var image = NSImage.alloc()
-            .initWithContentsOfFile(com.getflourish.config.background_image);
+        .initWithContentsOfFile(com.getflourish.config.background_image);
 
         var fill = layer.style()
-            .fills()
-            .addNewStylePart();
+        .fills()
+        .addNewStylePart();
         if (fill) {
             fill.setFillType(4);
             fill.setPatternImage(image);
@@ -90,7 +90,7 @@ com.getflourish.common = {
             fill.setPatternTileScale(1);
         }
         doc.currentPage()
-            .deselectAllLayers();
+        .deselectAllLayers();
         // layer.setIsSelected(true);
         // com.getflourish.utils.sendToBack();
         layer.setIsLocked(true);
@@ -100,24 +100,24 @@ com.getflourish.common = {
     addSolidBackground: function (artboard, hex_string) {
         var layer = com.getflourish.common.addRectangleLayer(artboard)
         layer.frame()
-            .setWidth(artboard.frame()
-                .width());
+        .setWidth(artboard.frame()
+                  .width());
         layer.frame()
-            .setHeight(artboard.frame()
-                .height());
+        .setHeight(artboard.frame()
+                   .height());
         layer.style()
-            .fills()
-            .addNewStylePart();
+        .fills()
+        .addNewStylePart();
         layer.style()
-            .fill()
-            .setFillType(0);
+        .fill()
+        .setFillType(0);
         layer.setName("Background");
 
         var color = MSColor.colorWithSVGString(hex_string);
 
         layer.style()
-            .fill()
-            .setColor(color)
+        .fill()
+        .setColor(color)
 
         return layer;
     },
@@ -210,8 +210,8 @@ com.getflourish.common = {
         // Add the initiating delegate (callback) function.
         WebViewLoadDelegate.prototype.webView_didClearWindowObject_forFrame = function (sender, scriptObject, frame) {
             var jswrapper = 'try {[[js]]} catch (e) {e.toString();}',
-                jscode = 'document.body.innerHTML;',
-                js = jswrapper.replace('[[js]]', jscode);
+            jscode = 'document.body.innerHTML;',
+            js = jswrapper.replace('[[js]]', jscode);
 
             var result = scriptObject.evaluateWebScript(js);
             log(result);
@@ -220,8 +220,8 @@ com.getflourish.common = {
         // Add the delegate (callback) function which is called when the page has loaded.
         WebViewLoadDelegate.prototype.webView_didFinishLoadForFrame = function (sender, frame) {
             var jswrapper = 'try {[[js]]} catch (e) {e.toString();}',
-                jscode = 'document.body.innerHTML;',
-                js = jswrapper.replace('[[js]]', jscode);
+            jscode = 'document.body.innerHTML;',
+            js = jswrapper.replace('[[js]]', jscode);
 
             var scriptObject = sender.windowScriptObject();
 
@@ -276,13 +276,13 @@ com.getflourish.common = {
         /**
          * Prepare the panel, show it and save it into the persistent store.
          */
-        var setupWebViewPanel = function () {
+         var setupWebViewPanel = function () {
             // Prepare the panel:
             // Set the panel size and
             // initialize the webview and load the URL
             var frame = NSMakeRect(0, 0, 320, 480);
             var webView = WebView.alloc()
-                .initWithFrame(frame);
+            .initWithFrame(frame);
             var webViewFrame = webView.mainFrame();
 
             // The FrameLoadDelegate offers the webView_didFinishLoadForFrame
@@ -299,11 +299,11 @@ com.getflourish.common = {
             // Set up the panel window
             var mask = NSTitledWindowMask + NSClosableWindowMask + NSMiniaturizableWindowMask + NSUtilityWindowMask;
             var panel = NSPanel.alloc()
-                .initWithContentRect_styleMask_backing_defer(frame, mask, NSBackingStoreBuffered, true);
+            .initWithContentRect_styleMask_backing_defer(frame, mask, NSBackingStoreBuffered, true);
 
             // Add the webView to the prepared panel
             panel.contentView()
-                .addSubview(webView);
+            .addSubview(webView);
 
             // Show the panel
             panel.makeKeyAndOrderFront(panel);
@@ -315,14 +315,14 @@ com.getflourish.common = {
 
         var update = function () {
             var webView = persist.get('webView')
-                .mainFrame()
-                .loadRequest(NSURLRequest.requestWithURL(NSURL.URLWithString(URL)));
+            .mainFrame()
+            .loadRequest(NSURLRequest.requestWithURL(NSURL.URLWithString(URL)));
         }
 
         var doScript = function () {
             var jswrapper = 'try {[[js]]} catch (e) {e.toString();}',
-                jscode = '',
-                js = jswrapper.replace('[[js]]', jscode);
+            jscode = '',
+            js = jswrapper.replace('[[js]]', jscode);
 
             // var result = webView.stringByEvaluatingJavaScriptFromString(js);
 
@@ -430,59 +430,59 @@ com.getflourish.common = {
     // Returns the page if it exists or creates a new page
     getPageByName: function (name) {
         for (var i = 0; i < doc.pages()
-            .count(); i++) {
+             .count(); i++) {
             var page = doc.pages()
-                .objectAtIndex(i);
-            if (page.name() == name) {
-                doc.setCurrentPage(page);
-                return page;
-            }
+        .objectAtIndex(i);
+        if (page.name() == name) {
+            doc.setCurrentPage(page);
+            return page;
         }
-        var page = com.getflourish.common.addPage(name);
-        return page;
-    },
-    getStyleSheetPage: function () {
-        if (com.getflourish.config.samePage == true) {
-            return doc.currentPage();
-        } else {
-            if (com.getflourish.config.stylesheetPage == null) {
-                com.getflourish.config.stylesheetPage = com.getflourish.common.getPageByName(com.getflourish.config.pageName);
-            }
-            return com.getflourish.config.stylesheetPage;
+    }
+    var page = com.getflourish.common.addPage(name);
+    return page;
+},
+getStyleSheetPage: function () {
+    if (com.getflourish.config.samePage == true) {
+        return doc.currentPage();
+    } else {
+        if (com.getflourish.config.stylesheetPage == null) {
+            com.getflourish.config.stylesheetPage = com.getflourish.common.getPageByName(com.getflourish.config.pageName);
         }
-    },
-    dump: function (obj) {
-        log("#####################################################################################")
-        log("## Dumping object " + obj)
-        log("## obj class is: " + [obj className])
-        log("#####################################################################################")
-        log("obj.properties:")
-        log([obj class].mocha()
-            .properties())
-        log("obj.propertiesWithAncestors:")
-        log([obj class].mocha()
-            .propertiesWithAncestors())
-        log("obj.classMethods:")
-        log([obj class].mocha()
-            .classMethods())
-        log("obj.classMethodsWithAncestors:")
-        log([obj class].mocha()
-            .classMethodsWithAncestors())
-        log("obj.instanceMethods:")
-        log([obj class].mocha()
-            .instanceMethods())
-        log("obj.instanceMethodsWithAncestors:")
-        log([obj class].mocha()
-            .instanceMethodsWithAncestors())
-        log("obj.protocols:")
-        log([obj class].mocha()
-            .protocols())
-        log("obj.protocolsWithAncestors:")
-        log([obj class].mocha()
-            .protocolsWithAncestors())
-        log("obj.treeAsDictionary():")
-        log(obj.treeAsDictionary())
-    },
+        return com.getflourish.config.stylesheetPage;
+    }
+},
+dump: function (obj) {
+    log("#####################################################################################")
+    log("## Dumping object " + obj)
+    log("## obj class is: " + [obj className])
+    log("#####################################################################################")
+    log("obj.properties:")
+    log([obj class].mocha()
+        .properties())
+    log("obj.propertiesWithAncestors:")
+    log([obj class].mocha()
+        .propertiesWithAncestors())
+    log("obj.classMethods:")
+    log([obj class].mocha()
+        .classMethods())
+    log("obj.classMethodsWithAncestors:")
+    log([obj class].mocha()
+        .classMethodsWithAncestors())
+    log("obj.instanceMethods:")
+    log([obj class].mocha()
+        .instanceMethods())
+    log("obj.instanceMethodsWithAncestors:")
+    log([obj class].mocha()
+        .instanceMethodsWithAncestors())
+    log("obj.protocols:")
+    log([obj class].mocha()
+        .protocols())
+    log("obj.protocolsWithAncestors:")
+    log([obj class].mocha()
+        .protocolsWithAncestors())
+    log("obj.treeAsDictionary():")
+    log(obj.treeAsDictionary())
+},
     // Returns an artboard from a given page
     getArtboardByPageAndName: function (page, name) {
 
@@ -513,7 +513,7 @@ com.getflourish.common = {
 
         // Authorize Sketch to save a file
         new AppSandbox()
-            .authorize(path, function () {});
+        .authorize(path, function () {});
 
         return path;
 
@@ -554,19 +554,19 @@ com.getflourish.common = {
         // calculates margins and displays them
         var parent = layer.parentGroup();
         var ml = layer.absoluteRect()
-            .x() - parent.absoluteRect()
-            .x();
+        .x() - parent.absoluteRect()
+        .x();
         var mt = layer.absoluteRect()
-            .y() - parent.absoluteRect()
-            .y();
+        .y() - parent.absoluteRect()
+        .y();
         var mr = parent.frame()
-            .width() - ml - layer.frame()
-            .width();
+        .width() - ml - layer.frame()
+        .width();
         var mb = parent.absoluteRect()
-            .y() + parent.frame()
-            .height() - layer.absoluteRect()
-            .y() - layer.frame()
-            .height();
+        .y() + parent.frame()
+        .height() - layer.absoluteRect()
+        .y() - layer.frame()
+        .height();
 
         var margin = "x: " + ml + ", y: " + mt + " / right: " + mr + ", bottom: " + mb;
         doc.showMessage(margin);
@@ -575,26 +575,26 @@ com.getflourish.common = {
         var c = doc.currentPage();
         doc.setCurrentPage(0);
         doc.setCurrentPage(doc.pages()
-            .count() - 1);
+                           .count() - 1);
         doc.setCurrentPage(c);
     },
     removeArtboardFromPage: function (page, name) {
         var theArtboard = null;
         var abs = page.artboards()
-            .objectEnumerator();
+        .objectEnumerator();
 
-            while (a = abs.nextObject()) {
-                if (a.name() == name) {
-                    page.removeLayer(a)
-                    break;
-                }
+        while (a = abs.nextObject()) {
+            if (a.name() == name) {
+                page.removeLayer(a)
+                break;
             }
+        }
     },
     // Removes all layers from an artboard
     removeAllLayersFromArtboard: function (artboard) {
 
         var layers = artboard.children()
-            .objectEnumerator();
+        .objectEnumerator();
         while (layer = layers.nextObject()) {
             artboard.removeLayer(layer);
         }
@@ -619,11 +619,11 @@ com.getflourish.common = {
     // },
     save_file_from_string: function (filename, the_string) {
         var path = [@""
-                stringByAppendingString: filename],
-            str = [@""
-                stringByAppendingString: the_string];
+        stringByAppendingString: filename],
+        str = [@""
+        stringByAppendingString: the_string];
         str.dataUsingEncoding_(NSUTF8StringEncoding)
-            .writeToFile_atomically_(path, true)
+        .writeToFile_atomically_(path, true)
     }
 }
 
@@ -635,7 +635,7 @@ com.getflourish.common = {
 com.getflourish.colorInventory = {
     generate: function (palettes) {
         var currentlySelectedArtboard = doc.currentPage()
-            .currentArtboard();
+        .currentArtboard();
         if (currentlySelectedArtboard == null) {
             doc.showMessage("Please select an artboard. The Inventory will be placed next to it.");
         }
@@ -667,7 +667,7 @@ com.getflourish.colorInventory = {
 
             // get the color artboard
             var colorArtboard = styleSheetPage.children()
-                .filteredArrayUsingPredicate(predicate);
+            .filteredArrayUsingPredicate(predicate);
             if (colorArtboard.count() == 0) {
                 // todo: adding is broken
                 colorArtboard = com.getflourish.common.addArtboard(styleSheetPage, com.getflourish.config.colorInventoryName);
@@ -718,11 +718,11 @@ com.getflourish.colorInventory = {
 
             // resize background
             bg.frame()
-                .setWidth(colorArtboard.frame()
-                    .width())
+            .setWidth(colorArtboard.frame()
+                      .width())
             bg.frame()
-                .setHeight(colorArtboard.frame()
-                    .height())
+            .setHeight(colorArtboard.frame()
+                       .height())
 
 
             // Feedback
@@ -747,7 +747,7 @@ com.getflourish.colorInventory = {
     },
     getColorURL: function () {
         var url = [doc askForUserInput: "Paste URL from Coolors or Hailpixel…"
-            initialValue: "http://coolors.co/e0e086-acbe14-2c1f19-327a76-bce2d7"]
+        initialValue: "http://coolors.co/e0e086-acbe14-2c1f19-327a76-bce2d7"]
         return url;
     },
     getColorsFromCoolorsString: function (string) {
@@ -792,7 +792,7 @@ com.getflourish.colorInventory = {
         // get defined colors, rename existing swatches
         var predicate = NSPredicate.predicateWithFormat("NOT (name BEGINSWITH %@) && className == %@", "Untitled", "MSLayerGroup");
         var queryResult = artboard.children()
-            .filteredArrayUsingPredicate(predicate);
+        .filteredArrayUsingPredicate(predicate);
         return queryResult;
     },
     getDocumentColors: function () {
@@ -805,7 +805,7 @@ com.getflourish.colorInventory = {
         // concat
         // todo: concat and display by type
         var allColors = solidFillColors.concat(textColors)
-            .unique();
+        .unique();
         return allColors;
     },
     getDocumentBorderColors: function () {
@@ -855,7 +855,7 @@ com.getflourish.colorInventory = {
         // get defined colors, rename existing swatches
         var predicate = NSPredicate.predicateWithFormat("className == %@ AND name != %@", "MSLayerGroup", "Untitled Color Swatch");
         var queryResult = colorSheet.children()
-            .filteredArrayUsingPredicate(predicate);
+        .filteredArrayUsingPredicate(predicate);
 
         for (var j = 0; j < queryResult.count(); j++) {
             // check if there are swatches (groups of color swatches)
@@ -866,7 +866,7 @@ com.getflourish.colorInventory = {
 
             // loop through all child layers to find the color
             var layers = group.layers()
-                .array();
+            .array();
             for (var i = 0; i < layers.count(); i++) {
 
                 // get the current layer
@@ -874,7 +874,7 @@ com.getflourish.colorInventory = {
                 if (currentLayer.name()
                     .indexOf("Color Swatch") == 0) {
                     hexColor = currentLayer.name()
-                        .substr(13);
+                .substr(13);
 
                     // remember color and name
                     // todo: format string for use in SCSS?
@@ -972,11 +972,11 @@ com.getflourish.colorInventory = {
 
         // resize background
         bg.frame()
-            .setWidth(artboard.frame()
-                .width())
+        .setWidth(artboard.frame()
+                  .width())
         bg.frame()
-            .setHeight(artboard.frame()
-                .height())
+        .setHeight(artboard.frame()
+                   .height())
     },
     getPalettesFromMergingColors: function (queryResult, definedColors) {
 
@@ -997,13 +997,13 @@ com.getflourish.colorInventory = {
 
             predicate2 = NSPredicate.predicateWithFormat("name BEGINSWITH %@", "Color Swatch");
             querySwatches = group.children()
-                .filteredArrayUsingPredicate(predicate2);
+            .filteredArrayUsingPredicate(predicate2);
             // do something with the color swatch
             if (querySwatches.count() == 1) {
                 // get color
                 c = querySwatches[0].style()
-                    .fill()
-                    .color();
+                .fill()
+                .color();
 
                 index = definedColors.indexOf(c);
                 primaryIndex = primaryColors.indexOf(c);
@@ -1027,8 +1027,8 @@ com.getflourish.colorInventory = {
                     }
                     var foo = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color isEqual:%@) && NOT(parentArtboard.name == %@)", c, com.getflourish.config.colorInventoryName);
                     var bar = doc.currentPage()
-                        .children()
-                        .filteredArrayUsingPredicate(foo);
+                    .children()
+                    .filteredArrayUsingPredicate(foo);
 
                     palettes[paletteNames.indexOf(pName)].swatches.push({
                         name: colorName,
@@ -1040,8 +1040,8 @@ com.getflourish.colorInventory = {
                     // not part of a palette
                     var foo = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color isEqual:%@) && NOT(parentArtboard.name == %@)", c, com.getflourish.config.colorInventoryName);
                     var bar = doc.currentPage()
-                        .children()
-                        .filteredArrayUsingPredicate(foo);
+                    .children()
+                    .filteredArrayUsingPredicate(foo);
                     primaryColors.push({
                         name: colorName,
                         color: c,
@@ -1064,8 +1064,8 @@ com.getflourish.colorInventory = {
         for (var i = 0; i < definedColors.length; i++) {
             predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color isEqual:%@) && NOT(parentArtboard.name == %@)", definedColors[i], com.getflourish.config.colorInventoryName);
             queryResult = doc.currentPage()
-                .children()
-                .filteredArrayUsingPredicate(predicate);
+            .children()
+            .filteredArrayUsingPredicate(predicate);
 
             documentColors.push({
                 name: "Untitled Color Swatch",
@@ -1120,36 +1120,36 @@ com.getflourish.colorInventory = {
             // var shift = what.frame().width();
             // com.getflourish.colorInventory.shiftArtboardsFromArtboardBy(where, shift);
             var left = rma.frame()
-                .width() + rma.frame()
-                .x() + 100;
+            .width() + rma.frame()
+            .x() + 100;
             var top = rma.frame()
-                .y();
+            .y();
             what.frame()
-                .setX(left);
+            .setX(left);
             what.frame()
-                .setY(top);
+            .setY(top);
         } else {
             var left = rma.frame()
-                .x();
+            .x();
             var top = rma.frame()
-                .y();
+            .y();
             what.frame()
-                .setX(left);
+            .setX(left);
             what.frame()
-                .setY(top);
+            .setY(top);
         }
     },
     shiftArtboardsFromArtboardBy: function (artboard, shift) {
         // Make sure an artboard is selected
         var selectedArtboard = artboard;
         doc.currentPage()
-            .deselectAllLayers();
+        .deselectAllLayers();
         selectedArtboard.setIsSelected(true);
         var width = selectedArtboard.frame()
-            .width();
+        .width();
 
         artboards = doc.currentPage()
-            .artboards();
+        .artboards();
 
         // Move all artboards that are next to the selected one
         for (var i = 0; i < artboards.count(); i++)  {
@@ -1161,19 +1161,19 @@ com.getflourish.colorInventory = {
                     .x() > selectedArtboard.frame()
                     .x()) {
                     var newX = artboards[i].frame()
-                        .x() + shift + 100;
-                    artboards[i].frame()
-                        .setX(newX);
-                }
+                .x() + shift + 100;
+                artboards[i].frame()
+                .setX(newX);
             }
-
         }
-    },
-    finish: function (artboard) {
+
+    }
+},
+finish: function (artboard) {
 
         // deselect all layers
         doc.currentPage()
-            .deselectAllLayers();
+        .deselectAllLayers();
 
         // select current artboard
         artboard.setIsSelected(true);
@@ -1233,16 +1233,16 @@ com.getflourish.colors = {
             } else if (ca === "MSStyleFill" && cb === "MSStyleFill") {
                 switch (a.fillType()) {
                     // pattern
-                case 4:
+                    case 4:
                     if (a.image() == b.image()) return true;
                     break;
                     // gradient
-                case 1:
+                    case 1:
                     // check if both gradients have the same number of stops
                     var stopsA = a.gradient()
-                        .stops();
+                    .stops();
                     var stopsB = b.gradient()
-                        .stops();
+                    .stops();
 
                     if (stopsA.count() == stopsB.count()) {
                         for (var i = 0; i < stopsA.count(); i++) {
@@ -1252,23 +1252,23 @@ com.getflourish.colors = {
                                 .position() != stopsB.objectAtIndex(i)
                                 .position()) {
                                 return false;
-                            }
                         }
-                        return true;
                     }
-                    break;
+                    return true;
+                }
+                break;
 
                 default:
-                    log("default");
-                    break;
-                }
+                log("default");
+                break;
             }
-        } catch (error) {
-            log("error comparing " + a.fillType() + " / " + b.fillType());
         }
-        return false;
-    },
-    createColorSheet: function (artboard, palettes) {
+    } catch (error) {
+        log("error comparing " + a.fillType() + " / " + b.fillType());
+    }
+    return false;
+},
+createColorSheet: function (artboard, palettes) {
         // create color chip for each color
         var left = 0;
         var top = 30;
@@ -1283,9 +1283,9 @@ com.getflourish.colors = {
             if (palette.swatches.length > 0) {
                 var title = com.getflourish.common.addTextLayerTitle(artboard, palette.name);
                 title.frame()
-                    .setY(top)
+                .setY(top)
                 title.frame()
-                    .setX(margin);
+                .setX(margin);
                 top += 80;
 
 
@@ -1300,12 +1300,12 @@ com.getflourish.colors = {
                     colorChip = com.getflourish.colors.addColorChip(artboard, palette.swatches[j]);
 
                     width = colorChip.frame()
-                        .width();
+                    .width();
                     // offset color chip
                     colorChip.frame()
-                        .setX(left);
+                    .setX(left);
                     colorChip.frame()
-                        .setY(top);
+                    .setY(top);
                     left += width;
 
                     // after x color chips, star a new row
@@ -1318,7 +1318,7 @@ com.getflourish.colors = {
                 if (left != 0) {
                     left = 0;
                     top += colorChip.frame()
-                        .height() + 1.2 * margin_top;
+                    .height() + 1.2 * margin_top;
                 }
             }
         }
@@ -1326,7 +1326,7 @@ com.getflourish.colors = {
     },
     update: function () {
         var scope = doc.currentPage()
-            .children();
+        .children();
         var result = com.getflourish.layers.selectLayersByName("Untitled Color Swatch", scope);
         var swatches = result.objectEnumerator();
         var left = 0;
@@ -1339,12 +1339,12 @@ com.getflourish.colors = {
             swatch = com.getflourish.colors.addColorChip(artboard, palette.swatches[j]);
 
             width = swatch.frame()
-                .width();
+            .width();
             // offset color chip
             swatch.frame()
-                .setX(left);
+            .setX(left);
             swatch.frame()
-                .setY(top);
+            .setY(top);
             left += width;
 
             // after x color chips, star a new row
@@ -1394,13 +1394,13 @@ com.getflourish.colors = {
         var white = MSColor.colorWithSVGString("#FFFFFF");
         var labelBG = com.getflourish.colors.addColorShape(group, white, 120, 195);
         labelBG.frame()
-            .setY(0);
+        .setY(0);
         labelBG.setName("Background");
         labelBG.setIsSelected(true);
 
         var bottomBG = com.getflourish.colors.addColorShape(group, white, 120, 75);
         bottomBG.frame()
-            .setY(120);
+        .setY(120);
         bottomBG.setName("Background-Bottom");
         bottomBG.setIsSelected(true);
 
@@ -1412,10 +1412,10 @@ com.getflourish.colors = {
         // Name Label
         var nameLabel = com.getflourish.common.addTextLayerEmphasis(group, colorName);
         nameLabel.frame()
-            .setY(colorSquare.frame()
-                .height() + padding);
+        .setY(colorSquare.frame()
+              .height() + padding);
         nameLabel.frame()
-            .setX(8);
+        .setX(8);
         nameLabel.setName("Swatch Name");
 
         // Name Label
@@ -1423,9 +1423,9 @@ com.getflourish.colors = {
 
         var countLabel = com.getflourish.common.addTextLayerEmphasis(group, "Test");
         countLabel.frame()
-            .setY(8);
+        .setY(8);
         countLabel.frame()
-            .setX(85);
+        .setX(85);
         countLabel.setTextAlignment(1);
         countLabel.setStringValue("" + swatch.occurences + "×");
         countLabel.adjustFrameToFit();
@@ -1434,8 +1434,8 @@ com.getflourish.colors = {
         countLabel.setTextColor(white);
         // Shadow
         var textShadow = countLabel.style()
-            .shadows()
-            .addNewStylePart();
+        .shadows()
+        .addNewStylePart();
 
         var black = MSColor.colorWithSVGString("#000000");
         black.alpha = 0.5;
@@ -1449,32 +1449,32 @@ com.getflourish.colors = {
         // Hex Label
         var hexLabel = com.getflourish.common.addTextLayer(group, hex_string);
         hexLabel.frame()
-            .setY(nameLabel.frame()
-                .y() + 14 + padding);
+        .setY(nameLabel.frame()
+              .y() + 14 + padding);
         hexLabel.frame()
-            .setX(8);
+        .setX(8);
         hexLabel.setName("Hex Label");
 
         // RGB Label
         var rgb = String(Math.ceil(color.red()
-            .toFixed(2) * 255)) + ", " + String(Math.ceil(color.green()
-            .toFixed(2) * 255)) + ", " + String(Math.ceil(color.blue()
-            .toFixed(2) * 255)) + ", " + String(color.alpha()
-            .toFixed(2));
+                                   .toFixed(2) * 255)) + ", " + String(Math.ceil(color.green()
+                                   .toFixed(2) * 255)) + ", " + String(Math.ceil(color.blue()
+                                   .toFixed(2) * 255)) + ", " + String(color.alpha()
+                                   .toFixed(2));
 
-        var rgbLabel = com.getflourish.common.addTextLayer(group, rgb);
-        rgbLabel.frame()
-            .setY(hexLabel.frame()
-                .y() + 14 + padding);
-        rgbLabel.adjustFrameToFit();
-        rgbLabel.frame()
-            .setX(8);
-        rgbLabel.setName("RGB Label");
+                                   var rgbLabel = com.getflourish.common.addTextLayer(group, rgb);
+                                   rgbLabel.frame()
+                                   .setY(hexLabel.frame()
+                                         .y() + 14 + padding);
+                                   rgbLabel.adjustFrameToFit();
+                                   rgbLabel.frame()
+                                   .setX(8);
+                                   rgbLabel.setName("RGB Label");
 
         // Shadow
         var shadow = labelBG.style()
-            .shadows()
-            .addNewStylePart();
+        .shadows()
+        .addNewStylePart();
 
         black.alpha = 0.2;
         shadow.setOffsetX(0);
@@ -1492,50 +1492,50 @@ com.getflourish.colors = {
         // add layer
         var layer = com.getflourish.common.addRectangleLayer(artboard)
         layer.frame()
-                .setWidth(width);
-            layer.frame()
-                .setHeight(height);
-            layer.style()
-                .fills()
-                .addNewStylePart();
-            layer.style()
-                .fill()
-                .setFillType(0);
-            layer.style()
-                .fill()
-                .setColor(color);
+        .setWidth(width);
+        layer.frame()
+        .setHeight(height);
+        layer.style()
+        .fills()
+        .addNewStylePart();
+        layer.style()
+        .fill()
+        .setFillType(0);
+        layer.style()
+        .fill()
+        .setColor(color);
 
-            return layer;
+        return layer;
     },
     addGradientShape: function (artboard, gradient, width, height) {
         // add layer
         var layer = com.getflourish.common.addRectangleLayer(artboard)
         layer.frame()
-            .setWidth(width);
+        .setWidth(width);
         layer.frame()
-            .setHeight(height);
+        .setHeight(height);
         layer.style()
-            .fills()
-            .addNewStylePart();
+        .fills()
+        .addNewStylePart();
         layer.style()
-            .fill()
-            .setFillType(1);
+        .fill()
+        .setFillType(1);
         layer.style()
-            .fill()
-            .setGradient(gradient);
+        .fill()
+        .setGradient(gradient);
 
         return layer;
     },
     getColorOf: function (_layer) {
         var color = null,
-            fill = null,
-            style = null,
-            fills = null,
-            className = String(_layer.className());
+        fill = null,
+        style = null,
+        fills = null,
+        className = String(_layer.className());
 
         switch (className) {
 
-        case "MSTextLayer":
+            case "MSTextLayer":
 
             try {
                 // get the text color
@@ -1543,8 +1543,8 @@ com.getflourish.colors = {
 
                 // check if the text layer has a fill color
                 fill = layer.style()
-                    .fills()
-                    .firstObject();
+                .fills()
+                .firstObject();
                 if (fill != undefined && fill.isEnabled()) {
                     color = fill.color();
                 }
@@ -1552,10 +1552,10 @@ com.getflourish.colors = {
                 // log(error);
             }
             break;
-        case "MSOvalShape":
-        case "MSShapeGroup":
-        case "MSShapePathLayer":
-        case "MSRectangleShape":
+            case "MSOvalShape":
+            case "MSShapeGroup":
+            case "MSShapePathLayer":
+            case "MSRectangleShape":
             try {
                 // try to determin the fill type
                 style = _layer.style();
@@ -1586,25 +1586,25 @@ com.getflourish.colors = {
 
         // get the color artboard
         var result = doc.currentPage()
-            .children()
-            .filteredArrayUsingPredicate(predicate);
+        .children()
+        .filteredArrayUsingPredicate(predicate);
 
         if (result.count() > 0 && result[0].parentGroup()
             .name() != "Untitled Color Swatch") {
             return result[0].parentGroup()
-                .name();
-        } else {
-            return null;
-        }
-    },
-    hasColorInventory: function () {
+        .name();
+    } else {
+        return null;
+    }
+},
+hasColorInventory: function () {
         // setup predicate
         var predicate = NSPredicate.predicateWithFormat("name == %@", com.getflourish.config.colorInventoryName);
 
         // get the color artboard
         var result = doc.currentPage()
-            .artboards()
-            .filteredArrayUsingPredicate(predicate);
+        .artboards()
+        .filteredArrayUsingPredicate(predicate);
         if (result.count() != 0) {
             return true;
         } else {
@@ -1617,8 +1617,8 @@ com.getflourish.colors = {
 
         // get the color artboard
         var result = doc.currentPage()
-            .artboards()
-            .filteredArrayUsingPredicate(predicate);
+        .artboards()
+        .filteredArrayUsingPredicate(predicate);
         if (result.count() != 0) {
             return result.objectAtIndex(0);
         } else {
@@ -1636,8 +1636,8 @@ com.getflourish.colors = {
 
             // check if the text layer has a fill color
             var fill = layer.style()
-                .fills()
-                .firstObject();
+            .fills()
+            .firstObject();
             if (fill != undefined && fill.isEnabled()) {
                 color = fill.color();
             }
@@ -1725,7 +1725,7 @@ com.getflourish.view = {
 com.getflourish.utils = {
     openInFinder: function(path) {
         var finderTask = [[NSTask alloc] init],
-            openFinderArgs = [NSArray arrayWithObjects:"-R", path, nil];
+        openFinderArgs = [NSArray arrayWithObjects:"-R", path, nil];
 
         [finderTask setLaunchPath:"/usr/bin/open"];
         [finderTask setArguments:openFinderArgs];
@@ -1733,7 +1733,7 @@ com.getflourish.utils = {
     },
     sendAction: function (commandToPerform) {
         try {
-        [NSApp sendAction: commandToPerform to: nil from: doc];
+            [NSApp sendAction: commandToPerform to: nil from: doc];
         } catch (e) {
             com.getflourish.log(e)
         }
@@ -1791,12 +1791,12 @@ com.getflourish.utils = {
          * Author: Jim Palmer (based on chunking idea from Dave Koelle)
          */
 
-        var re = /(^-?[0-9]+(\.?[0-9]*)[df]?e?[0-9]?$|^0x[0-9a-f]+$|[0-9]+)/gi,
-            sre = /(^[ ]*|[ ]*$)/g,
-            dre = /(^([\w ]+,?[\w ]+)?[\w ]+,?[\w ]+\d+:\d+(:\d+)?[\w ]?|^\d{1,4}[\/\-]\d{1,4}[\/\-]\d{1,4}|^\w+, \w+ \d+, \d{4})/,
-            hre = /^0x[0-9a-f]+$/i,
-            ore = /^0/,
-            i = function(s) { return com.getflourish.utils.naturalSort.insensitive && (''+s).toLowerCase() || ''+s },
+         var re = /(^-?[0-9]+(\.?[0-9]*)[df]?e?[0-9]?$|^0x[0-9a-f]+$|[0-9]+)/gi,
+         sre = /(^[ ]*|[ ]*$)/g,
+         dre = /(^([\w ]+,?[\w ]+)?[\w ]+,?[\w ]+\d+:\d+(:\d+)?[\w ]?|^\d{1,4}[\/\-]\d{1,4}[\/\-]\d{1,4}|^\w+, \w+ \d+, \d{4})/,
+         hre = /^0x[0-9a-f]+$/i,
+         ore = /^0/,
+         i = function(s) { return com.getflourish.utils.naturalSort.insensitive && (''+s).toLowerCase() || ''+s },
             // convert all to strings strip whitespace
             x = i(a).replace(sre, '') || '',
             y = i(b).replace(sre, '') || '',
@@ -1810,7 +1810,7 @@ com.getflourish.utils = {
         // first try and sort Hex codes or Dates
         if (yD)
             if ( xD < yD ) return -1;
-            else if ( xD > yD ) return 1;
+        else if ( xD > yD ) return 1;
         // natural sorting through split numeric strings and default strings
         for(var cLoc=0, numS=Math.max(xN.length, yN.length); cLoc < numS; cLoc++) {
             // find floats not starting with '0', string or 0 if not defined (Clint Priest)
@@ -1842,7 +1842,7 @@ com.getflourish.css = {
      * createRuleSetStr by Tyler Gaw https://gist.github.com/tylergaw/adc3d6ad044f5afac446
      **/
 
-    createRuleSetStr: function (layer) {
+     createRuleSetStr: function (layer) {
 
         var baseunit = com.getflourish.css.getBaseUnit();
 
@@ -1865,13 +1865,13 @@ com.getflourish.css = {
             var value = declaration.substring(declaration.indexOf(":") + 1, declaration.indexOf("px"));
 
             switch (property) {
-            case "font-size":
+                case "font-size":
                 if (com.getflourish.css.formatOptions.useRelativeFontSize) {
                     value = value / baseunit;
                     declaration = property + ": " + value + "rem;";
                 }
                 break;
-            case "line-height":
+                case "line-height":
                 if (com.getflourish.css.formatOptions.useRelativeLineHeight) {
                     value = com.getflourish.css.getRelativeLineHeight(layer);
                     declaration = property + ": " + value + "em;";
@@ -1885,7 +1885,7 @@ com.getflourish.css = {
                 //     log(declaration)
                 //   }
                 // break;
-            default:
+                default:
                 break;
             }
 
@@ -1908,7 +1908,7 @@ com.getflourish.css = {
 
         if (persistent["com.getflourish.baseunit"] == null) {
             var value = parseFloat([doc askForUserInput: "Base unit:"
-                initialValue: 16]);
+                                   initialValue: 16]);
             persistent["com.getflourish.baseunit"] = value;
         }
 
@@ -1918,7 +1918,7 @@ com.getflourish.css = {
     getClassName: function (layer) {
         // get the layer name
         var name = layer.name()
-            .toLowerCase();
+        .toLowerCase();
 
         // replace special characters by a dash
         var regex = new RegExp("[/:(). ]", "g");
@@ -1945,9 +1945,9 @@ com.getflourish.css = {
 
         if (textLayer.className() == "MSTextLayer") {
             var fontSize = textLayer.fontSize();
-            var lineSpacing = textLayer.lineSpacing();
-            relativeLineHeight = (lineSpacing / fontSize)
-                .toFixed(2);
+            var lineHeight = textLayer.lineHeight();
+            relativeLineHeight = (lineHeight / fontSize)
+            .toFixed(2);
         }
         return relativeLineHeight;
     },
@@ -1964,30 +1964,30 @@ com.getflourish.css = {
             if ([layer isKindOfClass: MSTextLayer] && layer.style()
                 .sharedObjectID() != null) {
                 stylesheet += '\n\n' + com.getflourish.css.createRuleSetStr(layer);
-            }
         }
-        return stylesheet;
-    },
-    generateMarkup: function (layers) {
-        var markup = '<!DOCTYPE html>';
-        markup += '\n';
-        markup += '<html lang="en">';
-        markup += '\n';
-        markup += '<head>';
-        markup += '\n\t';
-        markup += '<meta charset="UTF-8">';
-        markup += '\n\t';
-        markup += '<title>Style Inventory</title>';
-        markup += '\n\t';
-        markup += '<link rel="stylesheet" href="typography.css">';
-        markup += '\n\t';
-        markup += '<style type="text/css">';
-        markup += '\n\t\t';
-        markup += 'body {background-color: #fff;background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.01) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0,0.01) 75%, rgba(0, 0, 0,0.01)), linear-gradient(45deg, rgba(0, 0, 0,0.01) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0,0.01) 75%, rgba(0, 0, 0, 0.01));background-size: 30px 30px;background-position: 0 0, 15px 15px; font-family: "Helvetica Neue"; line-height: 1.3em;font-size: 16px;}';
-        markup += '\n\t\t';
-        markup += '.code {font-family: monospace; font-size: 0.6em; color: #999; line-height: 1.3em; margin: 0}';
-        markup += 'h1 {margin-bottom: 5px;cursor: pointer; font-weight: normal}';
-        markup += '.small {font-size: 0.8em}';
+    }
+    return stylesheet;
+},
+generateMarkup: function (layers) {
+    var markup = '<!DOCTYPE html>';
+    markup += '\n';
+    markup += '<html lang="en">';
+    markup += '\n';
+    markup += '<head>';
+    markup += '\n\t';
+    markup += '<meta charset="UTF-8">';
+    markup += '\n\t';
+    markup += '<title>Style Inventory</title>';
+    markup += '\n\t';
+    markup += '<link rel="stylesheet" href="typography.css">';
+    markup += '\n\t';
+    markup += '<style type="text/css">';
+    markup += '\n\t\t';
+    markup += 'body {background-color: #fff;background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.01) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0,0.01) 75%, rgba(0, 0, 0,0.01)), linear-gradient(45deg, rgba(0, 0, 0,0.01) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0,0.01) 75%, rgba(0, 0, 0, 0.01));background-size: 30px 30px;background-position: 0 0, 15px 15px; font-family: "Helvetica Neue"; line-height: 1.3em;font-size: 16px;}';
+    markup += '\n\t\t';
+    markup += '.code {font-family: monospace; font-size: 0.6em; color: #999; line-height: 1.3em; margin: 0}';
+    markup += 'h1 {margin-bottom: 5px;cursor: pointer; font-weight: normal}';
+    markup += '.small {font-size: 0.8em}';
 
         // markup += 'header {position: fixed; top: 0px; overflow: scroll; height: 200px;background: white}';
         markup += '\n\t';
@@ -2009,13 +2009,13 @@ com.getflourish.css = {
             if ([layer isKindOfClass: MSTextLayer] && layer.style()
                 .sharedObjectID() != null) {
                 // markup += "<td>" + com.getflourish.css.createRuleSetStr(layer) + "</td>";
-                markup += '\n\t' + com.getflourish.css.createMarkupStr(layer);
-                markup += '\n\t';
-                markup += '<span class="code">\n\t\t' + com.getflourish.css.createRuleSetStr(layer) + '\n\t</span>';
-                markup += '\n';
-            }
+            markup += '\n\t' + com.getflourish.css.createMarkupStr(layer);
+            markup += '\n\t';
+            markup += '<span class="code">\n\t\t' + com.getflourish.css.createRuleSetStr(layer) + '\n\t</span>';
+            markup += '\n';
         }
-        markup += '\n';
+    }
+    markup += '\n';
         // markup += '<script type="text/javascript">';
         // markup += 'var lorem = document.getElementById("lorem");var allElements = document.querySelectorAll("*");for (var i = 0; i < allElements.length; i++) {var element = allElements[i];element.onclick=function(element) {lorem.className = element.target.className;}}';
         // markup += '</script>';
@@ -2037,11 +2037,11 @@ com.getflourish.layers = {
             var layer = layers[0];
             var parent = layer.parentGroup();
             var midX = parent.absoluteRect()
-                .midX();
+            .midX();
             var targetX = Math.ceil(midX - layer.frame()
-                .width() / 2);
+                                    .width() / 2);
             layer.absoluteRect()
-                .setX(targetX);
+            .setX(targetX);
         } else if (layers.count() > 1) {
             for (var i = 0; i < layers.count(); i++) {
 
@@ -2053,11 +2053,11 @@ com.getflourish.layers = {
             var layer = layers[0];
             var parent = layer.parentGroup();
             var midY = parent.absoluteRect()
-                .midY();
+            .midY();
             var targetY = Math.ceil(midY - layer.frame()
-                .height() / 2);
+                                    .height() / 2);
             layer.absoluteRect()
-                .setY(targetY);
+            .setY(targetY);
         } else if (layers.count() > 1) {
             for (var i = 0; i < layers.count(); i++) {
 
@@ -2071,11 +2071,11 @@ com.getflourish.layers = {
      * Returns the x position of the rightmost artboard
      * @return {artboard} artboard
      */
-    getRightmostArtboard: function () {
+     getRightmostArtboard: function () {
         var rma = null;
 
         var scope = doc.currentPage()
-            .artboards();
+        .artboards();
         if(scope.count() > 0) {
             var maxX = [scope valueForKeyPath: "@max.frame.maxX"];
             var predicate = NSPredicate.predicateWithFormat("frame.maxX == %@", maxX);
@@ -2129,7 +2129,7 @@ com.getflourish.layers = {
     select: function (layers) {
         // deselect first
         doc.currentPage()
-            .deselectAllLayers();
+        .deselectAllLayers();
 
         // then select all layers from the original selection
         for (var i = 0; i < layers.count(); i++) {
@@ -2138,13 +2138,13 @@ com.getflourish.layers = {
     },
     selectLayersByColor: function (referenceLayer, scope) {
         var color = null,
-            results = 0,
-            referenceColor = null,
-            selected = null;
+        results = 0,
+        referenceColor = null,
+        selected = null;
 
         // deselect
         doc.documentData()
-            .deselectAllLayers();
+        .deselectAllLayers();
 
         // get color of selected layer
         color = com.getflourish.colors.getColorOf(referenceLayer);
@@ -2161,22 +2161,24 @@ com.getflourish.layers = {
         // use appropriate predicate depending on the selected layer class
 
         switch (String(referenceLayer.className())) {
-        case "MSTextLayer":
-            predicate = NSPredicate.predicateWithFormat("isVisible == true && isLocked == false && textColor.hexValue == %@ && textColor.alpha == %@", color.hexValue(), color.alpha());
-            break;
-        case "MSOvalShape":
-        case "MSShapeGroup":
-        case "MSShapePathLayer":
-        case "MSRectangleShape":
-            // check if color is solid
-            if (ftype != 0) {
-                predicate = NSPredicate.predicateWithFormat("isVisible == true && isLocked == false && (style.fill != NULL) && (style.fill isEqual:%@)", color);
-            } else {
-                predicate = NSPredicate.predicateWithFormat("isVisible == true && isLocked == false && (style.fill != NULL) && (style.fill.fillType == 0) && style.fill.color.hexValue == %@ && style.fill.color.alpha == %@", color.hexValue(), color.alpha());
-            }
-            break;
-        default:
 
+            case "MSTextLayer":
+              predicate = NSPredicate.predicateWithFormat("isVisible == true && textColor.hexValue == %@ && textColor.alpha == %@", color.hexValue(), color.alpha());
+            break;
+            
+            case "MSOvalShape":
+            case "MSShapeGroup":
+            case "MSShapePathLayer":
+            case "MSRectangleShape":
+              // check if color is solid
+              if (ftype != 0) {
+                  predicate = NSPredicate.predicateWithFormat("isVisible == true && (style.fill != NULL) && (style.fill isEqual:%@)", color);
+              } else {
+                  predicate = NSPredicate.predicateWithFormat("isVisible == true && (style.fill != NULL) && (style.fill.fillType == 0) && style.fill.color.hexValue == %@ && style.fill.color.alpha == %@", color.hexValue(), color.alpha());
+              }
+            break;
+            
+            default:
             break;
         }
 
@@ -2185,19 +2187,19 @@ com.getflourish.layers = {
 
         // select all results
         doc.currentPage()
-            .selectLayers(queryResult);
+        .selectLayers(queryResult);
 
         return queryResult;
     },
     selectLayersByBorderColor: function (referenceLayer, scope) {
         var color = null,
-            results = 0,
-            referenceColor = null,
-            selected = null;
+        results = 0,
+        referenceColor = null,
+        selected = null;
 
         // deselect
         doc.documentData()
-            .deselectAllLayers();
+        .deselectAllLayers();
 
         // get color of selected layer
         color = com.getflourish.colors.getColorOf(referenceLayer);
@@ -2209,7 +2211,7 @@ com.getflourish.layers = {
 
         // select all results
         doc.currentPage()
-            .selectLayers(queryResult);
+        .selectLayers(queryResult);
 
         return queryResult;
     },
@@ -2217,7 +2219,7 @@ com.getflourish.layers = {
 
         // deselect
         doc.documentData()
-            .deselectAllLayers();
+        .deselectAllLayers();
 
         // init predicate
         var predicate = null;
@@ -2245,7 +2247,7 @@ com.getflourish.layers = {
 
         // select all results
         doc.currentPage()
-            .selectLayers(result);
+        .selectLayers(result);
 
         return result;
     },
@@ -2253,7 +2255,7 @@ com.getflourish.layers = {
 
         // deselect
         doc.documentData()
-            .deselectAllLayers();
+        .deselectAllLayers();
 
         // init predicate
         var predicate = null;
@@ -2266,7 +2268,7 @@ com.getflourish.layers = {
 
         // select all results
         doc.currentPage()
-            .selectLayers(result);
+        .selectLayers(result);
 
         return result;
     },
@@ -2274,7 +2276,7 @@ com.getflourish.layers = {
 
         // deselect
         doc.documentData()
-            .deselectAllLayers();
+        .deselectAllLayers();
 
         // init predicate
         var predicate = null;
@@ -2287,7 +2289,7 @@ com.getflourish.layers = {
 
         // select all results
         doc.currentPage()
-            .selectLayers(result);
+        .selectLayers(result);
 
         return result;
     },
@@ -2299,7 +2301,7 @@ com.getflourish.layers = {
 
         // select all results
         doc.currentPage()
-            .selectLayers(queryResult);
+        .selectLayers(queryResult);
 
         return queryResult;
     },
@@ -2312,7 +2314,7 @@ com.getflourish.layers = {
 
         // deselect all layers
         doc.currentPage()
-            .deselectAllLayers();
+        .deselectAllLayers();
 
         // select parent group
         parent.setIsSelected(true);
@@ -2361,7 +2363,7 @@ com.getflourish.layers = {
 
             // deselect all layers
             doc.currentPage()
-                .deselectAllLayers();
+            .deselectAllLayers();
 
             // select b
             a.setIsSelected(true);
@@ -2415,11 +2417,11 @@ com.getflourish.textStyleInventory = {
 
         // resize background
         bg.frame()
-            .setWidth(artboard.frame()
-                .width())
+        .setWidth(artboard.frame()
+                  .width())
         bg.frame()
-            .setHeight(artboard.frame()
-                .height())
+        .setHeight(artboard.frame()
+                   .height())
 
         doc.currentPage().deselectAllLayers();
         bg.setIsSelected(true);
@@ -2443,14 +2445,14 @@ com.getflourish.textStyleInventory = {
     analyseTextStyles: function ()  {
         var definedTextStyles = [];
         var styles = doc.documentData()
-            .layerTextStyles()
-            .objects();
+        .layerTextStyles()
+        .objects();
 
         for (var i = 0; i < styles.count(); i++) {
             var style = styles.objectAtIndex(i);
             var attributes = style.style()
-                .textStyle()
-                .attributes();
+            .textStyle()
+            .attributes();
             var textStyle = style
             if (!com.getflourish.common.isIncluded(definedTextStyles, textStyle) && style.name().indexOf("Style Inventory") == -1) {
                 definedTextStyles.push({
@@ -2523,16 +2525,16 @@ com.getflourish.textStyleInventory = {
             textLayer.setTextAlignment(0);
             textLayer.setName(definedTextStyle.name);
             var theWidth = textLayer.frame()
-                .width();
+            .width();
 
             var color = textLayer.textColor();
 
             var hexColor = color.hexValue();
             var rgb = String(Math.ceil(color.red() * 255)) + ", " + String(Math.ceil(color.green() * 255)) + ", " + String(Math.ceil(color.blue() * 255)) + ", " + String(color.alpha()
-                .toFixed(2));
+                                                                                                                                                                          .toFixed(2));
 
             var alpha = String(color.alpha()
-                .toFixed(2) * 100);
+                               .toFixed(2) * 100);
             if (has == true) colorName = com.getflourish.colors.getNameForColor(hexColor);
 
             if (colorName == null) {
@@ -2541,35 +2543,35 @@ com.getflourish.textStyleInventory = {
             }
 
 
-            var label = textLayer.fontPostscriptName() + "\n" + textLayer.fontSize() + "pt, " + colorName;
-            styleNameLayer.setStringValue(label);
-            styleNameLayer.setName(definedTextStyle.name);
-            styleNameLayer.setTextColor($grey);
-            styleNameLayer.setLineSpacing(18);
+        var label = textLayer.fontPostscriptName() + "\n" + textLayer.fontSize() + "pt, " + colorName;
+        styleNameLayer.setStringValue(label);
+        styleNameLayer.setName(definedTextStyle.name);
+        styleNameLayer.setTextColor($grey);
+        styleNameLayer.setLineHeight(18);
 
-            if (theWidth > maxWidth) maxWidth = theWidth;
-            textLayer.frame()
-                .setX(margin + 150);
-            textLayer.frame()
-                .setY(top);
+        if (theWidth > maxWidth) maxWidth = theWidth;
+        textLayer.frame()
+        .setX(margin + 150);
+        textLayer.frame()
+        .setY(top);
 
             // position the style name layer
             styleNameLayer.frame()
-                .setX(margin);
+            .setX(margin);
             styleNameLayer.frame()
-                .setY(top);
+            .setY(top);
 
             top += textLayer.frame()
-                .height();
+            .height();
             top += styleNameLayer.frame()
-                .height();
+            .height();
         }
 
         // centerView(textLayer)
 
         // Resize artboard and background to match the newly created text layers
         var bounds = MSLayerGroup.groupBoundsForLayers(artboard.layers()
-            .array());
+                                                       .array());
 
         var scope = artboard.children();
         var predicate = NSPredicate.predicateWithFormat("className == %@", "MSTextLayer");
@@ -2578,9 +2580,9 @@ com.getflourish.textStyleInventory = {
         var maxWidth = [result valueForKeyPath: "@max.frame.width"];
 
         artboard.frame()
-            .setWidth(maxWidth + 150 + 2 * margin);
+        .setWidth(maxWidth + 150 + 2 * margin);
         artboard.frame()
-            .setHeight(bounds.size.height);
+        .setHeight(bounds.size.height);
 
 
     },
@@ -2616,7 +2618,7 @@ com.getflourish.textStyleInventory = {
  * [symbolInventory description]
  * @type {Object}
  */
-com.getflourish.symbolInventory = {
+ com.getflourish.symbolInventory = {
     addSymbolsSheetToPage: function (page) {
 
         // get symbols
@@ -2686,21 +2688,21 @@ com.getflourish.symbolInventory = {
          * todo: improve rendering time
          */
 
-        var name;
-        var moduleName;
-        var prevName = "";
-        var layer;
-        var layers = com.getflourish.layers.getLayersSortedByName(artboard.layers());
+         var name;
+         var moduleName;
+         var prevName = "";
+         var layer;
+         var layers = com.getflourish.layers.getLayersSortedByName(artboard.layers());
 
-        var padding = 200;
-        var nextX = padding;
-        var nextY = 0;
-        var gridX = 80;
-        var gridY = 200;
-        var maxX = 0;
-        var maxY = 0;
+         var padding = 200;
+         var nextX = padding;
+         var nextY = 0;
+         var gridX = 80;
+         var gridY = 200;
+         var maxX = 0;
+         var maxY = 0;
 
-        var artboardWidth = 0;
+         var artboardWidth = 0;
 
         // storage
         var cards = [];
@@ -2865,8 +2867,8 @@ com.getflourish.symbolInventory = {
 
         // Shadow
         var shadow = card.style()
-            .shadows()
-            .addNewStylePart();
+        .shadows()
+        .addNewStylePart();
 
         var black = MSColor.colorWithSVGString("#000000");
         black.alpha = 0.1;
@@ -2921,7 +2923,7 @@ com.getflourish.symbolInventory = {
     /**
      * Exports all symbols as PNG
      */
-    export: function (exportPath) {
+     export: function (exportPath) {
 
         var scope = doc.currentPage().children();
         var predicate = NSPredicate.predicateWithFormat("parentOrSelfIsSymbol == %@ && className != %@", false, "MSArtboardGroup");
@@ -2939,23 +2941,24 @@ com.getflourish.symbolInventory = {
          * export
          */
 
-        var exportLayers = doc.currentPage().children().objectEnumerator();
+         var exportLayers = doc.currentPage().children().objectEnumerator();
 
-        while (slice = exportLayers.nextObject()) {
+         while (slice = exportLayers.nextObject()) {
           if (slice.isSymbol()) {
-            var rect = slice.absoluteRect().rect();
-            var rect = slice.absoluteInfluenceRect();
-            [doc saveArtboardOrSlice:[GKRect rectWithRect:rect] toFile:exportPath + slice.name() + '.png'];
-            // [doc saveArtboardOrSlice:slice toFile:exportPath + slice.name() + '.png'];
-          }
+
+            var path = exportPath + slice.name() + '.png';
+
+            // with shadows
+            exportLayerToPath(slice, path, 1, "", "png", true);
         }
+    }
 
         /**
          * show symbols
          */
 
-        layers = results.objectEnumerator();
-        while (layer = layers.nextObject()) {
+         layers = results.objectEnumerator();
+         while (layer = layers.nextObject()) {
             layer.setIsVisible(true);
         }
 
@@ -3000,41 +3003,41 @@ com.getflourish.symbolInventory = {
         if (styles.count() != 0) {
             for (var i = 0; i < styles.count(); i++) {
               var style = styles.objectAtIndex(i);
-                textStyles.push({
-                    "textStyle": style,
-                    "name": style.name()
-                });
-                textItems.push(style.name());
-            }
-            if (textItems) selection = com.getflourish.common.createSelect("Select a text style or create a new one", textItems, preselect);
-        } else {
-            return;
-        }
-        return selection;
-    },
-
-    selectLayerStyle: function () {
-        var layerStyles = [];
-        var layerStyleItems = [];
-
-        var selection;
-
-        var styles = doc.documentData().layerStyles().objects();
-        if (styles.count() != 0) {
-            for (var i = 0; i < styles.count(); i++) {
-              var style = styles.objectAtIndex(i);
-                layerStyles.push({
-                    "layerStyle": style,
-                    "name": style.name()
-                });
-                layerStyleItems.push(style.name());
-            }
-            if (layerStyleItems) selection = com.getflourish.common.createSelect("Select a style or create a new one", layerStyleItems, 0);
-        } else {
-            return;
-        }
-        return selection;
+              textStyles.push({
+                "textStyle": style,
+                "name": style.name()
+            });
+              textItems.push(style.name());
+          }
+          if (textItems) selection = com.getflourish.common.createSelect("Select a text style or create a new one", textItems, preselect);
+      } else {
+        return;
     }
+    return selection;
+},
+
+selectLayerStyle: function () {
+    var layerStyles = [];
+    var layerStyleItems = [];
+
+    var selection;
+
+    var styles = doc.documentData().layerStyles().objects();
+    if (styles.count() != 0) {
+        for (var i = 0; i < styles.count(); i++) {
+          var style = styles.objectAtIndex(i);
+          layerStyles.push({
+            "layerStyle": style,
+            "name": style.name()
+        });
+          layerStyleItems.push(style.name());
+      }
+      if (layerStyleItems) selection = com.getflourish.common.createSelect("Select a style or create a new one", layerStyleItems, 0);
+  } else {
+    return;
+}
+return selection;
+}
 }
 
 
@@ -3049,3 +3052,68 @@ Array.prototype.unique = function () {
 
     return a;
 };
+
+
+/*
+ Exports a layer to a given path
+
+ Author: abynim
+ Source: https://gist.github.com/abynim/97ed6a1d569fa0c1f34e
+ */
+
+ function exportLayerToPath(layer, path, scale, format, suffix, includeShadows) {
+
+
+     var sketchVersion = getSketchVersionNumber(),
+     doc = com.getflourish.doc,
+     rect = includeShadows == false ? layer.absoluteRect().rect() : layer.absoluteInfluenceRect(),
+     useDuplicate = !CGRectContainsRect(layer.parentArtboard().absoluteRect().rect(), rect),
+     scale = scale || 1,
+     suffix = suffix || "",
+     format = format || "png"
+
+     if(useDuplicate) {
+         layer = layer.duplicate()
+         layer.removeFromParent()
+         doc.currentPage().addLayers([layer])
+         rect = includeShadows == false ? layer.absoluteRect().rect() : layer.absoluteInfluenceRect()
+     }
+
+     if(sketchVersion >= 350) {
+         var slice = MSExportRequest.requestWithRect_scale(rect, scale),
+         layerName = layer.name() + suffix
+         slice.setShouldTrim(0)
+         slice.setSaveForWeb(1)
+         slice.configureForLayer(layer)
+         slice.setName(layerName)
+         slice.setFormat(format)
+         doc.saveArtboardOrSlice_toFile(slice, path)
+         if(useDuplicate) layer.removeFromParent()
+
+         return
+     }
+
+     // pre-sketch-3.5
+     layer.exportOptions().addExportSize()
+
+     var exportSize = layer.exportOptions().sizes().array().lastObject()
+     exportSize.setScale(scale)
+     exportSize.setName(suffix)
+     exportSize.setFormat(format)
+     var slice = sketchVersion >= 344 ? MSSliceMaker.sliceFromExportSize_layer_inRect_useIDForName(exportSize, layer, rect, false) : MSSliceMaker.sliceFromExportSize_layer_inRect(exportSize, layer, rect)
+     doc.saveArtboardOrSlice_toFile(slice, path)
+     exportSize.remove()
+     slice = nil
+     exportSize = nil
+
+     if(useDuplicate) layer.removeFromParent()
+ }
+
+ function getSketchVersionNumber() {
+     const version = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString")
+     var versionNumber = version.stringByReplacingOccurrencesOfString_withString(".", "") + ""
+     while(versionNumber.length != 3) {
+         versionNumber += "0"
+     }
+     return parseInt(versionNumber)
+ }
