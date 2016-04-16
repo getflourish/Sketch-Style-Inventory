@@ -2428,10 +2428,6 @@ com.getflourish.textStyleInventory = {
 
         // com.getflourish.textStyleInventory.exportStyles(artboard, path);
 
-        if (virtual) {
-            doc.currentPage().removeLayer(artboard);
-        }
-
         // Feedback
         var execTime = (new Date() - startTime) / 1000;
         doc.showMessage("Generated Text Styles in " + execTime + " s");
