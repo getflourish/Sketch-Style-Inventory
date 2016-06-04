@@ -81,8 +81,7 @@ com.getflourish.common = {
         .initWithContentsOfFile(com.getflourish.config.background_image);
 
         var fill = layer.style()
-        .fills()
-        .addNewStylePart();
+        .addStylePartOfType(0);
         if (fill) {
             fill.setFillType(4);
             fill.setPatternImage(image);
@@ -106,8 +105,7 @@ com.getflourish.common = {
         .setHeight(artboard.frame()
                    .height());
         layer.style()
-        .fills()
-        .addNewStylePart();
+        .addStylePartOfType(0);
         layer.style()
         .fill()
         .setFillType(0);
@@ -1434,8 +1432,7 @@ createColorSheet: function (artboard, palettes) {
         countLabel.setTextColor(white);
         // Shadow
         var textShadow = countLabel.style()
-        .shadows()
-        .addNewStylePart();
+        .addStylePartOfType(2);
 
         var black = MSColor.colorWithSVGString("#000000");
         black.alpha = 0.5;
@@ -1473,8 +1470,7 @@ createColorSheet: function (artboard, palettes) {
 
         // Shadow
         var shadow = labelBG.style()
-        .shadows()
-        .addNewStylePart();
+        .addStylePartOfType(2);
 
         black.alpha = 0.2;
         shadow.setOffsetX(0);
@@ -1496,8 +1492,7 @@ createColorSheet: function (artboard, palettes) {
         layer.frame()
         .setHeight(height);
         layer.style()
-        .fills()
-        .addNewStylePart();
+        .addStylePartOfType(0);
         layer.style()
         .fill()
         .setFillType(0);
@@ -1515,8 +1510,7 @@ createColorSheet: function (artboard, palettes) {
         layer.frame()
         .setHeight(height);
         layer.style()
-        .fills()
-        .addNewStylePart();
+        .addStylePartOfType(0);
         layer.style()
         .fill()
         .setFillType(1);
@@ -2861,8 +2855,7 @@ com.getflourish.textStyleInventory = {
 
         // Shadow
         var shadow = card.style()
-        .shadows()
-        .addNewStylePart();
+        .addStylePartOfType(2);
 
         var black = MSColor.colorWithSVGString("#000000");
         black.alpha = 0.1;
