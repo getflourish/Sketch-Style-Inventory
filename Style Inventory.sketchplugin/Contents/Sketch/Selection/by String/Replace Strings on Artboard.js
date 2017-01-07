@@ -21,11 +21,11 @@ var onRun = function (context) {
         var referenceString = layer.stringValue();
 
         // Prompt user for input of new button text
-        var newString = [doc askForUserInput:"New text" initialValue:[layer stringValue]];
+        var newString = [doc askForUserInput:"Search string" initialValue:[layer stringValue]];
 
         var result = com.getflourish.layers.selectLayersByString(referenceString, scope);
 
-        doc.showMessage("Changed text for " + result.count() + " layers.");
+        doc.showMessage("Selected " + result.count() + " layers.");
 
         for (var i = 0; i < result.count(); i++) {
             layer.setTextBehaviour(0)
