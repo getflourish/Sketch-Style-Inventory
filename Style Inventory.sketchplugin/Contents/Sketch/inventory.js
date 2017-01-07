@@ -450,36 +450,36 @@ getStyleSheetPage: function () {
     }
 },
 dump: function (obj) {
-    log("#####################################################################################")
-    log("## Dumping object " + obj)
-    log("## obj class is: " + [obj className])
-    log("#####################################################################################")
-    log("obj.properties:")
-    log([obj class].mocha()
+    console.log("#####################################################################################")
+    console.log("## Dumping object " + obj)
+    console.log("## obj class is: " + [obj className])
+    console.log("#####################################################################################")
+    console.log("obj.properties:")
+    console.log([obj class].mocha()
         .properties())
-    log("obj.propertiesWithAncestors:")
-    log([obj class].mocha()
+    console.log("obj.propertiesWithAncestors:")
+    console.log([obj class].mocha()
         .propertiesWithAncestors())
-    log("obj.classMethods:")
-    log([obj class].mocha()
+    console.log("obj.classMethods:")
+    console.log([obj class].mocha()
         .classMethods())
-    log("obj.classMethodsWithAncestors:")
-    log([obj class].mocha()
+    console.log("obj.classMethodsWithAncestors:")
+    console.log([obj class].mocha()
         .classMethodsWithAncestors())
-    log("obj.instanceMethods:")
-    log([obj class].mocha()
+    console.log("obj.instanceMethods:")
+    console.log([obj class].mocha()
         .instanceMethods())
-    log("obj.instanceMethodsWithAncestors:")
-    log([obj class].mocha()
+    console.log("obj.instanceMethodsWithAncestors:")
+    console.log([obj class].mocha()
         .instanceMethodsWithAncestors())
-    log("obj.protocols:")
-    log([obj class].mocha()
+    console.log("obj.protocols:")
+    console.log([obj class].mocha()
         .protocols())
-    log("obj.protocolsWithAncestors:")
-    log([obj class].mocha()
+    console.log("obj.protocolsWithAncestors:")
+    console.log([obj class].mocha()
         .protocolsWithAncestors())
-    log("obj.treeAsDictionary():")
-    log(obj.treeAsDictionary())
+    console.log("obj.treeAsDictionary():")
+    console.log(obj.treeAsDictionary())
 },
     // Returns an artboard from a given page
     getArtboardByPageAndName: function (page, name) {
@@ -2143,11 +2143,19 @@ com.getflourish.layers = {
         // get color of selected layer
         color = com.getflourish.colors.getColorOf(referenceLayer);
 
+        console.log(color)
+
+        com.getflourish.common.dump(color)
+        console.log("foo")
+        console.log(color.immutableModelObject().svgRepresentation())
+
         var ftype = 0;
 
         try {
             ftype = color.fillType();
         } catch (error) {}
+
+        console.log(ftype)
 
         // init predicate
         var predicate = null;
@@ -2156,7 +2164,7 @@ com.getflourish.layers = {
 
         switch (String(referenceLayer.className())) {
             case "MSTextLayer":
-            predicate = NSPredicate.predicateWithFormat("textColor.hexValue == %@ && textColor.alpha == %@", color.hexValue(), color.alpha());
+            predicate = NSPredicate.predicateWithFormat("textColor == %@", color);
             break;
             case "MSOvalShape":
             case "MSShapeGroup":
@@ -2166,7 +2174,7 @@ com.getflourish.layers = {
             if (ftype != 0) {
                 predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill isEqual:%@)", color);
             } else {
-                predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.fillType == 0) && style.fill.color.hexValue == %@ && style.fill.color.alpha == %@", color.hexValue(), color.alpha());
+                predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.fillType == 0) && style.fill.color == %@", color);
             }
             break;
             default:
