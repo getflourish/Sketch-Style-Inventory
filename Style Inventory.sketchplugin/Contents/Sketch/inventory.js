@@ -2292,7 +2292,8 @@ com.getflourish.layers = {
         return result;
     },
     selectLayersByTextStyle: function (textStyle, scope) {
-        var predicate = NSPredicate.predicateWithFormat("(style.textStyle != NULL) && (FUNCTION(style.textStyle, 'isEqualForSync:asPartOfSymbol:', %@, nil) == YES)", textStyle);
+
+        var predicate = NSPredicate.predicateWithFormat("(style.textStyle != NULL) && (FUNCTION(style.textStyle.attributes, 'isEqual:', %@, nil) == YES)", textStyle.attributes());
 
         // query page layers
         var queryResult = scope.filteredArrayUsingPredicate(predicate);
