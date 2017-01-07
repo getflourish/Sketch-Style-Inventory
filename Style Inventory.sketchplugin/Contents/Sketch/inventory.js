@@ -1,8 +1,10 @@
 @import 'sandbox.js'
 @import 'persistence.js'
 
+
 // Namespaced library of functions common across multiple plugins
 var com = com || {};
+var sketch;
 
 // todo: update pattern code to [self setPatternImage:image collection:self.documentData.images]
 
@@ -45,6 +47,8 @@ com.getflourish.common = {
     com.getflourish.doc = context.document;
     com.getflourish.selection = context.selection;
 
+    sketch = context.api()
+
     var pluginPath = context.scriptPath;
     var lastSlash = pluginPath.lastIndexOf("/");
     var basePath = pluginPath.substr(0, lastSlash);
@@ -64,7 +68,7 @@ com.getflourish.common = {
         return artboard;
     },
     addCheckeredBackground: function (artboard) {
-        com.getflourish.doc.showMessage("foo")
+
         var layer = com.getflourish.common.addRectangleLayer(artboard)
 
         layer.frame()
@@ -76,18 +80,19 @@ com.getflourish.common = {
         layer.setName("Background");
 
 
+        // todo: add pattern
 
-        var image = NSImage.alloc()
-        .initWithContentsOfFile(com.getflourish.config.background_image);
-
-        var fill = layer.style()
-        .addStylePartOfType(0);
-        if (fill) {
-            fill.setFillType(4);
-            fill.setPatternImage(image);
-            fill.setPatternFillType(0);
-            fill.setPatternTileScale(1);
-        }
+        // var image = NSImage.alloc()
+        // .initWithContentsOfFile(com.getflourish.config.background_image);
+        //
+        // var fill = layer.style()
+        // .addStylePartOfType(0);
+        // if (fill) {
+        //     fill.setFillType(4);
+        //     fill.setPatternImage(image);
+        //     fill.setPatternFillType(0);
+        //     fill.setPatternTileScale(1);
+        // }
         doc.currentPage()
         .deselectAllLayers();
         // layer.setIsSelected(true);
@@ -133,24 +138,30 @@ com.getflourish.common = {
         // var shapeGroup = [MSShapeGroup shapeWithPath:shape];
         // target.addLayers([shapeGroup]);
 
-        var layer = target.addLayerOfType("rectangle");
+        var groupFrame = NSMakeRect(0, 0, 10, 10);
+        var layer = [[MSLayerGroup alloc] initWithFrame:groupFrame];
+        target.addLayers([layer]);
+
+        // com.getflourish.common.dump(target)
+        // var layer = target.addLayerOfType("rectangle");
         return layer;
     },
     addTextLayer: function (target, label) {
-        var textLayer = target.addLayerOfType("text");
+        // var textLayer = NSTextField.alloc().initWithFrame_(NSMakeRect(x, y, 100, 25));
+        var textLayer = MSTextLayer.new();
         textLayer.setStringValue(label)
         textLayer.setName(label)
         return textLayer;
     },
     addTextLayerEmphasis: function (target, label) {
-        var textLayer = target.addLayerOfType("text");
+        var textLayer = MSTextLayer.new();
         textLayer.setStringValue(label)
         textLayer.setName(label)
         textLayer.setFontPostscriptName("HelveticaNeue-Bold");
         return textLayer;
     },
     addTextLayerTitle: function (target, label) {
-        var textLayer = target.addLayerOfType("text");
+        var textLayer = MSTextLayer.new();
         textLayer.setStringValue(label)
         textLayer.setName(label)
         textLayer.setFontSize(44);
@@ -450,36 +461,36 @@ getStyleSheetPage: function () {
     }
 },
 dump: function (obj) {
-    console.log("#####################################################################################")
-    console.log("## Dumping object " + obj)
-    console.log("## obj class is: " + [obj className])
-    console.log("#####################################################################################")
-    console.log("obj.properties:")
-    console.log([obj class].mocha()
+    log("#####################################################################################")
+    log("## Dumping object " + obj)
+    log("## obj class is: " + [obj className])
+    log("#####################################################################################")
+    log("obj.properties:")
+    log([obj class].mocha()
         .properties())
-    console.log("obj.propertiesWithAncestors:")
-    console.log([obj class].mocha()
+    log("obj.propertiesWithAncestors:")
+    log([obj class].mocha()
         .propertiesWithAncestors())
-    console.log("obj.classMethods:")
-    console.log([obj class].mocha()
+    log("obj.classMethods:")
+    log([obj class].mocha()
         .classMethods())
-    console.log("obj.classMethodsWithAncestors:")
-    console.log([obj class].mocha()
+    log("obj.classMethodsWithAncestors:")
+    log([obj class].mocha()
         .classMethodsWithAncestors())
-    console.log("obj.instanceMethods:")
-    console.log([obj class].mocha()
+    log("obj.instanceMethods:")
+    log([obj class].mocha()
         .instanceMethods())
-    console.log("obj.instanceMethodsWithAncestors:")
-    console.log([obj class].mocha()
+    log("obj.instanceMethodsWithAncestors:")
+    log([obj class].mocha()
         .instanceMethodsWithAncestors())
-    console.log("obj.protocols:")
-    console.log([obj class].mocha()
+    log("obj.protocols:")
+    log([obj class].mocha()
         .protocols())
-    console.log("obj.protocolsWithAncestors:")
-    console.log([obj class].mocha()
+    log("obj.protocolsWithAncestors:")
+    log([obj class].mocha()
         .protocolsWithAncestors())
-    console.log("obj.treeAsDictionary():")
-    console.log(obj.treeAsDictionary())
+    log("obj.treeAsDictionary():")
+    log(obj.treeAsDictionary())
 },
     // Returns an artboard from a given page
     getArtboardByPageAndName: function (page, name) {
@@ -681,6 +692,8 @@ com.getflourish.colorInventory = {
                 // get hex colors from color artboard
                 var colorArtboardColors = com.getflourish.utils.arrayFromImmutableArray(com.getflourish.colorInventory.getColorArtboardColors(colorArtboard));
 
+                log("got artboard colors")
+
                 // get defined colors
                 var queryResult = com.getflourish.colorInventory.getDefinedColors(colorArtboard);
 
@@ -740,7 +753,7 @@ com.getflourish.colorInventory = {
         var layers = colorArtboard.children();
 
         // analyse the colors
-        var rawHexColors = [layers valueForKeyPath: "@distinctUnionOfObjects.style.fill.color.hexValue"];
+        var rawHexColors = [layers valueForKeyPath: "@distinctUnionOfObjects.style.fill.color"];
         return rawHexColors;
     },
     getColorURL: function () {
@@ -3041,8 +3054,7 @@ Array.prototype.unique = function () {
     var a = this.concat();
     for (var i = 0; i < a.length; ++i) {
         for (var j = i + 1; j < a.length; ++j) {
-            if (a[i].hexValue() === a[j].hexValue())
-                a.splice(j--, 1);
+            if (a[i] === a[j]) a.splice(j--, 1);
         }
     }
 
