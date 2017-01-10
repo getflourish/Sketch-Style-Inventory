@@ -116,7 +116,7 @@ com.getflourish.common = {
         .setFillType(0);
         layer.setName("Background");
 
-        var color = MSColor.colorWithSVGString(hex_string);
+        var color = MSImmutableColor.colorWithSVGString(hex_string);
 
         layer.style()
         .fill()
@@ -134,23 +134,28 @@ com.getflourish.common = {
         return page;
     },
     addRectangleLayer: function (target) {
-        // var shape = MSRectangleShape.alloc().init();
-        // var shapeGroup = [MSShapeGroup shapeWithPath:shape];
-        // target.addLayers([shapeGroup]);
 
-        var groupFrame = NSMakeRect(0, 0, 10, 10);
-        var layer = [[MSLayerGroup alloc] initWithFrame:groupFrame];
-        target.addLayers([layer]);
+        var rect = NSMakeRect(0, 0, 200, 25)
+        var shape = [[MSRectangleShape alloc] init]
+        [shape setFrame:[MSRect rectWithRect:rect]]
+        var shapeGroup = [MSShapeGroup shapeWithPath:shape]
+        // var fill = [[shapeGroup style] addStylePartOfType:1]
+        // var color = [MSColor colorWithNSColor:nsColor]
+        // [fill setColor:color]
 
-        // com.getflourish.common.dump(target)
-        // var layer = target.addLayerOfType("rectangle");
-        return layer;
+        log("---")
+        log(shapeGroup)
+
+        target.addLayers([shapeGroup])
+
+        return shapeGroup;
     },
     addTextLayer: function (target, label) {
         // var textLayer = NSTextField.alloc().initWithFrame_(NSMakeRect(x, y, 100, 25));
         var textLayer = MSTextLayer.new();
         textLayer.setStringValue(label)
         textLayer.setName(label)
+        target.addLayers([textLayer]);
         return textLayer;
     },
     addTextLayerEmphasis: function (target, label) {
@@ -158,6 +163,7 @@ com.getflourish.common = {
         textLayer.setStringValue(label)
         textLayer.setName(label)
         textLayer.setFontPostscriptName("HelveticaNeue-Bold");
+        target.addLayers([textLayer]);
         return textLayer;
     },
     addTextLayerTitle: function (target, label) {
@@ -166,6 +172,7 @@ com.getflourish.common = {
         textLayer.setName(label)
         textLayer.setFontSize(44);
         textLayer.setFontPostscriptName("HelveticaNeue-Thin");
+        target.addLayers([textLayer]);
         return textLayer;
     },
     areOfEqualClass: function (layers) {
@@ -692,8 +699,6 @@ com.getflourish.colorInventory = {
                 // get hex colors from color artboard
                 var colorArtboardColors = com.getflourish.utils.arrayFromImmutableArray(com.getflourish.colorInventory.getColorArtboardColors(colorArtboard));
 
-                log("got artboard colors")
-
                 // get defined colors
                 var queryResult = com.getflourish.colorInventory.getDefinedColors(colorArtboard);
 
@@ -816,7 +821,12 @@ com.getflourish.colorInventory = {
         // concat
         // todo: concat and display by type
         var allColors = solidFillColors.concat(textColors)
-        .unique();
+        .uniqueColors();
+
+        for (var i = 0; i < allColors.length; i++) {
+          log(allColors[i])
+        }
+
         return allColors;
     },
     getDocumentBorderColors: function () {
@@ -836,7 +846,6 @@ com.getflourish.colorInventory = {
     },
     getDestinctProperties: function (keyPath, scope) {
         // get all layers of the current page, except the ones used on the color artboard
-        // todo: should accept scope
         var props = [];
         for (var i = 0; i < doc.pages().count(); i++) {
             var page = doc.pages().objectAtIndex(i);
@@ -851,7 +860,6 @@ com.getflourish.colorInventory = {
             props.push(properties);
         }
         props = [].concat.apply([], props)
-        log(props)
 
         return props;
     },
@@ -1227,13 +1235,13 @@ com.getflourish.colors = {
         try {
             if (ca === "MSColor" && cb === "MSColor") {
                 try {
-                    hex_a = String(a.hexValue());
+                    hex_a = String(a.immutableModelObject().svgRepresentation());
                 } catch (error)  {
                     log("couldn’t get hex a");
                 }
 
                 try {
-                    hex_b = String(b.hexValue());
+                    hex_b = String(b.immutableModelObject().svgRepresentation());
                 } catch (error)  {
                     log("couldn’t get hex a");
                 }
@@ -1285,7 +1293,7 @@ createColorSheet: function (artboard, palettes) {
         var top = 30;
         var margin = 45;
         var margin_top = 125;
-        var width = 0;
+        var width = 120;
 
         for (var i = 0; i < palettes.length; i++) {
             var palette = palettes[i];
@@ -1333,7 +1341,7 @@ createColorSheet: function (artboard, palettes) {
                 }
             }
         }
-        com.getflourish.common.resize(artboard, 790, top);
+        com.getflourish.common.resize(artboard, 870, top);
     },
     update: function () {
         var scope = doc.currentPage()
@@ -1369,25 +1377,20 @@ createColorSheet: function (artboard, palettes) {
     // todo: change method to accept a color object with name and color value
     addColorChip: function (artboard, swatch) {
 
-        // Regular expression to check if the value is a valid Hex color.
-        var isHex = /([0-9A-F]{6}$)|([0-9A-F]{3}$)/i
         var padding = 8;
 
-        // Check if the value is valid hex color. If so, set the hex_string to the value and get the
-        // RGBA Tupel with MSColor and set it to color.
+        var hex_string = swatch.color.immutableModelObject().svgRepresentation()
+        var color = swatch.color;
 
-        if( isHex.test(swatch.color) ) {
-            var hex_string = "#" + swatch.color;
-            var color =  MSColor.colorWithSVGString(hex_string)
-        } else {
-            var hex_string = "#" + swatch.color.hexValue();
-            var color = swatch.color;
-        }
 
         var colorName = "";
 
         // add layer group
-        var group = artboard.addLayerOfType("group");
+
+        var groupFrame = NSMakeRect(0, 0, 120, 195);
+        var group = [[MSLayerGroup alloc] initWithFrame:groupFrame];
+        artboard.addLayers([group]);
+
         var group_name = "";
         if (swatch.name == "Untitled Color Swatch") {
             swatch.name = "Untitled Color Swatch";
@@ -1402,7 +1405,7 @@ createColorSheet: function (artboard, palettes) {
         group.setName(swatch.name);
 
         // draw white label rectangle
-        var white = MSColor.colorWithSVGString("#FFFFFF");
+        var white = MSImmutableColor.colorWithSVGString("#FFFFFF");
         var labelBG = com.getflourish.colors.addColorShape(group, white, 120, 195);
         labelBG.frame()
         .setY(0);
@@ -1447,7 +1450,7 @@ createColorSheet: function (artboard, palettes) {
         var textShadow = countLabel.style()
         .addStylePartOfType(2);
 
-        var black = MSColor.colorWithSVGString("#000000");
+        var black = MSImmutableColor.colorWithSVGString("#000000");
         black.alpha = 0.5;
         textShadow.setOffsetX(0);
         textShadow.setOffsetY(1);
@@ -2109,14 +2112,14 @@ com.getflourish.layers = {
         return layersMeta.sort(com.getflourish.utils.sortName);
     },
     getLayersByTextStyle: function (textStyle, scope) {
-        var predicate = NSPredicate.predicateWithFormat("(style.textStyle != NULL) && (FUNCTION(style.textStyle, 'isEqualForSync:asPartOfSymbol:', %@, nil) == YES)", textStyle);
+        var predicate = NSPredicate.predicateWithFormat("(style.textStyle != NULL) && (FUNCTION(style.textStyle, 'isEqual:', %@) == YES)", textStyle);
         // query page layers
         var queryResult = scope.filteredArrayUsingPredicate(predicate);
 
         return queryResult;
     },
     getLayersByLayerStyle: function (layerStyle, scope) {
-        var predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (FUNCTION(style.fill, 'isEqualForSync:asPartOfSymbol:', %@, nil) == YES)", layerStyle.fill());
+        var predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (FUNCTION(style.fill, 'isEqual:', %@) == YES)", layerStyle.fill());
         // query page layers
         var queryResult = scope.filteredArrayUsingPredicate(predicate);
 
@@ -2129,7 +2132,7 @@ com.getflourish.layers = {
         return queryResult;
     },
     getEqualLayers: function (referenceLayer, scope) {
-        var predicate = NSPredicate.predicateWithFormat("(FUNCTION(self, 'isEqualForSync:asPartOfSymbol:', %@, nil) == YES)", context.selection[0]);
+        var predicate = NSPredicate.predicateWithFormat("(FUNCTION(self, 'isEqual:', %@) == YES)", context.selection[0]);
         var queryResult = scope.filteredArrayUsingPredicate(predicate);
         return queryResult;
     },
@@ -2155,12 +2158,6 @@ com.getflourish.layers = {
 
         // get color of selected layer
         color = com.getflourish.colors.getColorOf(referenceLayer);
-
-        console.log(color)
-
-        com.getflourish.common.dump(color)
-        console.log("foo")
-        console.log(color.immutableModelObject().svgRepresentation())
 
         var ftype = 0;
 
@@ -2217,7 +2214,7 @@ com.getflourish.layers = {
         // get color of selected layer
         color = com.getflourish.colors.getColorOf(referenceLayer);
 
-        var predicate = NSPredicate.predicateWithFormat("(style.border != NULL) && style.border.color.hexValue == %@", color.hexValue());
+        var predicate = NSPredicate.predicateWithFormat("(style.border != NULL) && style.border.color == %@", color);
 
         // query page layers
         var queryResult = scope.filteredArrayUsingPredicate(predicate);
@@ -2409,22 +2406,35 @@ com.getflourish.textStyleInventory = {
         // start tracking the time
         var startTime = new Date();
 
+        log("text styles")
+
         var virtual = _virtual || false;
         // ask for base unit
         if (com.getflourish.css.formatOptions.useRelativeFontSize == true) var baseunit = com.getflourish.css.getBaseUnit();
 
+        log("pre analyse")
         // get defined text styles
         var definedTextStyles = com.getflourish.textStyleInventory.analyseTextStyles();
 
+        log("analysed")
+
         // for large files, sketch crashes after adding the style sheet page (a second time)
         var styleSheetPage = com.getflourish.common.getStyleSheetPage();
+
+        log("got style page")
+
         var artboard = com.getflourish.common.getArtboardByPageAndName(styleSheetPage, "Text Styles Inventory");
+
+        log("got artboard")
         artboard.removeAllLayers();
 
-        if (virtual) com.getflourish.textStyleInventory.createTextStylesVirtual(artboard, definedTextStyles);
+        // if (virtual) com.getflourish.textStyleInventory.createTextStylesVirtual(artboard, definedTextStyles);
 
+log("after virtual")
         artboard.removeAllLayers();
         com.getflourish.textStyleInventory.createTextStyles(artboard, definedTextStyles);
+
+        log("after create")
 
         var bg = com.getflourish.common.addCheckeredBackground(artboard);
 
@@ -2494,7 +2504,7 @@ com.getflourish.textStyleInventory = {
         for (var i = 0; i < definedTextStyles.length; i++) {
 
             var definedTextStyle = definedTextStyles[i];
-            var textLayer = artboard.addLayerOfType("text");
+            var textLayer = com.getflourish.common.addTextLayer(artboard, "");
 
             textLayer.setStyle(definedTextStyle.textStyle.newInstance());
             textLayer.setName(definedTextStyle.name);
@@ -2504,17 +2514,18 @@ com.getflourish.textStyleInventory = {
 
         var has = com.getflourish.colors.hasColorInventory();
         var top = 30;
+        var padding = 30;
         var margin = 20;
         var maxWidth = 0;
         var colorName;
 
         for (var i = 0; i < definedTextStyles.length; i++) {
 
-            var $grey = MSColor.colorWithSVGString("#000000");
+            var $grey = MSImmutableColor.colorWithSVGString("#000000");
             $grey.alpha = 0.5;
 
             var definedTextStyle = definedTextStyles[i];
-            var textLayer = artboard.addLayerOfType("text");
+            var textLayer = com.getflourish.common.addTextLayer(artboard, "");
 
             var fontString = String(definedTextStyle.attributes.NSFont);
             var font = fontString.substring(1, fontString.indexOf("pt."));
@@ -2524,7 +2535,7 @@ com.getflourish.textStyleInventory = {
 
             // Text layer holding the style name
             var styleName = definedTextStyle.name;
-            var styleNameLayer = artboard.addLayerOfType("text");
+            var styleNameLayer = com.getflourish.common.addTextLayer(artboard, "");
 
             textLayer.setTextAlignment(0);
             textLayer.setStringValue(styleName);
@@ -2539,7 +2550,7 @@ com.getflourish.textStyleInventory = {
 
             var color = textLayer.textColor();
 
-            var hexColor = color.hexValue();
+            var hexColor = color.immutableModelObject().svgRepresentation();
             var rgb = String(Math.ceil(color.red() * 255)) + ", " + String(Math.ceil(color.green() * 255)) + ", " + String(Math.ceil(color.blue() * 255)) + ", " + String(color.alpha()
                                                                                                                                                                           .toFixed(2));
 
@@ -2548,7 +2559,7 @@ com.getflourish.textStyleInventory = {
             if (has == true) colorName = com.getflourish.colors.getNameForColor(hexColor);
 
             if (colorName == null) {
-                colorName = "#" + hexColor;
+                colorName = hexColor;
                 if (alpha != 100) colorName += " @" + alpha + "%"
             }
 
@@ -2580,8 +2591,8 @@ com.getflourish.textStyleInventory = {
         // centerView(textLayer)
 
         // Resize artboard and background to match the newly created text layers
-        var bounds = MSLayerGroup.groupBoundsForLayers(artboard.layers()
-                                                       .array());
+        var bounds;
+        if (artboard.layers().length) bounds = MSLayerGroup.groupBoundsForLayers(artboard.layers());
 
         var scope = artboard.children();
         var predicate = NSPredicate.predicateWithFormat("className == %@", "MSTextLayer");
@@ -2591,8 +2602,8 @@ com.getflourish.textStyleInventory = {
 
         artboard.frame()
         .setWidth(maxWidth + 150 + 2 * margin);
-        artboard.frame()
-        .setHeight(bounds.size.height);
+
+        if (bounds) artboard.frame().setHeight(bounds.size.height + 2 * padding);
 
 
     },
@@ -2822,7 +2833,7 @@ com.getflourish.textStyleInventory = {
         label.setCharacterSpacing(2);
 
         // color
-        var color = MSColor.colorWithSVGString(com.getflourish.config.TEXT_COLOR);
+        var color = MSImmutableColor.colorWithSVGString(com.getflourish.config.TEXT_COLOR);
 
         // position
         label.frame().setX(x);
@@ -2872,14 +2883,14 @@ com.getflourish.textStyleInventory = {
 
     addCard: function (artboard) {
         // add background
-        var color = MSColor.colorWithSVGString(com.getflourish.config.CARD_COLOR);
+        var color = MSImmutableColor.colorWithSVGString(com.getflourish.config.CARD_COLOR);
         var card = com.getflourish.colors.addColorShape(artboard, color, 100, 100);
 
         // Shadow
         var shadow = card.style()
         .addStylePartOfType(2);
 
-        var black = MSColor.colorWithSVGString("#000000");
+        var black = MSImmutableColor.colorWithSVGString("#000000");
         black.alpha = 0.1;
         shadow.setOffsetX(0);
         shadow.setOffsetY(2);
@@ -2909,7 +2920,7 @@ com.getflourish.textStyleInventory = {
     },
 
     addLine: function (target) {
-        var black = MSColor.colorWithSVGString("#000000");
+        var black = MSImmutableColor.colorWithSVGString("#000000");
         black.alpha = 0.15;
         var line = com.getflourish.colors.addColorShape(target, black, 100, 1);
         line.setName("separator");
@@ -3050,11 +3061,13 @@ return selection;
 }
 
 
-Array.prototype.unique = function () {
+Array.prototype.uniqueColors = function () {
     var a = this.concat();
     for (var i = 0; i < a.length; ++i) {
         for (var j = i + 1; j < a.length; ++j) {
-            if (a[i] === a[j]) a.splice(j--, 1);
+            if (a[i].immutableModelObject().svgRepresentation().isEqual(a[j].immutableModelObject().svgRepresentation())) {
+              a.splice(j--, 1);
+            }
         }
     }
 
