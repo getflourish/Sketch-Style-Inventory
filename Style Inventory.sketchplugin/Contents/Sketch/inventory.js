@@ -82,17 +82,19 @@ com.getflourish.common = {
 
         // todo: add pattern
 
-        // var image = NSImage.alloc()
-        // .initWithContentsOfFile(com.getflourish.config.background_image);
-        //
-        // var fill = layer.style()
-        // .addStylePartOfType(0);
-        // if (fill) {
-        //     fill.setFillType(4);
-        //     fill.setPatternImage(image);
-        //     fill.setPatternFillType(0);
-        //     fill.setPatternTileScale(1);
-        // }
+        var image = NSImage.alloc()
+        .initWithContentsOfFile(com.getflourish.config.background_image);
+
+        var fill = layer.style()
+        .addStylePartOfType(0);
+        if (fill) {
+            fill.setFillType(4);
+
+            fill.setImage(MSImageData.alloc().initWithImage_convertColorSpace(image, false))
+
+            fill.setPatternFillType(0);
+            fill.setPatternTileScale(1);
+        }
         doc.currentPage()
         .deselectAllLayers();
         // layer.setIsSelected(true);
