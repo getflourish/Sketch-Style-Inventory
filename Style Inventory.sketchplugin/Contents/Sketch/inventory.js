@@ -2703,7 +2703,7 @@ log("after virtual")
         /**
          * Very basic layout routine that places all layers with the same base name next to each other.
          * Every time a new base name is found, a new row will be started.
-         * The nameing convention is: set/element/state
+         * The naming convention is: set/element/state
          *
          * e.g.     ui/checkbox/normal
          *          ui/checkbox/selected
@@ -2965,6 +2965,8 @@ log("after virtual")
 
          var exportLayers = doc.currentPage().children().objectEnumerator();
 
+         // todo: fix export of symbols
+
          while (slice = exportLayers.nextObject()) {
           if (slice.isSymbol()) {
 
@@ -2972,8 +2974,8 @@ log("after virtual")
 
             // with shadows
             exportLayerToPath(slice, path, 1, "", "png", true);
+          }
         }
-    }
 
         /**
          * show symbols
