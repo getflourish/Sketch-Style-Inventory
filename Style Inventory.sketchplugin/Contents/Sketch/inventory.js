@@ -2483,9 +2483,6 @@ com.getflourish.symbolInventory = {
 
     // get symbols
     var symbols = doc.documentData().allSymbols()
-    log("-- symbols --")
-
-    log(symbols.count())
 
     // add an artboard where all symbols will be placed
 
@@ -2507,7 +2504,6 @@ com.getflourish.symbolInventory = {
       var symbolRef = symbols.objectAtIndex(i);
 
       // add layer from symbol to document
-      log(symbols.objectAtIndex(i))
       var symbol = symbols.objectAtIndex(i).newSymbolInstance();
 
       // set name
@@ -2655,8 +2651,9 @@ com.getflourish.symbolInventory = {
     }
 
     // resize artboard
+
     artboard.frame().setHeight(nextY + padding + maxY)
-    artboard.frame().setWidth(artboardWidth + padding)
+    artboard.frame().setWidth(artboardWidth + 2 * padding)
 
     // add background
     com.getflourish.symbolInventory.addBackground(artboard);
