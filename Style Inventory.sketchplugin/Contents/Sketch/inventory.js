@@ -1335,26 +1335,26 @@ com.getflourish.colors = {
     // Name Label
     if (swatch.occurences == null) swatch.occurences = 0;
 
-    var countLabel = com.getflourish.common.addTextLayerEmphasis(group, "Test");
-    countLabel.frame().setY(8);
-    countLabel.frame().setX(85);
-    countLabel.setTextAlignment(1);
-    countLabel.setStringValue("" + swatch.occurences + "×");
-    countLabel.adjustFrameToFit();
-    countLabel.setTextAlignment(1);
-    countLabel.setName("Swatch Count");
-    countLabel.setTextColor(white);
+    // var countLabel = com.getflourish.common.addTextLayerEmphasis(group, "Test");
+    // countLabel.frame().setY(8);
+    // countLabel.frame().setX(85);
+    // countLabel.setTextAlignment(1);
+    // countLabel.setStringValue("" + swatch.occurences + "×");
+    // countLabel.adjustFrameToFit();
+    // countLabel.setTextAlignment(1);
+    // countLabel.setName("Swatch Count");
+    // countLabel.setTextColor(white);
     // Shadow
-    var textShadow = countLabel.style().addStylePartOfType(2);
+    // var textShadow = countLabel.style().addStylePartOfType(2);
 
     var black = MSImmutableColor.colorWithSVGString("#000000");
-    black.alpha = 0.5;
-    textShadow.setOffsetX(0);
-    textShadow.setOffsetY(1);
-    textShadow.setBlurRadius(2);
-    textShadow.setSpread(0);
-
-    textShadow.setColor(black)
+    // black.alpha = 0.5;
+    // textShadow.setOffsetX(0);
+    // textShadow.setOffsetY(1);
+    // textShadow.setBlurRadius(2);
+    // textShadow.setSpread(0);
+    //
+    // textShadow.setColor(black)
 
     // Hex Label
     var hexLabel = com.getflourish.common.addTextLayer(group, hex_string);
