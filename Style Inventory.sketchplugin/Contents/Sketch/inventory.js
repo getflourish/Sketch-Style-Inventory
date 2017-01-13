@@ -280,7 +280,7 @@ com.getflourish.common = {
       // initialize the webview and load the URL
       var frame = NSMakeRect(0, 0, 320, 480);
       var webView = WebView.alloc()
-.initWithFrame(frame);
+      .initWithFrame(frame);
       var webViewFrame = webView.mainFrame();
 
       // The FrameLoadDelegate offers the webView_didFinishLoadForFrame
@@ -297,11 +297,11 @@ com.getflourish.common = {
       // Set up the panel window
       var mask = NSTitledWindowMask + NSClosableWindowMask + NSMiniaturizableWindowMask + NSUtilityWindowMask;
       var panel = NSPanel.alloc()
-.initWithContentRect_styleMask_backing_defer(frame, mask, NSBackingStoreBuffered, true);
+      .initWithContentRect_styleMask_backing_defer(frame, mask, NSBackingStoreBuffered, true);
 
       // Add the webView to the prepared panel
       panel.contentView()
-.addSubview(webView);
+      .addSubview(webView);
 
       // Show the panel
       panel.makeKeyAndOrderFront(panel);
@@ -313,8 +313,8 @@ com.getflourish.common = {
 
     var update = function () {
       var webView = persist.get('webView')
-.mainFrame()
-.loadRequest(NSURLRequest.requestWithURL(NSURL.URLWithString(URL)));
+      .mainFrame()
+      .loadRequest(NSURLRequest.requestWithURL(NSURL.URLWithString(URL)));
     }
 
     var doScript = function () {
@@ -429,7 +429,7 @@ com.getflourish.common = {
   getPageByName: function (name) {
     for (var i = 0; i < doc.pages().count(); i++) {
       var page = doc.pages()
-.objectAtIndex(i);
+      .objectAtIndex(i);
       if (page.name() == name) {
         doc.setCurrentPage(page);
         return page;
@@ -1241,7 +1241,7 @@ com.getflourish.colors = {
         if (left != 0) {
           left = 0;
           top += colorChip.frame()
-    .height() + 1.2 * margin_top;
+          .height() + 1.2 * margin_top;
         }
       }
     }
@@ -1420,8 +1420,8 @@ com.getflourish.colors = {
 
         // check if the text layer has a fill color
         fill = layer.style()
-  .fills()
-  .firstObject();
+        .fills()
+        .firstObject();
         if (fill != undefined && fill.isEnabled()) {
           color = fill.color();
         }
@@ -1466,7 +1466,7 @@ com.getflourish.colors = {
 
     if (result.count() > 0 && result[0].parentGroup().name() != "Untitled Color Swatch") {
       return result[0].parentGroup()
-.name();
+      .name();
     } else {
       return null;
     }
@@ -1506,8 +1506,8 @@ com.getflourish.colors = {
 
       // check if the text layer has a fill color
       var fill = layer.style()
-.fills()
-.firstObject();
+      .fills()
+      .firstObject();
       if (fill != undefined && fill.isEnabled()) {
         color = fill.color();
       }
@@ -1816,7 +1816,7 @@ com.getflourish.css = {
       var fontSize = textLayer.fontSize();
       var lineHeight = textLayer.lineHeight();
       relativeLineHeight = (lineHeight / fontSize)
-.toFixed(2);
+      .toFixed(2);
     }
     return relativeLineHeight;
   },
@@ -1831,7 +1831,7 @@ com.getflourish.css = {
 
       // only get CSS for text layers
       if ([layer isKindOfClass: MSTextLayer] && layer.style()
-.sharedObjectID() != null) {
+      .sharedObjectID() != null) {
         stylesheet += '\n\n' + com.getflourish.css.createRuleSetStr(layer);
       }
     }
@@ -1876,7 +1876,7 @@ com.getflourish.css = {
 
       // only get CSS for text layers
       if ([layer isKindOfClass: MSTextLayer] && layer.style()
-.sharedObjectID() != null) {
+      .sharedObjectID() != null) {
         // markup += "<td>" + com.getflourish.css.createRuleSetStr(layer) + "</td>";
         markup += '\n\t' + com.getflourish.css.createMarkupStr(layer);
         markup += '\n\t';
@@ -1906,11 +1906,11 @@ com.getflourish.layers = {
       var layer = layers[0];
       var parent = layer.parentGroup();
       var midX = parent.absoluteRect()
-.midX();
+      .midX();
       var targetX = Math.ceil(midX - layer.frame()
-.width() / 2);
+      .width() / 2);
       layer.absoluteRect()
-.setX(targetX);
+      .setX(targetX);
     } else if (layers.count() > 1) {
       for (var i = 0; i < layers.count(); i++) {
 
@@ -1922,11 +1922,11 @@ com.getflourish.layers = {
       var layer = layers[0];
       var parent = layer.parentGroup();
       var midY = parent.absoluteRect()
-.midY();
+      .midY();
       var targetY = Math.ceil(midY - layer.frame()
-.height() / 2);
+      .height() / 2);
       layer.absoluteRect()
-.setY(targetY);
+      .setY(targetY);
     } else if (layers.count() > 1) {
       for (var i = 0; i < layers.count(); i++) {
 
@@ -2217,7 +2217,7 @@ com.getflourish.layers = {
 
       // deselect all layers
       doc.currentPage()
-.deselectAllLayers();
+      .deselectAllLayers();
 
       // select b
       a.setIsSelected(true);
@@ -2297,8 +2297,8 @@ com.getflourish.textStyleInventory = {
     for (var i = 0; i < styles.count(); i++) {
       var style = styles.objectAtIndex(i);
       var attributes = style.style()
-.textStyle()
-.attributes();
+      .textStyle()
+      .attributes();
       var textStyle = style
       if (!com.getflourish.common.isIncluded(definedTextStyles, textStyle) && style.name().indexOf("Style Inventory") == -1) {
         definedTextStyles.push({
@@ -2368,16 +2368,16 @@ com.getflourish.textStyleInventory = {
       textLayer.setTextAlignment(0);
       textLayer.setName(definedTextStyle.name);
       var theWidth = textLayer.frame()
-.width();
+      .width();
 
       var color = textLayer.textColor();
 
       var hexColor = color.immutableModelObject().svgRepresentation();
       var rgb = String(Math.ceil(color.red() * 255)) + ", " + String(Math.ceil(color.green() * 255)) + ", " + String(Math.ceil(color.blue() * 255)) + ", " + String(color.alpha()
-.toFixed(2));
+      .toFixed(2));
 
       var alpha = String(color.alpha()
-.toFixed(2) * 100);
+      .toFixed(2) * 100);
       if (has == true) colorName = com.getflourish.colors.getNameForColor(hexColor);
 
       if (colorName == null) {
@@ -2394,20 +2394,20 @@ com.getflourish.textStyleInventory = {
 
       if (theWidth > maxWidth) maxWidth = theWidth;
       textLayer.frame()
-.setX(margin + 150);
+      .setX(margin + 150);
       textLayer.frame()
-.setY(top);
+      .setY(top);
 
       // position the style name layer
       styleNameLayer.frame()
-.setX(margin);
+      .setX(margin);
       styleNameLayer.frame()
-.setY(top);
+      .setY(top);
 
       top += textLayer.frame()
-.height();
+      .height();
       top += styleNameLayer.frame()
-.height();
+      .height();
     }
 
     // centerView(textLayer)
@@ -2767,43 +2767,42 @@ com.getflourish.symbolInventory = {
   export: function (exportPath) {
 
     var scope = doc.currentPage().children();
-    var predicate = NSPredicate.predicateWithFormat("parentOrSelfIsSymbol == %@ && className != %@", false, "MSArtboardGroup");
+
+
+    log(scope.count())
+    var predicate = NSPredicate.predicateWithFormat("className == %@", "MSSymbolInstance");
 
     // hide non symbols
     var results = scope.filteredArrayUsingPredicate(predicate);
 
     var layers = results.objectEnumerator();
 
-    while (layer = layers.nextObject()) {
-      layer.setIsVisible(false);
-    }
+    // while (layer = layers.nextObject()) {
+    //   layer.setIsVisible(false);
+    // }
 
     /**
     * export
     */
 
-    var exportLayers = doc.currentPage().children().objectEnumerator();
+    log("layer count")
+    log(results.count())
+
+    var exportLayers = layers
 
     // todo: fix export of symbols
 
     while (slice = exportLayers.nextObject()) {
-      if (slice.isSymbol()) {
 
-        var path = exportPath + slice.name() + '.png';
+      log(slice.name())
+      var path = exportPath + slice.name() + '.png';
 
-        // with shadows
-        exportLayerToPath(slice, path, 1, "", "png", true);
-      }
+      // with shadows
+      // exportLayerToPath(slice, path, 1, "", "png", true);
+      processSlice(slice, [1], path)
+
     }
 
-    /**
-    * show symbols
-    */
-
-    layers = results.objectEnumerator();
-    while (layer = layers.nextObject()) {
-      layer.setIsVisible(true);
-    }
 
     doc.showMessage('Symbols exported to: ' + exportPath);
   },
@@ -2900,64 +2899,52 @@ Array.prototype.uniqueColors = function () {
 
 /*
 Exports a layer to a given path
-
-Author: abynim
-Source: https://gist.github.com/abynim/97ed6a1d569fa0c1f34e
 */
 
-function exportLayerToPath(layer, path, scale, format, suffix, includeShadows) {
+function processSlice(slice, factors, fileName){
 
+  var frame = [slice frame],
+  sliceName = [slice name];
 
-  var sketchVersion = getSketchVersionNumber(),
-  doc = com.getflourish.doc,
-  rect = includeShadows == false ? layer.absoluteRect().rect() : layer.absoluteInfluenceRect(),
-  useDuplicate = !CGRectContainsRect(layer.parentArtboard().absoluteRect().rect(), rect),
-  scale = scale || 1,
-  suffix = suffix || "",
-  format = format || "png"
+  for (var i = 0; i < factors.length; i++) {
+    var factor = factors[i],
+    version = makeSliceAndResizeWithFactor(slice, factor);
 
-  if(useDuplicate) {
-    layer = layer.duplicate()
-    layer.removeFromParent()
-    doc.currentPage().addLayers([layer])
-    rect = includeShadows == false ? layer.absoluteRect().rect() : layer.absoluteInfluenceRect()
+    [doc saveArtboardOrSlice: version toFile:fileName];
+
+    log("Saved " + fileName);
   }
-
-  if(sketchVersion >= 350) {
-    var slice = MSExportRequest.requestWithRect_scale(rect, scale),
-    layerName = layer.name() + suffix
-    slice.setShouldTrim(0)
-    slice.setSaveForWeb(1)
-    slice.configureForLayer(layer)
-    slice.setName(layerName)
-    slice.setFormat(format)
-    doc.saveArtboardOrSlice_toFile(slice, path)
-    if(useDuplicate) layer.removeFromParent()
-
-    return
-  }
-
-  // pre-sketch-3.5
-  layer.exportOptions().addExportSize()
-
-  var exportSize = layer.exportOptions().sizes().array().lastObject()
-  exportSize.setScale(scale)
-  exportSize.setName(suffix)
-  exportSize.setFormat(format)
-  var slice = sketchVersion >= 344 ? MSSliceMaker.sliceFromExportSize_layer_inRect_useIDForName(exportSize, layer, rect, false) : MSSliceMaker.sliceFromExportSize_layer_inRect(exportSize, layer, rect)
-  doc.saveArtboardOrSlice_toFile(slice, path)
-  exportSize.remove()
-  slice = nil
-  exportSize = nil
-
-  if(useDuplicate) layer.removeFromParent()
 }
 
-function getSketchVersionNumber() {
-  const version = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString")
-  var versionNumber = version.stringByReplacingOccurrencesOfString_withString(".", "") + ""
-  while(versionNumber.length != 3) {
-    versionNumber += "0"
+function makeSliceAndResizeWithFactor (layer, factor) {
+  var loopLayerChildren = [[layer children] objectEnumerator],
+  sliceLayerAncestry = [MSImmutableLayerAncestry ancestryWithMSLayer:layer];
+  rect = [MSSliceTrimming trimmedRectForLayerAncestry:sliceLayerAncestry];
+  useSliceLayer = false,
+  slice
+  ;
+
+  // Check for MSSliceLayer and overwrite the rect if present
+  while (layerChild = [loopLayerChildren nextObject]) {
+    if ([layerChild class] == 'MSSliceLayer') {
+      sliceLayerAncestry = [MSImmutableLayerAncestry ancestryWithMSLayer:layerChild];
+      rect = [MSSliceTrimming trimmedRectForLayerAncestry:sliceLayerAncestry];
+      useSliceLayer = true;
+    }
   }
-  return parseInt(versionNumber)
+
+  var slices = [MSExportRequest exportRequestsFromExportableLayer:layer inRect:rect useIDForName:false];
+  var slice = null;
+  if (slices.count() > 0) {
+    slice = slices[0];
+    slice.scale = (factor / (this.baseDensity + 1))
+  }
+
+  if (!useSliceLayer) {
+    slice.shouldTrim = true;
+  }
+  // slice.saveForWeb = true;
+  // slice.compression = 0;
+  // slice.includeArtboardBackground = false;
+  return slice;
 }
