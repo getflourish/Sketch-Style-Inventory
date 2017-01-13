@@ -127,8 +127,6 @@ com.getflourish.common = {
     // var color = [MSColor colorWithNSColor:nsColor]
     // [fill setColor:color]
 
-    log("---")
-    log(shapeGroup)
 
     target.addLayers([shapeGroup])
 
@@ -827,6 +825,8 @@ com.getflourish.colorInventory = {
     var predicate = NSPredicate.predicateWithFormat("className == %@ AND name != %@", "MSLayerGroup", "Untitled Color Swatch");
     var queryResult = colorSheet.children().filteredArrayUsingPredicate(predicate);
 
+    log("exporting")
+    log(queryResult.count())
     for (var j = 0; j < queryResult.count(); j++) {
       // check if there are swatches (groups of color swatches)
 
@@ -835,7 +835,7 @@ com.getflourish.colorInventory = {
       pName = "Defined";
 
       // loop through all child layers to find the color
-      var layers = group.layers().array();
+      var layers = group.layers();
       for (var i = 0; i < layers.count(); i++) {
 
         // get the current layer
@@ -1021,10 +1021,6 @@ com.getflourish.colorInventory = {
       predicate = NSPredicate.predicateWithFormat("(style.fill != NULL) && (style.fill.color isEqual:%@) && NOT(parentArtboard.name == %@)", definedColors[i], com.getflourish.config.colorInventoryName);
       queryResult = doc.currentPage().children().filteredArrayUsingPredicate(predicate);
 
-      log("count")
-      log(queryResult)
-      log(queryResult.count())
-
       documentColors.push({
         name: "Untitled Color Swatch",
         color: definedColors[i],
@@ -1147,7 +1143,6 @@ com.getflourish.colors = {
       ca = String(a.className());
       cb = String(b.className());
 
-      log("received classnames " + ca + " / " + cb);
     } catch (error) {
       log("could not receive classnames");
     }
@@ -1192,7 +1187,7 @@ com.getflourish.colors = {
           break;
 
           default:
-          log("default");
+
           break;
         }
       }
@@ -2026,8 +2021,6 @@ com.getflourish.layers = {
       ftype = color.fillType();
     } catch (error) {}
 
-    console.log(ftype)
-
     // init predicate
     var predicate = null;
 
@@ -2256,35 +2249,24 @@ com.getflourish.textStyleInventory = {
     // start tracking the time
     var startTime = new Date();
 
-    log("text styles")
-
     var virtual = _virtual || false;
     // ask for base unit
     if (com.getflourish.css.formatOptions.useRelativeFontSize == true) var baseunit = com.getflourish.css.getBaseUnit();
 
-    log("pre analyse")
     // get defined text styles
     var definedTextStyles = com.getflourish.textStyleInventory.analyseTextStyles();
-
-    log("analysed")
 
     // for large files, sketch crashes after adding the style sheet page (a second time)
     var styleSheetPage = com.getflourish.common.getStyleSheetPage();
 
-    log("got style page")
-
     var artboard = com.getflourish.common.getArtboardByPageAndName(styleSheetPage, "Text Styles Inventory");
 
-    log("got artboard")
     artboard.removeAllLayers();
 
     // if (virtual) com.getflourish.textStyleInventory.createTextStylesVirtual(artboard, definedTextStyles);
 
-    log("after virtual")
     artboard.removeAllLayers();
     com.getflourish.textStyleInventory.createTextStyles(artboard, definedTextStyles);
-
-    log("after create")
 
     var bg = com.getflourish.common.addCheckeredBackground(artboard);
 

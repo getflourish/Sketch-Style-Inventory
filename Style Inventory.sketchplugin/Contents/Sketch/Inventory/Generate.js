@@ -16,7 +16,7 @@ var exportMetadata;
 var artboards;
 
 // turn the text styles panel on / off
-var showTextStylesPanel = true;
+var showTextStylesPanel = false;
 
 var ca, ta, sa;
 
@@ -52,6 +52,8 @@ function handleExport () {
 
         var exportPath;
 
+log("colors")
+log(colors)
 
         if (colors == 1) {
 
@@ -63,6 +65,8 @@ function handleExport () {
 
             // export
             com.getflourish.colorInventory.export(exportPath);
+
+            log("exported colors")
 
             com.getflourish.doc.showMessage("colors done")
 
