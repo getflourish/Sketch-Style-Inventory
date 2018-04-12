@@ -1394,9 +1394,9 @@ com.getflourish.colors = {
     hexLabel.frame().setX(8);
     hexLabel.setName("Hex Label");
 
-    if (color.r) {
+    if (color.red()) {
       // RGB Label
-      var rgb = String(Math.ceil(color.r.toFixed(2) * 255)) + ", " + String(Math.ceil(color.g.toFixed(2) * 255)) + ", " + String(Math.ceil(color.b.toFixed(2) * 255)) + ", " + String(color.a.toFixed(2));
+      var rgb = String(Math.ceil(color.red().toFixed(2) * 255)) + ", " + String(Math.ceil(color.green().toFixed(2) * 255)) + ", " + String(Math.ceil(color.blue().toFixed(2) * 255)) + ", " + String(color.alpha().toFixed(2));
 
       var rgbLabel = com.getflourish.common.addTextLayer(group, rgb);
       rgbLabel.frame().setY(hexLabel.frame().y() + 14 + padding);
@@ -2083,10 +2083,12 @@ com.getflourish.layers = {
     selected = null;
 
     // deselect
-    doc.documentData().deselectAllLayers();
+    com.getflourish.utils.deselectAllLayers()
 
     // get color of selected layer
     color = com.getflourish.colors.getColorOf(referenceLayer);
+
+    log(color)
 
     var ftype = 0;
 
@@ -2096,6 +2098,7 @@ com.getflourish.layers = {
 
     // init predicate
     var predicate = null;
+
 
     // use appropriate predicate depending on the selected layer class
 
@@ -2121,6 +2124,7 @@ com.getflourish.layers = {
 
     // query page layers
     var queryResult = scope.filteredArrayUsingPredicate(predicate);
+    log(queryResult)
 
     // select all results
     com.getflourish.utils.selectLayers(queryResult);
@@ -2134,7 +2138,7 @@ com.getflourish.layers = {
     selected = null;
 
     // deselect
-    doc.documentData().deselectAllLayers();
+    com.getflourish.utils.deselectAllLayers()
 
     // get color of selected layer
     color = com.getflourish.colors.getColorOf(referenceLayer);
@@ -2152,7 +2156,7 @@ com.getflourish.layers = {
   selectLayersByName: function (referenceName, scope) {
 
     // deselect
-    doc.documentData().deselectAllLayers();
+    com.getflourish.utils.deselectAllLayers()
 
     // init predicate
     var predicate = null;
@@ -2186,7 +2190,7 @@ com.getflourish.layers = {
   selectLayersBySize: function (width, height, scope) {
 
     // deselect
-    doc.documentData().deselectAllLayers();
+    com.getflourish.utils.deselectAllLayers()
 
     // init predicate
     var predicate = null;
@@ -2205,7 +2209,7 @@ com.getflourish.layers = {
   selectLayersByString: function (referenceString, scope) {
 
     // deselect
-    doc.documentData().deselectAllLayers();
+    com.getflourish.utils.deselectAllLayers()
 
     // init predicate
     var predicate = null;
