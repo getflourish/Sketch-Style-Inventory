@@ -47,6 +47,11 @@ To install only a selection of plugins, you will first need to place the library
 
 You can then install selected plugins by double-clicking the file, or alternatively, drag and drop the file onto the Sketch app icon. This will automatically copy the plugin to your Sketch Plugins folder.
 
+## Install with Sketch Runner
+With Sketch Runner, just go to the `install` command and search for `Sketch Style Inventory`. Runner allows you to manage plugins and do much more to speed up your workflow in Sketch. [Download Runner here](http://www.sketchrunner.com).
+
+![Install with Sketch Runner](sketch-style-inventory-runner.png)
+
 ## Keyboard Shortcuts
 
 Most plugins have a pre-defined keyboard shortcut. You can always change it by editing the shortcut written in parenthesis at the end of the first line of a plugin.
