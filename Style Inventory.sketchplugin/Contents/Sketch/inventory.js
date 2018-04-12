@@ -2112,9 +2112,9 @@ com.getflourish.layers = {
       case "MSRectangleShape":
       // check if color is solid
       if (ftype != 0) {
-        predicate = NSPredicate.predicateWithFormat("(style.fills != NULL) && (style.fills isEqual:%@)", color);
+        predicate = NSPredicate.predicateWithFormat("(style.fills != NULL) && SUBQUERY(style.fills, $fill, $fill isEqual:%@).@count > 0", color);
       } else {
-        predicate = NSPredicate.predicateWithFormat("(style.fills != NULL) && (style.fills.fillType == 0) && style.fills.color == %@", color);
+        predicate = NSPredicate.predicateWithFormat("(style.fills != NULL) && SUBQUERY(style.fills, $fill, $fill.fillType == 0).@count > 0 && SUBQUERY(style.fills, $fill, $fill.color == %@).@count > 0", color);
       }
       break;
       default:
