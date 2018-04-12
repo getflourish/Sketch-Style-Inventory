@@ -16,14 +16,16 @@ var onRun = function (context) {
 
     com.getflourish.common.init(context);
 
-    com.getflourish.doc.currentPage().deselectAllLayers();
+    // doc.deselectAllLayers();
+
+    // selection.clear();
 
     var selected = selection;
 
     for (var i = 0; i < selected.count(); i++) {
         var layer = selected.objectAtIndex(i);
-        layer.setIsSelected(true);
-        com.getflourish.view.centerTo(layer);
+        layer.isSelected = true;
+        // com.getflourish.view.centerTo(layer);
 
         var name = [doc askForUserInput:"Color name: (e.g. Primary > Blue)" initialValue:""]
         if(name != "") {
@@ -40,10 +42,10 @@ var onRun = function (context) {
         } else {
             break;
         }
-        layer.setIsSelected(false);
+        layer.isSelected = false
     }
 
-    com.getflourish.view.centerTo(com.getflourish.doc.currentPage().currentArtboard());
+    // com.getflourish.view.centerTo(com.getflourish.doc.currentPage().currentArtboard());
 
     com.getflourish.colorInventory.generate();
 

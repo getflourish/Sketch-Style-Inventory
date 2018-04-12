@@ -52,8 +52,6 @@ function handleExport () {
 
         var exportPath;
 
-log("colors")
-log(colors)
 
         if (colors == 1) {
 
@@ -65,8 +63,6 @@ log(colors)
 
             // export
             com.getflourish.colorInventory.export(exportPath);
-
-            log("exported colors")
 
             com.getflourish.doc.showMessage("colors done")
 
@@ -211,12 +207,17 @@ var onRun = function (context) {
 
         layout(artboards)
 
-        var view = doc.currentView();
-        doc.currentPage().selectLayers(artboards);
-        view.zoomToSelection();
+        var view = doc.documentWindow();
+        com.getflourish.utils.selectLayers(artboards);
+
+        com.getflourish.view.zoomToLayers(artboards);
         // view.refresh();
 
-        doc.currentPage().deselectAllLayers();
+        doc.scheduleLayerListRefresh()
+        doc.reloadInspector()
+        doc.reloadView()
+
+        com.getflourish.utils.selectLayers([]);
         com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
         doc.showMessage("Generated Style Inventory");
     }
