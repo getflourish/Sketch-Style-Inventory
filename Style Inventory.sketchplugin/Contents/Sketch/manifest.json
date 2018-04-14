@@ -16,6 +16,12 @@
       "script": "Inventory/Generate.js"
     },
     {
+      "name": "Import Colors",
+      "identifier": "com.getflourish.styleinventory.inventory.import",
+      "shortcut": "",
+      "script": "Inventory/Import.js"
+    },
+    {
       "name": "Name Color Swatch",
       "identifier": "com.getflourish.styleinventory.inventory.namecolorswatch",
       "shortcut": "",
@@ -76,6 +82,7 @@
            "title": "Inventory",
            "items": [
                 "com.getflourish.styleinventory.inventory.generate",
+                "com.getflourish.styleinventory.inventory.import",
                 "com.getflourish.styleinventory.inventory.namecolorswatch"
             ]
         },

@@ -597,6 +597,8 @@ com.getflourish.common = {
 
 com.getflourish.colorInventory = {
   generate: function (palettes) {
+
+    log(palettes)
     var currentlySelectedArtboard = doc.currentPage().currentArtboard();
 
     if (currentlySelectedArtboard == null) {
@@ -652,6 +654,8 @@ com.getflourish.colorInventory = {
         // add text colors to the palettes
 
       }
+
+      log(palettes)
 
       // clear the artboard before adding swatches
       colorArtboard.removeAllLayers();
@@ -887,10 +891,22 @@ com.getflourish.colorInventory = {
           var palette = str[key];
           var swatches = [];
           for (var swatch in palette) {
-            color = palette[swatch].replace("#", "");
+
+            // color = palette[swatch].replace("#", "");
+            var rgba = com.getflourish.colors.hexToRgb(palette[swatch]);
+            log("rgba")
+            log(rgba)
+
+            var msc = MSColor.colorWithRGBADictionary({
+              r: rgba.r/255,
+              g: rgba.g/255,
+              b: rgba.b/255,
+              a: 1
+            })
+
             newSwatch = {
               name: swatch,
-              color: color
+              color: msc
             }
             newSwatches.push(newSwatch);
           }
