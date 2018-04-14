@@ -1,5 +1,8 @@
 *****
-**Important note:** The plugin has been updated to work with Sketch 49
+**14 April 2018:** The plugin has been updated to work with Sketch 49.
+
+If you are using the plugin and want to provide feedback, please comment on [Q&A: How and why do you use this plugin?](https://github.com/getflourish/Sketch-Style-Inventory/issues/94)
+
 *****
 
 # Style Inventory for Sketch
