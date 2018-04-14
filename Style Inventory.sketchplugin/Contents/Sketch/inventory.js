@@ -841,7 +841,9 @@ com.getflourish.colorInventory = {
         // get the current layer
         var currentLayer = layers[i];
         if (currentLayer.name().indexOf("Color Swatch") == 0) {
+
           hexColor = currentLayer.name().substr(13);
+          rgbColor = currentLayer.style().fills()[0].color()
 
           // remember color and name
           // todo: format string for use in SCSS?
@@ -853,7 +855,8 @@ com.getflourish.colorInventory = {
             colorName = colorName.substr(colorName.indexOf(">") + 2);
           }
           if (data[pName] == null) data[pName] = {};
-          data[pName][colorName] = hexColor;
+          var colorString = [rgbColor.red().toFixed(2), rgbColor.green().toFixed(2), rgbColor.blue().toFixed(2), rgbColor.alpha().toFixed(2)].join(", ")
+          data[pName][colorName] = "rgba(" + colorString +")";
         }
       }
     }
@@ -891,14 +894,13 @@ com.getflourish.colorInventory = {
           for (var swatch in palette) {
 
             // color = palette[swatch].replace("#", "");
-            var rgba = com.getflourish.colors.hexToRgb(palette[swatch]);
-
+            var rgbaComponents = palette[swatch].substr(5, palette[swatch].length - 6).split(", ")
 
             var msc = MSColor.colorWithRGBADictionary({
-              r: rgba.r/255,
-              g: rgba.g/255,
-              b: rgba.b/255,
-              a: 1
+              r: rgbaComponents[0],
+              g: rgbaComponents[1],
+              b: rgbaComponents[2],
+              a: rgbaComponents[3]
             })
 
             newSwatch = {
