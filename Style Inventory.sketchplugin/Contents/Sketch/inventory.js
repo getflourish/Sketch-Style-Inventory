@@ -1649,12 +1649,11 @@ com.getflourish.utils = {
     com.getflourish.utils.selectLayers([])
   },
   openInFinder: function(path) {
-    // var finderTask = [[NSTask alloc] init],
-    // openFinderArgs = [NSArray arrayWithObjects:"-R", path, nil];
-    //
-    // [finderTask setLaunchPath:"/usr/bin/open"];
-    // [finderTask setArguments:[NSArray arrayWithObjects:"-R", path, nil]];
-    // [finderTask launch];
+    var finderTask = [[NSTask alloc] init];
+
+    [finderTask setLaunchPath:"/usr/bin/open"];
+    finderTask.setArguments_(NSArray.arrayWithArray_(['-R', path]));
+    [finderTask launch];
   },
   sendAction: function (commandToPerform) {
     try {
