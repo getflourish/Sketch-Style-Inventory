@@ -6,7 +6,7 @@
 
 Design requires free, sometimes chaotic exploration. But design also means organization and structure. Sketch can be good in both aspects, but moving from exploration to structured layouts with text styles and unified colors is hard. Either you start clean files from scratch, or you use what you have and try to tidy it up. The Style Inventory is meant to help you with that. It gives you an overview of all your used styles and helps you to merge styles of similar layers into one.
 
-![Generate dialog](http://f.cl.ly/items/3c1N0F3K0i2T1x3z0F2X/Bildschirmfoto%202015-04-26%20um%2022.05.10.png)
+![Generate dialog](http://f.cl.ly/items/3944230o3a0V1u2u463t/export%20metadata.gif)
 
 ## Plugin Directory
 
@@ -37,8 +37,6 @@ With Sketch Runner, just go to the `install` command and search for `Sketch Styl
 ## Keyboard Shortcuts
 
 You can change keyboard shortcuts using [Sketch Plugin Monster](https://github.com/PeachScript/sketch-plugin-monster), the native System Preferences, or by editing the `manifest.json`
-
-
 
 ## Style Inventory
 Generate a visual style sheet with all colors, text styles and symbols that you are using. This will help you to get an overview of your used styles so you can merge styles that are very similar.
@@ -71,10 +69,7 @@ When you select this option in the generator, Sketch will export the Style Inven
 - Text Styles as CSS
 - Symbols as PNG
 
-
-**Shortcut:** `ctrl` + `⌘` + `⌥` + `I`
-
-![Generate dialog](http://f.cl.ly/items/3944230o3a0V1u2u463t/export%20metadata.gif)
+![Generate dialog](http://f.cl.ly/items/3c1N0F3K0i2T1x3z0F2X/Bildschirmfoto%202015-04-26%20um%2022.05.10.png)
 
 ### Select Layers by Color
 
