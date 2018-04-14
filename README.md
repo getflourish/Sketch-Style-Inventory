@@ -43,9 +43,9 @@ Generate a visual style sheet with all colors, text styles and symbols that you 
 
 Choose what you want to generate in the configurator. The inventory will be generated on a new page called "Style Inventory".
 
-![](https://dzwonsemrish7.cloudfront.net/items/3T0W380P081I1a1E422N/Bildschirmfoto%202018-04-14%20um%2012.12.59.png)
-
 **Shortcut:** `ctrl` + `⌘` + `⌥` + `I`
+
+![](https://dzwonsemrish7.cloudfront.net/items/3T0W380P081I1a1E422N/Bildschirmfoto%202018-04-14%20um%2012.12.59.png)
 
 
 ## Name Color Swatch
