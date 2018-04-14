@@ -1,5 +1,5 @@
 *****
-**Important note:** The plugin has been updated to work with Sketch 3.3+
+**Important note:** The plugin has been updated to work with Sketch 49
 *****
 
 # Style Inventory for Sketch
@@ -7,26 +7,6 @@
 Design requires free, sometimes chaotic exploration. But design also means organization and structure. Sketch can be good in both aspects, but moving from exploration to structured layouts with text styles and unified colors is hard. Either you start clean files from scratch, or you use what you have and try to tidy it up. The Style Inventory is meant to help you with that. It gives you an overview of all your used styles and helps you to merge styles of similar layers into one.
 
 ![Generate dialog](http://f.cl.ly/items/3c1N0F3K0i2T1x3z0F2X/Bildschirmfoto%202015-04-26%20um%2022.05.10.png)
-
-## Change Log
-
-**April 14, 2018**
-* Updated for Sketch 49
-* Added support for Sketch Plugin Updater
-
-**February 28, 2016**
-* Refactored to new plugin bundle format
-
-**April 26, 2015**
-* Added Symbols Inventory
-* Simplified export
-* Added configurator
-
-**April 14, 2015**
-* Updated plugins for Sketch 3.3+
-
-**December 7, 2014**
-* Moved all unrelated plugins to a new repository called [Sketch Mate](https://github.com/getflourish/Sketch-Mate). It will take a few days to update the documentation for the new plugins.
 
 ## Plugin Directory
 
@@ -59,13 +39,29 @@ With Sketch Runner, just go to the `install` command and search for `Sketch Styl
 You can change keyboard shortcuts using [Sketch Plugin Monster](https://github.com/PeachScript/sketch-plugin-monster), the native System Preferences, or by editing the `manifest.json`
 
 
-### Generate
 
-This command can generate artboards that collect all colors, text styles and symbols of a document. Choose what you want to generate in the configurator. The artboards will be generated on a new page called "Style Inventory".
+## Style Inventory
+Generate a visual style sheet with all colors, text styles and symbols that you are using. This will help you to get an overview of your used styles so you can merge styles that are very similar.
+
+Choose what you want to generate in the configurator. The inventory will be generated on a new page called "Style Inventory".
 
 **Shortcut:** `ctrl` + `⌘` + `⌥` + `I`
 
 ![Generate dialog](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/generate.gif)
+
+## Name Color Swatch
+If you want to organize your colors, you can name color swatches (groups) on the color inventory artboard. The plugin uses the following naming convention for palettes and colors:
+
+Colors as part of a palette:
+
+- `Brand > Primary`
+- `Grays > 80`
+
+A single color, not part of a palette:
+
+- `Some Color`
+
+You can rename the generated color swatches, or use the plugin that will show a dialog where you can enter the color name.
 
 ### Export
 
@@ -80,17 +76,18 @@ When you select this option in the generator, Sketch will export the Style Inven
 
 ![Generate dialog](http://f.cl.ly/items/3944230o3a0V1u2u463t/export%20metadata.gif)
 
-### Select Layers by Color on Artboard
+### Select Layers by Color
 
-Based on a selected layer, all layers on the current artboard that match the fill or text color will be selected.
+Based on a selected layer, all layers that match the fill or text color will be selected.
 
 **Shortcut:** `ctrl` + `⌘` + `C`
 
-![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Color.gif)
+### Select Layers by Text Style
 
-### Select Layers by Color
+Based on a selected layer, all layers that match its text style will be selected.
 
-`experimental` Based on a selected layer, all document layers that match the fill or text color will be selected.
+**Shortcut:** `ctrl` + `⌘` + `T`
+
 
 ### Select Layers by Name
 
@@ -104,27 +101,23 @@ Replaces all occurences of the text string found in the selected text layer
 
 **Shortcut:** `shift` + `⌘` + `K`
 
-![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20by%20Name.gif)
 
-### Select Next Layer by Color
+## Change Log
 
-`experimental` Based on a selection, the next layer with the same fill color will be selected.
+**April 14, 2018**
+* Updated for Sketch 49
+* Added support for Sketch Plugin Updater
 
-### Select Next Layer by Text Style
+**February 28, 2016**
+* Refactored to new plugin bundle format
 
-`experimental` Based on a selection, the next layer with the same text style will be selected.
+**April 26, 2015**
+* Added Symbols Inventory
+* Simplified export
+* Added configurator
 
-![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Select%20Layer%20by%20Similar%20Style.png)
+**April 14, 2015**
+* Updated plugins for Sketch 3.3+
 
-## Style Inventory
-Generate a visual style sheet with all colors and text styles that you are using. This will help you to get an overview of your used styles so you can merge styles that are very close together. This will also export a CSS file with text styles.
-
-### Generate/Text Style Inventory
-Generates an artboard with all text styles that are used in the document.
-![Selection Animation](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Sketch%20CSS.gif)
-
-
-### Generate/Color Inventory
-Generates an artboard with all colors that are used on the current page.
-
-![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Colors.png)
+**December 7, 2014**
+* Moved all unrelated plugins to a new repository called [Sketch Mate](https://github.com/getflourish/Sketch-Mate). It will take a few days to update the documentation for the new plugins.
