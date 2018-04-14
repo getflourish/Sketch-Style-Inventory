@@ -201,7 +201,7 @@ com.getflourish.common = {
       js = jswrapper.replace('[[js]]', jscode);
 
       var result = scriptObject.evaluateWebScript(js);
-      log(result);
+
     };
 
     // Add the delegate (callback) function which is called when the page has loaded.
@@ -213,7 +213,7 @@ com.getflourish.common = {
       var scriptObject = sender.windowScriptObject();
 
       var result = scriptObject.evaluateWebScript(js);
-      log(result);
+
     };
 
     // Prepare the function that will be used as an object added to the
@@ -598,7 +598,7 @@ com.getflourish.common = {
 com.getflourish.colorInventory = {
   generate: function (palettes) {
 
-    log(palettes)
+
     var currentlySelectedArtboard = doc.currentPage().currentArtboard();
 
     if (currentlySelectedArtboard == null) {
@@ -654,8 +654,6 @@ com.getflourish.colorInventory = {
         // add text colors to the palettes
 
       }
-
-      log(palettes)
 
       // clear the artboard before adding swatches
       colorArtboard.removeAllLayers();
@@ -894,8 +892,7 @@ com.getflourish.colorInventory = {
 
             // color = palette[swatch].replace("#", "");
             var rgba = com.getflourish.colors.hexToRgb(palette[swatch]);
-            log("rgba")
-            log(rgba)
+
 
             var msc = MSColor.colorWithRGBADictionary({
               r: rgba.r/255,
@@ -1008,7 +1005,6 @@ com.getflourish.colorInventory = {
             var foo = NSPredicate.predicateWithFormat("(style.fills != NULL) && (style.fills.color isEqual:%@) && NOT(parentArtboard.name == %@)", c, com.getflourish.config.colorInventoryName);
             var bar = doc.currentPage().children().filteredArrayUsingPredicate(foo);
 
-            log(c)
             palettes[paletteNames.indexOf(pName)].swatches.push({
               name: colorName,
               color: c,
@@ -1311,10 +1307,7 @@ com.getflourish.colors = {
     var padding = 8;
     var color = swatch.color[0] || swatch.color;
 
-
     var hex_string = color.immutableModelObject().svgRepresentation()
-    log("hex")
-    log(hex_string)
 
     var colorName = "";
 
@@ -1394,7 +1387,6 @@ com.getflourish.colors = {
     hexLabel.frame().setX(8);
     hexLabel.setName("Hex Label");
 
-    log(color)
     if (color.red() != null)) {
       // RGB Label
       var rgb = String(Math.ceil(color.red().toFixed(2) * 255)) + ", " + String(Math.ceil(color.green().toFixed(2) * 255)) + ", " + String(Math.ceil(color.blue().toFixed(2) * 255)) + ", " + String(color.alpha().toFixed(2));
@@ -2124,7 +2116,7 @@ com.getflourish.layers = {
 
     // query page layers
     var queryResult = scope.filteredArrayUsingPredicate(predicate);
-    log(queryResult)
+
 
     // select all results
     com.getflourish.utils.selectLayers(queryResult);
@@ -2502,10 +2494,6 @@ com.getflourish.textStyleInventory = {
 
     artboard.frame().setWidth(maxWidth + 150 + 2 * margin);
 
-    log("--- set bounds")
-    log(bounds)
-    log(bounds.size.height)
-
     if (bounds) artboard.frame().setHeight(top + padding);
 
 
@@ -2763,7 +2751,7 @@ com.getflourish.symbolInventory = {
   },
 
   addBackground: function (artboard) {
-    log("add bg")
+
     // add background
     var bg = com.getflourish.common.addSolidBackground(artboard, com.getflourish.config.BACKGROUND_COLOR);
 
