@@ -69,7 +69,7 @@ When you select this option in the generator, Sketch will export the Style Inven
 - Text Styles as CSS
 - Symbols as PNG
 
-![Generate dialog](http://f.cl.ly/items/3c1N0F3K0i2T1x3z0F2X/Bildschirmfoto%202015-04-26%20um%2022.05.10.png)
+![](https://dzwonsemrish7.cloudfront.net/items/0d2R2j0Q3m0f2F3y1T1x/Bildschirmfoto%202018-04-14%20um%2012.09.32.png)
 
 ### Select Layers by Color
 
