@@ -43,9 +43,10 @@ Generate a visual style sheet with all colors, text styles and symbols that you 
 
 Choose what you want to generate in the configurator. The inventory will be generated on a new page called "Style Inventory".
 
+![](https://dzwonsemrish7.cloudfront.net/items/3T0W380P081I1a1E422N/Bildschirmfoto%202018-04-14%20um%2012.12.59.png)
+
 **Shortcut:** `ctrl` + `⌘` + `⌥` + `I`
 
-![Generate dialog](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/generate.gif)
 
 ## Name Color Swatch
 If you want to organize your colors, you can name color swatches (groups) on the color inventory artboard. The plugin uses the following naming convention for palettes and colors:
@@ -60,6 +61,8 @@ A single color, not part of a palette:
 - `Some Color`
 
 You can rename the generated color swatches, or use the plugin that will show a dialog where you can enter the color name.
+
+![](https://dzwonsemrish7.cloudfront.net/items/1i2J142t2L1I3o250S09/Bildschirmfoto%202018-04-14%20um%2012.11.38.png)
 
 ### Export
 
