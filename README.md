@@ -4,30 +4,36 @@
 
 # Style Inventory for Sketch
 
-Design requires free, sometimes chaotic exploration. But design also means organisation and structure. Sketch can be good in both aspects, but moving from exploration to structured layouts with text styles and unified colors is hard. Either you start clean files from scratch, or you use what you have and try to tidy it up. The Style Inventory is meant to help you with that. It gives you an overview of all your used styles and helps you to merge styles of similar layers into one.
+Design requires free, sometimes chaotic exploration. But design also means organization and structure. Sketch can be good in both aspects, but moving from exploration to structured layouts with text styles and unified colors is hard. Either you start clean files from scratch, or you use what you have and try to tidy it up. The Style Inventory is meant to help you with that. It gives you an overview of all your used styles and helps you to merge styles of similar layers into one.
 
 ![Generate dialog](http://f.cl.ly/items/3c1N0F3K0i2T1x3z0F2X/Bildschirmfoto%202015-04-26%20um%2022.05.10.png)
 
 ## Change Log
 
+**April 14, 2018**
+* Updated for Sketch 49
+* Added support for Sketch Plugin Updater
+
 **February 28, 2016**
-* refactored to new plugin bundle format
+* Refactored to new plugin bundle format
 
 **April 26, 2015**
-* added Symbols Inventory
-* simplified export
-* added configurator
+* Added Symbols Inventory
+* Simplified export
+* Added configurator
 
 **April 14, 2015**
-Updated plugins for Sketch 3.3+
+* Updated plugins for Sketch 3.3+
 
 **December 7, 2014**
-* Moved all unreleated plugins to a new repository called [Sketch Mate](https://github.com/getflourish/Sketch-Mate). It will take a few days to update the documentation for the new plugins.
+* Moved all unrelated plugins to a new repository called [Sketch Mate](https://github.com/getflourish/Sketch-Mate). It will take a few days to update the documentation for the new plugins.
 
 ## Plugin Directory
 
 #### Inventory
 * Generate `ctrl` + `⌘` + `⌥` + `I`
+* Import Colors
+* Name Color Swatch
 
 #### Selection
 * by Color/Select Layers by Color `shift` + `ctrl` + `⌘` + `C`
@@ -41,11 +47,7 @@ Updated plugins for Sketch 3.3+
 
 ## Installation
 
-To install all plugins, [download](https://github.com/getflourish/Sketch-Style-Inventory/archive/master.zip) them all first, unzip the archive, and place the folder contents in your Sketch Plugins folder by navigating to `Sketch > Plugins > Reveal Plugins Folder…`
-
-To install only a selection of plugins, you will first need to place the library file `inventory.js` in the root of your Sketch Plugins directory. This is very important as all plugins rely on its functionality.
-
-You can then install selected plugins by double-clicking the file, or alternatively, drag and drop the file onto the Sketch app icon. This will automatically copy the plugin to your Sketch Plugins folder.
+To install all plugins, [download](https://github.com/getflourish/Sketch-Style-Inventory/archive/master.zip) and double click.
 
 ## Install with Sketch Runner
 With Sketch Runner, just go to the `install` command and search for `Sketch Style Inventory`. Runner allows you to manage plugins and do much more to speed up your workflow in Sketch. [Download Runner here](http://www.sketchrunner.com).
@@ -54,13 +56,7 @@ With Sketch Runner, just go to the `install` command and search for `Sketch Styl
 
 ## Keyboard Shortcuts
 
-Most plugins have a pre-defined keyboard shortcut. You can always change it by editing the shortcut written in parenthesis at the end of the first line of a plugin.
-
-For example, the first line of `Duplicate Artboard.sketchplugin`:
-
-> // Duplicates the current artboard right next to it. (shift command d)
-
-You can use modifier keys such as `option`, `command`, `control`, `shift`
+You can change keyboard shortcuts using [Sketch Plugin Monster](https://github.com/PeachScript/sketch-plugin-monster), the native System Preferences, or by editing the `manifest.json`
 
 
 ### Generate
@@ -73,7 +69,12 @@ This command can generate artboards that collect all colors, text styles and sym
 
 ### Export
 
-When you select this option in the generator, Sketch will export metadata and images of your project that you can use in development. Colors as JSON, symbols as PNG, text styles as JSON.
+When you select this option in the generator, Sketch will export the Style Inventory.
+
+- Colors and palettes as JSON
+- Text Styles as CSS
+- Symbols as PNG
+
 
 **Shortcut:** `ctrl` + `⌘` + `⌥` + `I`
 
@@ -127,6 +128,3 @@ Generates an artboard with all text styles that are used in the document.
 Generates an artboard with all colors that are used on the current page.
 
 ![Screenshot](https://dl.dropboxusercontent.com/u/974773/_keepalive/Style%20Inventory/Colors.png)
-
-### Rename/Rename selected layers
-`experimental` A simple wizard that will guide you through your styles that are missing variable names. This will be used to to provide more information for SASS and JSON export.
