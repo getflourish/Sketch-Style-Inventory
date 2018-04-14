@@ -3,7 +3,7 @@
   "description": "Review, import & export styles in Sketch.",
   "author": "Florian Schulz",
   "homepage": "https://github.com/getflourish/Sketch-Style-Inventory",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "identifier": "com.getflourish.sketch.styleinventory",
   "updateURL": "https://github.com/downloads/example/sketchplugins/sketchplugins.json",
   "compatibleVersion": 4.9,

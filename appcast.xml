@@ -6,7 +6,7 @@
     <description>Review, import & export styles in Sketch.</description>
     <language>en</language>
     <item>
-      <title>Version 1.5.0</title>
+      <title>Version 1.5.1</title>
       <description>
         <![CDATA[
           <ul>
@@ -14,7 +14,7 @@
           </ul>
         ]]>
       </description>
-      <enclosure url="https://github.com/getflourish/Sketch-Style-Inventory/archive/master.zip" sparkle:version="1.5.0" />
+      <enclosure url="https://github.com/getflourish/Sketch-Style-Inventory/archive/master.zip" sparkle:version="1.5.1" />
     </item>
   </channel>
 </rss>
