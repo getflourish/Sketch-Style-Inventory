@@ -13,10 +13,6 @@ com.getflourish = {
 
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 com.getflourish.config = {
   colorInventoryName: "Color Inventory",
   pageName: "Style Inventory",
@@ -29,14 +25,6 @@ com.getflourish.config = {
   TEXT_COLOR: "#333333",
   TEXTSTYLE_NAME: "Style Inventory / Label"
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-// define where the style sheet will be placed
-// either on the same page or a separate page?
 
 com.getflourish.common = {
   init: function (context) {
@@ -75,7 +63,6 @@ com.getflourish.common = {
     layer.frame().setHeight(artboard.frame().height());
     layer.setName("Background");
 
-
     // todo: add pattern
 
     var image = NSImage.alloc().initWithContentsOfFile(com.getflourish.config.background_image);
@@ -83,9 +70,7 @@ com.getflourish.common = {
     var fill = layer.style().addStylePartOfType(0);
     if (fill) {
       fill.setFillType(4);
-
       fill.setImage(MSImageData.alloc().initWithImage(image))
-
       fill.setPatternFillType(0);
       fill.setPatternTileScale(1);
     }
@@ -692,11 +677,10 @@ com.getflourish.colorInventory = {
       doc.showMessage("Finished…");
 
       // resize background
-      // if (bg) {
-      //   bg.frame().setWidth(colorArtboard.frame().width())
-      //   bg.frame().setHeight(colorArtboard.frame().height())
-      // }
-
+      if (bg) {
+        bg.frame().setWidth(colorArtboard.frame().width())
+        bg.frame().setHeight(colorArtboard.frame().height())
+      }
 
       // Feedback
       var execTime = (new Date() - startTime) / 1000;
@@ -874,10 +858,11 @@ com.getflourish.colorInventory = {
 
     var output = JSON.stringify(data, undefined, 2);
 
+
     if (output == "{}") {
       doc.showMessage("Nothing to export. You need to define swatches.")
     } else {
-      exportPath += "/colors.json";
+      exportPath += "colors.json";
       com.getflourish.common.save_file_from_string(exportPath, output);
       doc.showMessage("Exported to " + exportPath);
     }
@@ -1139,9 +1124,6 @@ com.getflourish.colorInventory = {
     // select current artboard
     artboard.isSelected = true
 
-    // refresh
-    // todo: this is costly
-
     // collapse artboards
     com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
     artboard.isSelected = true
@@ -1315,6 +1297,8 @@ com.getflourish.colors = {
 
 
     var hex_string = color.immutableModelObject().svgRepresentation()
+    log("hex")
+    log(hex_string)
 
     var colorName = "";
 
@@ -1394,7 +1378,8 @@ com.getflourish.colors = {
     hexLabel.frame().setX(8);
     hexLabel.setName("Hex Label");
 
-    if (color.red()) {
+    log(color)
+    if (color.red() != null)) {
       // RGB Label
       var rgb = String(Math.ceil(color.red().toFixed(2) * 255)) + ", " + String(Math.ceil(color.green().toFixed(2) * 255)) + ", " + String(Math.ceil(color.blue().toFixed(2) * 255)) + ", " + String(color.alpha().toFixed(2));
 
@@ -1403,18 +1388,18 @@ com.getflourish.colors = {
       rgbLabel.adjustFrameToFit();
       rgbLabel.frame().setX(8);
       rgbLabel.setName("RGB Label");
-
-      // Shadow
-      var shadow = labelBG.style().addStylePartOfType(2);
-
-      black.alpha = 0.2;
-      shadow.setOffsetX(0);
-      shadow.setOffsetY(2);
-      shadow.setBlurRadius(3);
-      shadow.setSpread(0);
-
-      shadow.setColor(black);
     }
+
+    // Shadow
+    var shadow = labelBG.style().addStylePartOfType(2);
+
+    black.alpha = 0.2;
+    shadow.setOffsetX(0);
+    shadow.setOffsetY(2);
+    shadow.setBlurRadius(3);
+    shadow.setSpread(0);
+
+    shadow.setColor(black);
 
 
 
@@ -1664,12 +1649,12 @@ com.getflourish.utils = {
     com.getflourish.utils.selectLayers([])
   },
   openInFinder: function(path) {
-    var finderTask = [[NSTask alloc] init],
-    openFinderArgs = [NSArray arrayWithObjects:"-R", path, nil];
-
-    [finderTask setLaunchPath:"/usr/bin/open"];
-    [finderTask setArguments:openFinderArgs];
-    [finderTask launch];
+    // var finderTask = [[NSTask alloc] init],
+    // openFinderArgs = [NSArray arrayWithObjects:"-R", path, nil];
+    //
+    // [finderTask setLaunchPath:"/usr/bin/open"];
+    // [finderTask setArguments:[NSArray arrayWithObjects:"-R", path, nil]];
+    // [finderTask launch];
   },
   sendAction: function (commandToPerform) {
     try {
@@ -2491,7 +2476,8 @@ com.getflourish.textStyleInventory = {
 
     // Resize artboard and background to match the newly created text layers
     var bounds;
-    if (artboard.layers().length) bounds = MSLayer.alignmentRectForLayers(artboard.layers());
+
+    if (artboard.layers()) bounds = MSLayer.alignmentRectForLayers(artboard.layers());
 
     var scope = artboard.children();
     var predicate = NSPredicate.predicateWithFormat("className == %@", "MSTextLayer");
@@ -2501,7 +2487,11 @@ com.getflourish.textStyleInventory = {
 
     artboard.frame().setWidth(maxWidth + 150 + 2 * margin);
 
-    if (bounds) artboard.frame().setHeight(bounds.size.height + 2 * padding);
+    log("--- set bounds")
+    log(bounds)
+    log(bounds.size.height)
+
+    if (bounds) artboard.frame().setHeight(top + padding);
 
 
   },
@@ -2985,7 +2975,6 @@ function processSlice(slice, factors, fileName){
 
     [doc saveArtboardOrSlice: version toFile:fileName];
 
-    log("Saved " + fileName);
   }
 }
 

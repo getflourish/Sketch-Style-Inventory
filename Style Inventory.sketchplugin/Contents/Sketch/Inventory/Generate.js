@@ -144,7 +144,7 @@ function showConfigurationDialog (states) {
 
     var buttonFour = NSButton.alloc().initWithFrame(NSMakeRect(0.0, 0.0, 200.0, 20.0))
     buttonFour.setButtonType(NSSwitchButton)
-    buttonFour.setTitle("Export Metadata")
+    buttonFour.setTitle("Export")
     buttonFour.setState(buttonStates[3])
     buttonFour.setCOSJSTargetFunction(function(sender){
       buttonStates[3] = buttonStates[3] == 0 ? 1 : 0
@@ -203,7 +203,6 @@ var onRun = function (context) {
             sa = com.getflourish.symbolInventory.generate();
             artboards.push(sa);
         }
-        if (exportMetadata == 1) handleExport();
 
         layout(artboards)
 
@@ -219,6 +218,9 @@ var onRun = function (context) {
 
         com.getflourish.utils.selectLayers([]);
         com.getflourish.utils.sendAction("collapseGroupsInLayerList:");
+
+        if (exportMetadata == 1) handleExport();
+        
         doc.showMessage("Generated Style Inventory");
     }
 
