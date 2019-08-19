@@ -1,7 +1,7 @@
 *****
 **⚠️ 19 August 2019:** This plugin is no longer maintained and does not work with Sketch 50+
 
-I’m working on a Ratio, web design tool that will make some of the commands and concepts of this plugin a core principle. Instead of relying on a plugin to stay organised and consistent, Ratio will support and guide you. 
+I’m working on a [Ratio](https://useratio.com), web design tool that will make some of the commands and concepts of this plugin a core principle. Instead of relying on a plugin to stay organised and consistent, Ratio will support and guide you. 
 
 I know that many of you wish that this plugin would still work, but I can no longer commit time to it. Thank you for using the plugin, providing feedback and reporting issues. This is one of my most complex plugins and maintaining it requires in-depth understanding of the internals of Sketch. 
 
