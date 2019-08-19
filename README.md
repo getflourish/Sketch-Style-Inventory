@@ -3,9 +3,15 @@
 
 I’m working on a [Ratio](https://useratio.com), web design tool that will make some of the commands and concepts of this plugin a core principle. Instead of relying on a plugin to stay organised and consistent, Ratio will support and guide you. 
 
-I know that many of you wish that this plugin would still work, but I can no longer commit time to it. Thank you for using the plugin, providing feedback and reporting issues. This is one of my most complex plugins and maintaining it requires in-depth understanding of the internals of Sketch. 
+This was one of my most complex plugins and maintaining it required in-depth understanding of the internals of Sketch that constantly changed over the years.
 
-In the meantime, stay tuned for Ratio. 
+I know that many of you wish that this plugin would still work, but I can no longer commit time to it. 
+
+Thank you for using the plugin, providing feedback and reporting issues. Feel free to fork it, fix it, and share it. 
+
+I think the problems adddressed by the plugin are better solved by a design tool that treats design systems as a first class citizen.
+
+If you liked what this plugin did for you in Sketch, stay tuned for Ratio. 
 https://useratio.com
 
 
